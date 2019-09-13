@@ -1,0 +1,53 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\todo{Introduction:}
+\begin{itemize}
+  \item Need for new computational methods (adaptive)
+  \item Statistics on usage of FDS? (literatur aus bennis diss?)
+  
+  \item Latest catastrophes: tower, Düsseldorf
+  \item ... help to .. catastrophes by giving hints on placements of safety measures.
+\end{itemize}
+
+Recent advancements in computer technology allows us to solve problems with billions of unknowns. However, raw computing power does not mean we can use it without further ado. The keys to efficiency are algorithms that exploit the hardware structure and focus resources on critical operations.
+
+For currently common multi-processor systems, algorithms for parallelization need to be supplied . These methods depend on the hardware architecture, and especially large-scale supercomputers with distributed memory access benefit from this method.
+
+Lots of \glspl{api} exist for these purposes, that allow users to take opportunity of already implemented ideas.
+
+For machines with shared memory access, \glsdesc{openmp}\glsunset{openmp} \autocite{openmp50} and \glsdesc{tbb}\glsunset{tbb} \autocite{tbb2018} with its work stealing policy are the most prominent approaches. IF architecture is distributed on nodes and thus have distributed memory access, the \glsdesc{mpi}\glsunset{mpi} \autocite{mpi31} will be used. A combination of both is possbile.
+
+Further, recently streaming multiprocessor architecture have become more and more interest, that work on graphic accelerator cards (GPUS). \glsdesc{openacc}\glsunset{openacc} \autocite{openacc27} or nVidia's \glsdesc{cuda}\glsunset{cuda} \autocite{cuda10} can be used for that.
+
+On the other hand, . adaptive
+
+A combinatation of both hardware and .. software driven algorithms can be supplied. However, their combination is not trivial. 
+
+"MPI remains the dominant library for production programming on large scale distributed memory machines."
+
+Some typeof hardware-related 
+To name a few, Hardware-related algorithms are parallelization, vectorization and limiting memory access, since it. In terms 
+
+
+guarantee the full usage of all available resources. The key to use those ausnutzen fully are efficient algorithms that either fit to the hardware or distribute resources on computing intensive operations.
+
+However, the key to use these structures efficientis to , and not computing power alone; (Erst) the combination with algorithms that use these structure efficiently offers a massive potential to reduce 
+
+
+
+
+Some of them
+
+parallelization, vectorization, limit memory access. adaptive methods
+
+parallelization depending on hardware architecture: MPI for distributed memory, OpenMP for shared memory, OpenACC or nVidia CUDA for streaming multiprocessors on e.g. GPUs
+
+adaptive methods to focus .
+
+
+Each algorithm . The combination of both is more or less trivial.
+On supercomputers
+This thesis presents the combination of both parallelization on distributed hardware architecture, and hp-adaptive methods.
+
+For spatial discretizations we use . The \gls{fem}

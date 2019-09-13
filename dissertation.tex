@@ -1,0 +1,133 @@
+\documentclass[10pt,a4paper,twoside,openright]{memoir}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+% ----- pgfplots -----
+\usepackage{pgfplots} % tikz, graphicx
+%\tikzexternalize
+
+% ----- formatting -----
+\usepackage{titling}
+\usepackage{fancyhdr}
+%\usepackage{booktabs}
+\OnehalfSpacing % memoir
+\nouppercaseheads % memoir
+%\setsecnumdepth{subsection} % memoir
+%\maxtocdepth{subsection} % memoir
+\input{misc/format}
+
+% ----- miscellaneous -----
+\usepackage{doi} %necessary?
+
+% ----- work in progress -----
+\usepackage{todonotes}
+\usepackage{blindtext}
+\usepackage{showframe}
+
+% ----- math -----
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{isomath} % \vectorsym, \matrixsym, \tensorsym
+\usepackage{bbold}
+\input{misc/math}
+
+% ----- bibliography -----
+\usepackage[backend=biber, style=authoryear]{biblatex}
+\DefineBibliographyStrings{english}{citedas = {hereafter}}
+\bibliography{misc/bibliography.bib}
+
+% replace 'note' by 'shorthand' for: MPI, OpenMP, CUDA, TBB, OpenACC
+\immediate\write18{sh misc/convert-shorthand.sh misc/bibliography.bib}
+
+% print url and urldate only if there is no doi
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldsource=doi,final]
+      \step[fieldset=url,null]
+      \step[fieldset=urldate,null]
+    }  
+  }
+}
+
+% ----- glossary -----
+\usepackage[automake]{glossaries-extra}
+\makeglossaries
+\input{misc/glossary}
+
+
+
+% --- document information ---
+\author{Marc Fehling}
+\title{Algorithms for massively parallel hp--adaptive finite element methods}
+\date{31. April 2020}
+
+
+
+\begin{document}
+  \begin{titlingpage}
+    \begin{center}
+      \vspace*{\fill}
+      \includegraphics[width=.75\textwidth]{logos/BUW_Logo-schwarz.eps}\bigskip
+      \vspace*{\fill}\vspace*{\fill}\par
+      {\Huge \thetitle\bigskip\par}
+      {\Huge \theauthor\bigskip\par}
+      {\LARGE \thedate\bigskip\bigskip\par}
+    \end{center}
+    {\large Perfect Publishing\hspace*{\fill}Forward by Fabulous Freddy\smallskip\\
+    The World\hspace*{\fill}Author of \emph{Kayaking with dragons}}
+  \end{titlingpage}
+  
+  
+  
+  \frontmatter
+  
+  \abstractintoc
+  \begin{abstract}
+    Abstract.
+  \end{abstract}
+  \clearpage
+  
+  % Approval page
+  
+  \begin{KeepFromToc} % memoir
+    \tableofcontents
+  \end{KeepFromToc}
+  \clearpage
+  
+  % Dedication
+  
+  % Acknowledgements
+  
+  \listoftables
+  \clearpage
+  
+  \listoffigures
+  \clearpage
+  
+  \printglossary[type=\acronymtype, title={List of Abbreviations}]
+  
+  % Other lists
+  
+  % Preface
+  
+  
+  
+  \mainmatter
+  
+  \input{chapters/introduction/introduction}
+  \input{chapters/parallel/parallel}
+  \input{chapters/dynamic/dynamic}
+  \input{chapters/results/results}
+  \input{chapters/summary/summary}
+  
+  \appendix
+  \input{appendix/calculus}
+  
+  
+  
+  \backmatter
+  
+  \printbibliography
+  
+  \listoftodos
+\end{document}
