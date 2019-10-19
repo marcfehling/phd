@@ -1,8 +1,42 @@
 \chapter{Massively parallel \hp-adaptive \glsfmtlongpl{fem}}
 \label{ch:parallel}
+\glsresetall
 
-Text.
+Any kind of numerical method requires thorough thought on designing suitable algorithms and data structures with respect to correctness, robustness and performance. In general, the ideas behind implementations of these methods are similar and can be generalized.
+%, especially when they are based on the same numerical method.
+This is also the case for additional enhancements that improve basic realizations. In case of the \gls{fem} such features are, for example, parallelisation, adaptive methods, continuous or discontinuous Galerkin methods, and the support for complex geometries.
 
+In this chapter, we will present algorithms and data structures for parallel, \hp-adaptive \glsfmtlongpl{fem}. Generalized thoughts on each of the two aspects have already been presented: \textcite{bangerth2009} developed a general implementation for \hp-adaptive \gls{fem} software; and a generalized distributed computing approach of the \glsfmtlong{fem} has been introduced by \textcite{bangerth2012}. However, the consolidation of both features is not trivial. We will elaborate on the trickiest facets in the following sections, after providing a brief introduction to \gls{fem} and the parallelisation approach we will follow.
+
+Thus chapter should be understood as an enhancement of the two aforementioned contributions and bases on large parts on it. We recommend a previous reading of both articles.
+
+
+\subsubsection{Basics of the \glsfmtlong{fem}}
+
+The basic idea of the \glsfmtlong{fem} conforms to the specification of a function space and finding a solution to the investigated problem in it. To be more precise, we pick a suitable set of basis functions for which the solution is a linear combination. Its coefficients are called unknowns or \glspl{dof}, since their values are determined after solving the problem.
+
+In general, \gls{fem} requires a subdivision of the domain into smaller cells, typically into triangles or quadrilaterals in two and tetrahedra or hexahedra in three dimensions. All these cells are mappings of a reference cell, to which we assign a set of shape functions with corresponding support points.
+%Those functions are designed to have the value one on exactly one support point and the value zero on all others.
+The composition of reference cell, shape functions and support points is defined as a finite element.
+
+The collection of all cells with their corresponding finite elements assigned form the aforementioned function space. In the global mesh, each support point for each finite element will be uniquely identified with a \gls{dof} on each cell. Consulting the weak formulation of the investigated problem, we are then able to formulate and solve the corresponding system of linear equations.
+
+\todo{add some equations and math symbols}
+$u_h(\vec{x}) = \sum_{j=0}^{N-1} U_j \varphi_j(\vec{x})$
+% $u_h \in V_h$
+
+This is just a brief introduction to \gls{fem} in order to provide the fundamentals for this chapter and to specify the nomenclature used. More details on this topic can be found in common literature \parencite[e.g.][]{girault1986, elman2014, kuzmin2015} \todo{add more literature?}. Especially \textcite{brenner2008} provided a more rigorous and mathematically sound definition on finite elements.
+
+
+\subsubsection{Parallelization approach for adaptive meshes}
+
+For distributed computing.
+
+This involves a hierarchy
+
+However, to stay flexible during 
+
+This is just a brief outline of all the requirements that \textcite{bangerth2012} worked out, which is crucial for the upcoming section.
 
 
 \input{chapters/parallel/enumeration}

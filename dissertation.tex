@@ -3,12 +3,13 @@
 \usepackage[english]{babel}
 
 % ----- pgfplots -----
-\usepackage{pgfplots} % tikz, graphicx
+\usepackage{femtikz} % pgfplots, tikz, graphicx
 %\tikzexternalize
 
 % ----- formatting -----
 \usepackage{titling}
 \usepackage{fancyhdr}
+\usepackage{enumitem} % resume
 %\usepackage{booktabs}
 \OnehalfSpacing % memoir
 \nouppercaseheads % memoir
@@ -121,7 +122,9 @@
   \input{chapters/summary/summary}
   
   \appendix
+  \glsresetall
   \input{appendix/calculus}
+  \input{appendix/enumeration}
   
   
   

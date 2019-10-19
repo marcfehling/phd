@@ -16,9 +16,9 @@ For currently common multi-processor systems, algorithms for parallelization nee
 
 Lots of \glspl{api} exist for these purposes, that allow users to take opportunity of already implemented ideas.
 
-For machines with shared memory access, \glsdesc{openmp}\glsunset{openmp} \autocite{openmp50} and \glsdesc{tbb}\glsunset{tbb} \autocite{tbb2018} with its work stealing policy are the most prominent approaches. IF architecture is distributed on nodes and thus have distributed memory access, the \glsdesc{mpi}\glsunset{mpi} \autocite{mpi31} will be used. A combination of both is possbile.
+For machines with shared memory access, \glsdesc{openmp}\glsunset{openmp} \parencite{openmp50} and \glsdesc{tbb}\glsunset{tbb} \parencite{tbb2018} with its work stealing policy are the most prominent approaches. IF architecture is distributed on nodes and thus have distributed memory access, the \glsdesc{mpi}\glsunset{mpi} \parencite{mpi31} will be used. A combination of both is possbile.
 
-Further, recently streaming multiprocessor architecture have become more and more interest, that work on graphic accelerator cards (GPUS). \glsdesc{openacc}\glsunset{openacc} \autocite{openacc27} or nVidia's \glsdesc{cuda}\glsunset{cuda} \autocite{cuda10} can be used for that.
+Further, recently streaming multiprocessor architecture have become more and more interest, that work on graphic accelerator cards (GPUS). \glsdesc{openacc}\glsunset{openacc} \parencite{openacc27} or nVidia's \glsdesc{cuda}\glsunset{cuda} \parencite{cuda10} can be used for that.
 
 On the other hand, . adaptive
 
@@ -51,3 +51,6 @@ On supercomputers
 This thesis presents the combination of both parallelization on distributed hardware architecture, and hp-adaptive methods.
 
 For spatial discretizations we use . The \gls{fem}
+
+
+We will provide an example implementation in the \dealii{} library, so that the reader is able to either embed our findings into his own \gls{fem} code or use the \dealii{} implementation right away.

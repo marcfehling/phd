@@ -1,4 +1,134 @@
 \section{Enumeration of \glsfmtlongpl{dof}}
 \label{sec:enumeration}
 
+Formulating and solving the system of linear equations requires a unique identification of all involved \glspl{dof} in the global mesh.
+
+This task is associated with problems when considering either paralelisation or hp methods, let alone a combination of both.
+
+Considering this task with paralellistion and \hp-adaptive methods individually, 
+
+
+The support points are associated with an identifier or index corresponding to the \glspl{dof}.
+
+
+
+A common approach to parallelization for cell based methods on distributed memory machines is to assign multiple cells to one process of that form a subdomain. Typically during the assembly of the equation system we need to the values of the surrounding cells. Thus, an extension of the subdomain by so called ghosts cells is required.
+
+
+When using continuous Galerkin methods on the other hand, \glspl{dof} are shares along interfaces between cells.
+
+
+However, a different way of enumerating \glspl{dof} has to be taken with parallel \gls{fem}. \textcite{bangerth2012} provided a 
+
+
+How do we cope with this problem? A first attempt would involve would involve so called constraints: We enumerate \glspl{dof} independently, but identify two similar \glspl{dof} during the assembly of the equation systems. This leads to several drawbacks. Once, we require more memory than necessary. Second, the number of \glspl{dof} differs with the number of subdomains. For debugging purposes, this should be avoided. And we can assure that our solvers yield the same results on either one or an arbitrary amount of subdomains or rather processors.
+
+We conclude that a unique enumeration of \glspl{dof} is mandatory for a robust \gls{fem} implementation.
+
+We developed an algorithm that combined the ideas of both previous algorithms.
+
+To ... the same nomenclature as \cite{bangerth2012}, we call the set of all locally owned cells $\mathbb{T}^p_{loc}$, the set of all ghost cells $\mathbb{T}^p_{ghost}$, and of all locally relevant cells $\mathbb{T}^p_{rel} = \mathbb{T}^p_{loc} \cup \mathbb{T}^p_{ghost}$ on processor and subdomain $p$.
+
+In short, we take most parts of the parallel algorithm. We will add a \gls{dof} unification step on after enumerating all locally owned cells, while subjecting to the fe domination hierarchy to decide ownership on interfaces. After exchanging \glspl{dof} on all ghost cells, we are left to merge the valid \glspl{dof} on interfaces with the valid counterparts.
+
+In detail, the complete algorithm consists of the following steps, starting with an initilation step flagged with `0`.
+\begin{enumerate}
+  \item[0.] \textit{Initialization.}
+  On all locally relevant cells $K \in \mathbb{T}^p_{rel}$, \gls{dof} indices are set to an invalid value, for example $-1$.
+  \item \textit{Local enumeration.}
+  Iterate over all locally owned cells $K \in \mathbb{T}^p_{loc}$ and assign valid \gls{dof} indices in ascending order, starting from zero. Remember the number of all assigned \gls{dof} indices as $n_p$.
+  \item \textit{Tie-break?}
+  Go over all ghost cells $K \in \mathbb{T}^p_{ghost}$. Invalidate all \gls{dof} indices on $K$, if $K$ belongs to a subdomain of lower rank $q < p$, invalidate all \gls{dof} indices on $K$.
+  \item \textit{Unification.}
+  Unify \glspl{dof}. Also incorporate ghost cells. This has to happen after the tie-break.
+\end{enumerate}
+At this stage, each processor knows which indices are owned by with him.
+\begin{enumerate}[resume]
+  \item \textit{Global re-enumeration.}
+  Iterate over all locally owned cells $K \in \mathbb{T}^p_{loc}$
+  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned. This time, we will not start at zero, but at the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, at $\sum_{q=0}^{p-1} n_q$, where $n_q$ is the number of \gls{dof} indices associated with subdomain $q$. This corresponds to an exclusive scan, and can be executed with via \texttt{MPI\_Exscan} \parencite{mpi31}.
+\end{enumerate}
+At this stage, all subdomains and processors have the correct index assigned to all locally owned \glspl{dof}.
+\begin{enumerate}[resume]
+  \item \textit{Ghost exchange.}
+  Text.
+  \item \textit{Merge.}
+  After the previous ghost exchange, each support point on interface has a least one valid \gls{dof} index. Thus, from all ghost cells 
+  \item \textit{Ghost exchange.}
+  Text.
+\end{enumerate}
+Now, all global \gls{dof} indices have been set uniquely.
+
+
+To identify 
+
+\glspl{dof} . Each
+
+Depending on which Galerkin method has been picked, we need to ... .
+
+Continous Galerkin methods require a unique identification of \glspl{dof} on interfaces between cells, because of the continuity requirement on the solution.
+
+
+
+
+The enumeration of dofs faces fundamental problems in both parallelisation and \hp-adaptive methods individually. Let us first elaborate on those and quickly recall the corresponding papers, before moving to the actual consolidation of the two.
+
+Even for \hp-adaptive methods, there are two kinds of issues:
+
+For \h-adaptive methods, neighboring cells. SO called hanging nodes.
+
+For \p-adaptive methods, finite elements of neighboring 
+
+In parallelisation, the workload of ... will be distributed the ownership
+
+
+
+
 Text.
+
+
+For hp methods, data structures need to be 
+
+For parallel methods, these structures need to be sondistent trhouthgout
+
+The difficulties with both of these methods are
+
+We will first recall
+
+For parallel
+
+
+For hp adaptive methods, using continous finite elements are crucial
+
+In the following, we present a novel approach to merge both algorithms into one.
+
+
+
+This step is essentially similar to...
+%%%
+
+
+Problems that occur involve shared \glspl{dof} on neighboring cells with the same finite element assigned on either the same or different subdomains, as well as with different finite elements assigned on either the same or different subdomains.
+
+A suitable benchmark that we used to test the enumeration algorithm consists of a two-dimensional domain of four neighboring cells. We provide two different Lagrangian elements that share at least one additional \gls{dof} per cell interface than only on vertices. Each of these finite elements will be assigned to two catty-cornered cells. Further, we divide the mesh into two subdomains containing two neighboring cells of differing finite elements. The whole setup is shown in fig.\@ \ref{fig:enumbenchmark} and covers the aforementioned special cases that we have encountered so far in parallel \hp-adaptive meshes. A step-by-step demonstration of the algorithm on this particular benchmark is presented in app.\@ \ref{app::enumeration}.
+
+\todo{Add benchmark test figure.}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[scale=3]
+    \def\Length{1}
+    \def\Radius{0.03}
+    
+    \LagrangeCell{0}{0}{\Length}{\Radius}{4}
+      {{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24}};
+    \LagrangeCell{\Length}{0}{\Length}{\Radius}{2}
+      {{25,26,27,28,29,30,31,32,33}};
+    \LagrangeCell{0}{\Length}{\Length}{\Radius}{1}
+      {{34,35,36,37}};
+    \LagrangeCell{\Length}{\Length}{\Length}{\Radius}{3}
+      {{38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53}};
+  \end{tikzpicture}
+  \caption{Benchmark for the algorithm to enumerate \glspl{dof}.}
+  \label{fig:enumbenchmark}
+\end{figure}
+
