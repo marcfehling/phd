@@ -3,7 +3,7 @@
 
 This section delivers the lengthy demonstration of the enumeration algorithm for \glspl{dof} on the corresponding benchmark from sec.\@ \ref{sec:enumeration}.
 
-The test case is composed out of four adjacent cells, from which two catty-cornered ones are assigned to the same Lagrangian finite element of either order two or four. The mesh is divided into two subdomains, each containing two neighboring cells of different finite element. The setup of the benchmark is shown in fig.\@ \ref{fig:enumdemosetup}.
+The test case is composed out of four adjacent cells, from which two catty-cornered ones are assigned to the same Lagrangian finite element of either order two or four. The mesh is divided into two subdomains, each containing two neighboring cells of different finite element. In this configuration, cells are either locally owned or ghost cells. The setup of the benchmark is shown in fig.\@ \ref{fig:enumdemosetup}.
 
 We apply the algorithm step-by-step on this particular example and present its intermediate states in fig.\@ \ref{fig:enumdemosteps}.
 
@@ -17,6 +17,6 @@ We apply the algorithm step-by-step on this particular example and present its i
 \todo{Add step-by-step figures.}
 \begin{figure}
   \centering
-  \caption{Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted.}
+  \caption{Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted. The left domain corresponds to the full mesh of processor with rank 0, the right one belongs to rank 1.}
   \label{fig:enumdemosteps}
 \end{figure}

@@ -27,33 +27,44 @@ We conclude that a unique enumeration of \glspl{dof} is mandatory for a robust \
 
 We developed an algorithm that combined the ideas of both previous algorithms.
 
-To ... the same nomenclature as \cite{bangerth2012}, we call the set of all locally owned cells $\mathbb{T}^p_{loc}$, the set of all ghost cells $\mathbb{T}^p_{ghost}$, and of all locally relevant cells $\mathbb{T}^p_{rel} = \mathbb{T}^p_{loc} \cup \mathbb{T}^p_{ghost}$ on processor and subdomain $p$.
+To follow the same nomenclature as \cite{bangerth2012}, we call the set of all locally owned cells $\mathbb{T}^p_{loc}$, the set of all ghost cells $\cellsp{ghost}$, and of all locally relevant cells $\cellsp{rel} = \cellsp{loc} \cup \cellsp{ghost}$ on processor and subdomain $p$.
 
 In short, we take most parts of the parallel algorithm. We will add a \gls{dof} unification step on after enumerating all locally owned cells, while subjecting to the fe domination hierarchy to decide ownership on interfaces. After exchanging \glspl{dof} on all ghost cells, we are left to merge the valid \glspl{dof} on interfaces with the valid counterparts.
 
 In detail, the complete algorithm consists of the following steps, starting with an initilation step flagged with `0`.
 \begin{enumerate}
   \item[0.] \textit{Initialization.}
-  On all locally relevant cells $K \in \mathbb{T}^p_{rel}$, \gls{dof} indices are set to an invalid value, for example $-1$.
+  On all locally relevant cells $K \in \cellsp{rel}$, \gls{dof} indices are set to an invalid value, for example $-1$.
   \item \textit{Local enumeration.}
-  Iterate over all locally owned cells $K \in \mathbb{T}^p_{loc}$ and assign valid \gls{dof} indices in ascending order, starting from zero. Remember the number of all assigned \gls{dof} indices as $n_p$.
+  Iterate over all locally owned cells $K \in \cellsp{loc}$ and assign valid \gls{dof} indices in ascending order, starting from zero. Remember the number of all assigned \gls{dof} indices as $n_p$.
   \item \textit{Tie-break?}
-  Go over all ghost cells $K \in \mathbb{T}^p_{ghost}$. Invalidate all \gls{dof} indices on $K$, if $K$ belongs to a subdomain of lower rank $q < p$, invalidate all \gls{dof} indices on $K$.
+  Go over all ghost cells $K \in \cellsp{ghost}$. Invalidate all \gls{dof} indices on $K$, if $K$ belongs to a subdomain of lower rank $q < p$, invalidate all \gls{dof} indices on $K$.
   \item \textit{Unification.}
   Unify \glspl{dof}. Also incorporate ghost cells. This has to happen after the tie-break.
 \end{enumerate}
 At this stage, each processor knows which indices are owned by with him.
 \begin{enumerate}[resume]
   \item \textit{Global re-enumeration.}
-  Iterate over all locally owned cells $K \in \mathbb{T}^p_{loc}$
-  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned. This time, we will not start at zero, but at the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, at $\sum_{q=0}^{p-1} n_q$, where $n_q$ is the number of \gls{dof} indices associated with subdomain $q$. This corresponds to an exclusive scan, and can be executed with via \texttt{MPI\_Exscan} \parencite{mpi31}.
+  Iterate over all locally owned cells $K \in \cellsp{loc}$
+  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned. This time, we will not start at zero, but at the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, at $\sum_{q=0}^{p-1} n_q$, where $n_q$ is the number of \gls{dof} indices associated with subdomain $q$. This corresponds to a prefix sum or exclusive scan, and can be obtained via \texttt{MPI\_Exscan} \parencite{mpi31}.
 \end{enumerate}
 At this stage, all subdomains and processors have the correct index assigned to all locally owned \glspl{dof}.
 \begin{enumerate}[resume]
   \item \textit{Ghost exchange.}
   Text.
+  This involves point-to-point communication using the following steps.
+  \begin{enumerate}[label=\alph*.]
+    \item Mark all local cells that have ghost neighbors.
+    \item Loop over all of these cells and prepare a data container with the cellid and list of corresponding dof indices.
+    \item Send this list to all
+    with non-blocking point-to-point communication, which can be executed via \texttt{MPI\_ISend} \parencite{mpi31}.
+    \item Receive a list of all via non-blocking point-to-point communication. In MPI, which can be executed via \texttt{MPI\_Irecv} \parencite{mpi31}.
+  \end{enumerate}
   \item \textit{Merge.}
-  After the previous ghost exchange, each support point on interface has a least one valid \gls{dof} index. Thus, from all ghost cells 
+  After the previous ghost exchange, each support point on interface has exactly one valid \gls{dof} index assigned. Iterate over all interfaces on ghost cells $K \in \cellsp{ghost}$ and set all remaining invalid \gls{dof} indices with the corresponding one of the dominating finite element.
+\end{enumerate}
+At this stage, all locally owned cells $K \in \cellsp{loc}$ have their correct \gls{dof} indices set.
+\begin{enumerate}[resume]
   \item \textit{Ghost exchange.}
   Text.
 \end{enumerate}
