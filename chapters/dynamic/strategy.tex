@@ -1,57 +1,14 @@
 \section{Adaptation strategies}
-\label{sec:strategy}
+\label{sec:adaptation}
 
-Herleitung Fehler mittels Galerkin orthogonalität? (nur benötigt für Melenk?)
+% \cite{melenk2001} \cite{ainsworth1998} und so weiter
 
-Text. \cite{mitchell2014}
+But how do
 
-\begin{align}
-\left\|\nabla\left(u \!-\! u_\text{hp}\right)\right\|_{H^{1}(\Omega)} &\leq C \, \frac{h^{\mu}}{p^{m-1}} \, \|u\|_{H^{m}(\Omega)},
-\end{align}
-$~ \mu \!=\! \min \left(p, m\!-\!1\right),~ C \text{ dependent on } m$
+Which finite element to pick on coarsened cells?
 
-\begin{align}
-\left\|\nabla\left(u \!-\! u_\text{hp}\right)\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, N_\text{dofs}^{1 / 3}\right),
-\end{align}
-$~ C,\, b \!>\! 0 \text{ independent of } N_\text{dofs}$
+We found it to introduce so called \texttt{future fe indices} that determine the finite element that will be associated to its cell after refinement has happened.
 
+We need to indicate which individual cell we will refine. Force p over h. Choose p over h.
 
-
-\subsection{Error estimation}
-\label{ssec:h}
-
-\cite{kelly1983} und so.
-
-\begin{align}
-\left\|\nabla\left(u \!-\! u_\text{h}\right)\right\|^{2}_{H^{1}(\Omega)} &\leq C \sum_{K} \eta_{K}^{2}, \\
-\eta_{K}^{2} &= \sum_{F \in \partial K} c_{F} \int\limits_{\partial K_{F}}\left[a \frac{\partial u_{h}}{\partial n}\right]^{2} \differential{o},
-\end{align}
-$c_F = \frac{h_F}{2 p_F}$
-
-
-
-\subsection{Error prediction}
-
-\cite{melenk2001} \cite{ainsworth1998} und so weiter.
-
-%\begin{table}
-%\caption{Error prediction algorithm based on Melenk and Wohlmuth \cite{melenk}}
-%\begin{tabular}{lll}
-%  \rowcolor{fzjblue!25} \multicolumn{1}{c}{\textbf{Adaptation type}} & \multicolumn{2}{c}{\textbf{Prediction formula}} \\
-%  \toprule
-%  no adaptation & $\eta_{K,\text{pred}} = \eta_{K} \, \gamma_\text{n}$ & $\gamma_\text{n} \in (0,\infty)$ \\
-%  \midrule
-%  p-adaptation & $\eta_{K,\text{pred}} = \eta_{K} \, \gamma_\text{p}^{(p_{K,\text{future}} - p_K)}$ & $\gamma_\text{p} \in (0,1)$ \\
-%  \midrule
-%  h-refinement & $\eta_{K_c,\text{pred}} = \eta_{K} \, \gamma_\text{h} \, 0.5^{p_K} \, 0.5^{\text{dim}}$ & $\gamma_\text{h} \in (0,\infty)$ \\
-%  \addlinespace[2mm]
-%  h-coarsening & $\eta_{K,\text{pred}} = \sum\limits_{K_c} \eta_{K_c} / (\gamma_\text{h} \, 0.5^{p_{K_c}})$ & $\forall K_c \text{ children of } K$
-%\end{tabular}
-%\end{table}
-
-
-
-\subsection{Smoothness estimation}
-\label{ssec:p}
-
-Text.
+This provides the basic functionality to \hp-adaptation on finite element data structures on distributed memory.

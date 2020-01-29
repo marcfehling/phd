@@ -1,10 +1,163 @@
 \section{Decision criteria}
 \label{sec:decision}
 
-\cite{melenk2001} \cite{ainsworth1998} und so weiter
+A common observation is that increasing the grid resolution or the polynomial degree of the basis functions will decrease the difference between the finite element approximation $u_\text{hp}$ and the actual solution $u$.
 
-But how do
+In fact, the impact of these adaptation techniques on the error is well understood. \textcite[theorem 3.4]{babuska1990} determined an upper bound for the error that depends both on the cell diameter $h$ and the polynomial degree $p$:
+\begin{align}
+\label{eq:errorbound_hp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, h^{\mu} \, p^{-(m-1)} \, \|u\|_{H^{m}(\Omega)} \,\text{,}
+\end{align}
+where $e_{hp} = u - u_\text{hp}$ denotes the error function, $m$ is a measure for the regularity of the solution $u$, $C$ is a constant dependent on $m$, and $\mu = \min \left(p, m - 1\right)$.
 
-Which finite element to pick on coarsened cells?
+These modifications do not have to happen uniformly on a global scale, but can be applied locally, since the global error consists of the local ones of each cell $K$:
+\begin{align}
+\label{eq:error_sum} \left\|e_\text{hp}\right\|_{H^1(\Omega)}^2 = \sum\limits_{K \in \Omega} \left\|e_\text{hp}\right\|_{H^1(K)}^2 \,\text{.}
+\end{align}
+Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. \textcite[theorem 5.1]{guo1986} predict exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ on a suitable \hp-adapted mesh:
+\begin{align}
+\label{eq:errorbound_exp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^{1 / 3}\right) \,\text{,}
+\end{align}
+where constants $b > 0$ and $C$ are both independent of $n_\text{dofs}$.
 
-We found it to introduce so called \texttt{future fe indices} that determine the finite element that will be associated to its cell after refinement has happened.
+With sufficient information about the investigated scenario, an \hp-adaptive grid can be tailored to its specifics manually. However, grid adjustments by hand may not be optimal. Furthermore, not all peculiarities about the scenario are generally known in advance, which is especially the case for problems with complex geometries and time dependent ones.
+
+Hence we need to elaborate on algorithms to automatically decide which subsets of the domain qualify for adaptation. With this technique, we typically set up a coarse mesh along with basis functions of a low polynomial degree and obtain a tailored mesh after several adaptation iterations.
+
+In this section, we present different ways to identify areas whose adaptation will be most profitable, and to choose the most beneficial type of adaptation. A selection of strategies for the latter have been reviewed and compared in detail by \textcite{mitchell2014}. We present a subset of their recommendations in terms of performance and applicability.
+
+\subsection{Error estimation}
+\label{ssec:estimation}
+
+which is done by identifying those section with the largest and least contribution to the global error.
+
+Since we generally lack an analytic solution to compare against, we have no error to compare against.
+
+Succesive adaptations of the mesh
+
+However, information about the actual error is not available, since the. Thus, we need to satisfied with an estimate of errors.
+
+Error is sum of contributions of every cell.
+\begin{align}
+\label{eq:Kelly} \left\|e\right\|_{H^1(\Omega)}^2 = \sum\limits_{K \in \Omega} \left\|e\right\|_{H^1(K)}^2
+\end{align}
+We need a reasonable estimate for any cell K.
+
+A suitable approach to \cite{kelly1983}
+
+For generalized POisson
+\begin{align}
+-\nabla \cdot \left( a \nabla u \right) = f
+\end{align}
+where $a$ is a function usually describing material characteristics.
+
+Kelly estimates
+\begin{align}
+\label{eq:Kelly2} \left\|e\right\|_{H^1(K)}^2 \simeq \eta_K^2 = \sum\limits_{F \in \partial K} \frac{h_K}{24 \, a_{min} \, p_K} \int\limits_{\partial K_{F}} \left( a \frac{\partial u_h}{\partial n} \right)^2 \differential{o}
+\end{align}
+where
+
+We will use these error estimates to decide w. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
+
+
+This gives us a good estimate for the Laplace equation. But in other applications, we . Thus, we are able to identify those regions of the domain with the highest contribution to the global error, as well as those with the least.
+
+
+
+\subsection{Error prediction}
+\label{ssec:prediction}
+
+\cite{babuska1990} determined upper error bounds for numerical solutions based the distribution of finite elements. Both mesh resolution and polynomial degrees of the basis functions have a different, yet quantifiable influence on the error leading to eq.~(\ref{eq:errorbound_hp}).
+
+Their findings are valid not only for the numerical solution on a global scope, but on subsets of the domain as well. Local changes by \h- and \p-adaptation will thus result in different local error bounds. This motivates a strategy to locally decide which type of adaptation to impose based on the refinement history: We can predict how the current error will change whenever certain areas of our domain are considered for adaptation in the following iteration. These predicted error estimates allow us to decide whether the choice of adaptation in the previous step was justified, and provide the foundation for it on the next one.
+
+We determine how the error bounds on two different distributions of finite elements will change by calculating their ratio. For this, we assume that both the actual error and its upper bound change with the same rate, which allows us to equate both ratios. We further assume that the solution is sufficiently regular ($m \gg p$). The ratio of errors then reads:
+\begin{align}
+\label{eq:errorratio_hp} \frac{||e_{h_f p_f}||_{H^{1}(\Omega)}}{||e_{h_a p_a}||_{H^{1}(\Omega)}} = \frac{h_f^{p_f}}{h_a^{p_a}} \, \left(\frac{p_f}{p_a}\right)^{-(m-1)} \,\text{,}
+\end{align}
+where subscripts $a$ and $f$ denote the finite element that is currently active or will be active after adaptation, respectively.
+
+If we only consider \h-adaptation and leave the polynomial degree of the basis function unchanged ($p_f = p_a \equiv p$), we end up with the classical error bound \todo{cite}:
+\begin{align}
+\label{eq:errorratio_h} \frac{||e_{h_f p}||_{H^{1}(\Omega)}}{||e_{h_a p}||_{H^{1}(\Omega)}} = \left( \frac{h_f}{h_a} \right)^p \,\text{.}
+\end{align}
+
+However, if only \p-adaptation is considered and we keep the domain unchanged ($h_f = h_a \equiv h$), the ratio of errors still depends on the regularity of the actual solution which is not at our disposal in general.
+\begin{align}
+\label{eq:errorratio_p} \frac{||e_{h p_f}||_{H^{1}(\Omega)}}{||e_{h p_a}||_{H^{1}(\Omega)}} = h^{p_f - p_a} \, \left(\frac{p_f}{p_a}\right)^{-(m-1)}
+\end{align}
+Following the considerations of \cite{melenk2001}, we expect \p-adaptation to change the error exponentially with the increment of the polynomial degree
+\begin{align}
+\label{eq:errorratio_p_exp} \frac{||e_{h p_f}||_{H^{1}(\Omega)}}{||e_{h p_a}||_{H^{1}(\Omega)}} \simeq c^{p_f - p_a} \,\text{,}
+\end{align}
+where $c$ is a constant independent of the cell diameter $h$.
+
+We suggest a similar approach for the hp-adaptation case as well. The above ratio assumes that the underlying mesh has not been changed. We thus identify eq.~(\ref{eq:errorratio_p_exp}) with an unaltered cell diameter ($h \equiv h_a$) in eq.~(\ref{eq:errorratio_hp}) resulting in:
+\begin{align}
+\label{eq:errorratio_hp_exp} \frac{||e_{h_f p_f}||_{H^{1}(\Omega)}}{||e_{h_a p_a}||_{H^{1}(\Omega)}} \simeq \left( \frac{h_f}{h_a} \right)^{p_f} \, c^{p_f - p_a} \,\text{.}
+\end{align}
+We will take this factor in all following considerations to predict how errors will change.
+
+% ----------
+
+% underscore
+Again division on multiple cells in case of h-refinement.
+
+For h-coarsening or hp-coarsening, we need to take special care. And h-coarsening involves summing up. Note that we take the new polynomial degree here.
+\begin{align}
+Some other nice formula hp coarsening
+\end{align}
+For pure h coarsening we consider
+\begin{align}
+Some other nice formula h coarsening
+\end{align}
+
+% start from here
+
+All above relations not only hold for the whole domain $\Omega$, but also qualify for local adaptation on subsets of it, i.e.\@ any cell $K \in \Omega$. We write introduce control parameters
+
+we need to subdivide it into it's children, thus
+
+Isotropic refinement with quadrilaterals in two and hexahedrals in three dimensions.
+
+We take
+Nothing changes
+\begin{align}
+\label{eq:nothing} ||e_{h p}||_{H^1(K)} \simeq \gamma_n \, ||e_{h p}||_{H^1(K)}
+\end{align}
+with a control parameter \(\gamma_n = 1\).
+
+p adaptation
+\begin{align}
+\label{eq:p_adaptation} ||e_{h p_f}||_{H^1(K)} \simeq \gamma_p^{p_f-p_a} \, ||e_{h p_a}||_{H^1(K)}
+\end{align}
+with a control parameter \(\gamma_p = \sqrt{0.1}\) chosen to be in accordance with \cite{melenk2001} and \cite{mitchell2014}.
+
+hp refinement
+\begin{align}
+\label{eq:hp_refinement} ||e_{h_f p_f}||_{H^1(K_c)} \simeq \gamma_h \, n_c^{-1} \, 0.5^{p_f} \, \gamma_p^{p_f - p_{a_c}} ||e_{h_a p_a}||_{H^1(K)}
+\end{align}
+with control parameter \(\gamma_h = 1\).
+
+hp coarsening
+\begin{align}
+\label{eq:hp_coarsening} ||e_{h_f p_f}||_{H^1(K)} \simeq \sum\limits_{c} \gamma_h^{-1} \, 2^{p_f} \, \gamma_p^{p_f - p_{\text{a}_c}} ||e_{h_{a_c} p_{a_c}}||_{H^1(K_c)}
+\end{align}
+
+% ---------
+
+We now have an algorithm to predict the error for the next adaptation step on basis of the current one. We are left to find a suitable criterion on how to use it to actually decide .
+
+The original idea of \cite{melenk2001} was to compare  for \h-refinement.
+The idea behind this is that
+
+We enhanced this approach for \h-coarsening
+Similarly for coarsening, we can do this.
+
+Another approach would be to treat the difference of predicted and estimated error as an indicator for each cell. From all cells that would be refined, we will consider those with the greatest values for p-refinement and the others for h-refinement. Analougously, those cells with the least difference will be \p-coarsened, while the
+
+
+
+\subsection{Smoothness estimation}
+\label{ssec:smoothness}
+
+Text.
