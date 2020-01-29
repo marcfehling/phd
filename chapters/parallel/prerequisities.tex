@@ -5,16 +5,24 @@
 
 The basic idea of the \glsfmtlong{fem} conforms to the specification of a function space and finding a solution to the investigated problem in it. To be more precise, we pick a suitable set of basis functions for which the solution is a linear combination. Its coefficients are called unknowns or \glspl{dof}, since their values are determined after solving the problem.
 
-In general, \gls{fem} requires a subdivision of the domain $\Omega$ into smaller cells $K$, where $\cup_{i} K_i = \Omega$\todo{make this beautiful}. Each cell $K$ corresponds to a connected Lipschitz domain with nonempty interior \todo{Check Ciarlet definition?}.
+In general, \gls{fem} requires a subdivision of the domain $\Omega$ into smaller cells $K$, where $\cup_{i} K_i = \Omega$\todo{make this beautiful} and each cell $K$ corresponds to a connected Lipschitz domain with nonempty interior \todo{Check Ciarlet definition?}.
 %All these cells are mappings of a reference cell, to which we assign a set of shape functions with corresponding support points.
 %Those functions are designed to have the value one on exactly one support point and the value zero on all others.
-On each cell, we define a finite-dimensional function space $P$ accompanied by a set of functionals $N = {\Psi_1, \dots, \Psi_n}$ that are a basis to its dual space $P'$, where $k$ corresponds the number of nodes. The tuple of $(K,P,N)$ is called a finite element. \todo{Cite Ciarlet or Brenner. Depends on definition of K.}
+Further, on each cell $K$, we define a finite-dimensional function space $P$, accompanied by a set of functionals $N = {\Psi_1, \dots, \Psi_n}$ that are a basis to its dual space $P'$, where $n$ corresponds the number of nodes. The tuple $(K,P,N)$ is called a finite element. \todo{Cite Ciarlet or Brenner. Depends on definition of K.}
 
-With this definition, we are able to find a set of basis functions ${\phi_1, ..., \phi_n}$ of $P$ dual to $N$ fulfilling $\Psi_i(\phi_j) = \delta_{ij}$. In other words, these basis functions span\todo{Is this the right word?} the function space $P$ while each of them has the value one on their associated node and zero on the other.
+With this definition, we are able to find a set of basis functions ${\phi_1, \dots, \phi_n}$ of $P$ dual to $N$ fulfilling $\Psi_i(\phi_j) = \delta_{ij}$. In other words, these basis functions span\todo{Is this the right word?} the function space $P$ while each of them has the value one on their associated node and zero on the other.
 
-In practice, it is sufficient to work with the 
+When dealing with finite elements in practice, it is sufficient to work with nodes and shape functions once the type of element is known.
 
 To be more specific, it is even sufficient to work on a reference cell and provide mappings on each mesh cell.
+
+The most common type of finite element are Lagrangian elements, that base on Lagrangian interpolation. A showcase of Lagrangian elements up to third order polynomials are showcased in fig.~\ref{eq:lagrange}.
+
+\begin{figure}
+  \centering
+  \caption{Nodes of Lagrangian elements on quadrilateral reference cells.}
+  \label{eq:lagrange}
+\end{figure}
 
 
 In practice, we define a reference finite element for which all pro
@@ -54,7 +62,7 @@ In computational applications, adaptive methods are used to align the resolution
 Refinement level differences of neighboring active cells lead to hanging nodes which are vertices with no counterpart on the opposite side of the interface.
 
 Hanging nodes.
-fig.\@ \ref{fig:hangingnodes}
+fig.~\ref{fig:hangingnodes}
 
 For convenience, the level difference of neighboring cells is usually limited to one level in order to simplify interpolation between cell interfaces.
 
