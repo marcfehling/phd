@@ -3,7 +3,7 @@
 
 A common observation is that increasing the grid resolution or the polynomial degree of the basis functions will decrease the difference between the finite element approximation $u_\text{hp}$ and the actual solution $u$.
 
-In fact, the impact of these adaptation techniques on the error is well understood. \textcite[theorem 3.4]{babuska1990} determined an upper bound for the error that depends both on the cell diameter $h$ and the polynomial degree $p$:
+In fact, the impact of these adaptation techniques on the error is well understood. \textcite[Thm.~3.4]{babuska1990} determined an upper bound for the error that depends both on the cell diameter $h$ and the polynomial degree $p$:
 \begin{align}
 \label{eq:errorbound_hp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, h^{\mu} \, p^{-(m-1)} \, \|u\|_{H^{m}(\Omega)} \,\text{,}
 \end{align}
@@ -13,7 +13,7 @@ These modifications do not have to happen uniformly on a global scale, but can b
 \begin{align}
 \label{eq:error_sum} \left\|e_\text{hp}\right\|_{H^1(\Omega)}^2 = \sum\limits_{K \in \Omega} \left\|e_\text{hp}\right\|_{H^1(K)}^2 \,\text{.}
 \end{align}
-Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. \textcite[theorem 5.1]{guo1986} predict exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ on a suitable \hp-adapted mesh:
+Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. \textcite[Thm.~5.1]{guo1986} predict exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ on a suitable \hp-adapted mesh:
 \begin{align}
 \label{eq:errorbound_exp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^{1 / 3}\right) \,\text{,}
 \end{align}
@@ -25,75 +25,109 @@ Hence we need to elaborate on algorithms to automatically decide which subsets o
 
 In this section, we present different ways to identify areas whose adaptation will be most profitable, and to choose the most beneficial type of adaptation. A selection of strategies for the latter have been reviewed and compared in detail by \textcite{mitchell2014}. We present a subset of their recommendations in terms of performance and applicability.
 
+
+
+\subsection{Adaptation strategies}
+\label{ssec:strategy}
+
+With these indicators, we
+
+
+We will decide on the basis of criteria for every cell which ones will be considered to be adapted. Typically errors or their estimates. Other indicators involve predicted errors or smoothness indicators which will be presented in the following sections.
+
+\textcite[Sec.~5.2]{bangerth2003} describe different strategies, from which we present a commonly used selection.
+
+
+
+So called fixed-error-reduction or fixed-fraction strategy takes that subset of cells whose indicators
+
+with the that accumulated for a certain fraction of the error
+
+This strategy only makes sense when the global sum of indicators actual has , for example local errors contribute to the global error in a global sum.
+
+leads to optimal meshes
+
+
+In practise, we need to find the maximum and minimum over all indicators, and interpolate the corresponding thresholds. In parallel, we have to do find a global maximum and minimum over all participating processors. And find a cer
+
+
+
+So called fixed-rate or fixed-number strategy takes a predefined fraction of cells with the highest and lowest indicators, which will be considered for either refinement or coarsening, respectively. This allows us to predict the growth of cells, but may not lead to an optimal mesh since more cells than necessary may be adapted.
+
+In practise, we need a binary search 
+
+For parallel computations, we need a binary search. We will use the one presented by \textcites[Sec.~3.1]{burstedde2008}[Sec.~5.1]{bangerth2012}.
+
+
+
+to find the maximum and minimum over all indicators, and interpolate the corresponding thresholds.
+
+
+
+
+
+First, we need to identify those regions of the domain with the highest or least contribution to the global error, and we want to adapt these regions locally.
+
+With these indicators, we are able to identify those regions of the domain with the highest or least contribution to the global error. We want to adapt these regions locally.
+
+
+
 \subsection{Error estimation}
 \label{ssec:estimation}
 
-which is done by identifying those section with the largest and least contribution to the global error.
+The determination of the error for our finite element approximation requires the actual solution to be at our disposal. However, this is not the case in general, and we need to come up with an alternative measure.
 
-Since we generally lack an analytic solution to compare against, we have no error to compare against.
-
-Succesive adaptations of the mesh
-
-However, information about the actual error is not available, since the. Thus, we need to satisfied with an estimate of errors.
-
-Error is sum of contributions of every cell.
+\textcite{kelly1983} worked out an error estimator for the generalized Poisson equation $-\nabla \cdot \left( a \nabla u \right) = f$, where $a$ is a function usually describing material characteristics. They determined an upper bound $\eta_K$ for the error on each cell by balancing the gradient of the finite element approximation $u_\text{hp}$ on all faces $F$ of the cell's boundary:
 \begin{align}
-\label{eq:Kelly} \left\|e\right\|_{H^1(\Omega)}^2 = \sum\limits_{K \in \Omega} \left\|e\right\|_{H^1(K)}^2
+\label{eq:kelly} \|e_\text{hp}\|_{H_1(\Omega)}^2 &\leq C \sum\limits_{K \in \Omega} \eta_K^2 &&\text{with}&  \eta_K^2 &= \sum\limits_{F \in \partial K} c_F \int\limits_{F} \left[ a \, \frac{\partial u_\text{hp}}{\partial n} \right]^2 \differential{o} \,\text{,}
 \end{align}
-We need a reasonable estimate for any cell K.
+where $C$ is independent of the solution, but depends on $a$, and
+\begin{align*}
+\left[ a \, \frac{\partial u_\text{hp}}{\partial n} \right] = \left. a \, \frac{\partial u_\text{hp}}{\partial n_K} \right|_K + \left. a \, \frac{\partial u_\text{hp}}{\partial n_J}\right|_J
+\end{align*}
+denotes the jump of the approximation's gradient on the face between two adjacent cells $K$ and $J$. Hence \textcite{ainsworth1997a} attribute this estimator to the class of gradient recovery estimators.
 
-A suitable approach to \cite{kelly1983}
+The constant $c_F$ depends on the characteristics of each individual face of the cell. \textcite{kelly1983} originally used the constant $c_F = \frac{h_K}{24 \, a_\text{min} \, p_K}$ on each face, on which we determine the minimum $a_\text{min}$ of the given function. Here, $h_K$ and $p_K$ denote both cell diameter and polynomial degree of the finite element on cell $K$, respectively. \textcite{davydov2017} proposed a different constant for \hp-adaptive \gls{fem}: They recommend $c_F = \frac{h_F}{2 \, a_\text{min} \, p_F}$ with $h_F$ the face diagonal and $p_F = \max\left(p_K, p_J\right)$ the largest polynomial degree of adjacent elements $K$ and $J$ on this particular face.
 
-For generalized POisson
-\begin{align}
--\nabla \cdot \left( a \nabla u \right) = f
-\end{align}
-where $a$ is a function usually describing material characteristics.
+This estimator has been worked out for the Poisson equation, but has proven its applicability on other problems as well, where this is no longer meant to be an estimator, but rather an error indicator\todo{cite deal.II kelly error estimator website}.
 
-Kelly estimates
-\begin{align}
-\label{eq:Kelly2} \left\|e\right\|_{H^1(K)}^2 \simeq \eta_K^2 = \sum\limits_{F \in \partial K} \frac{h_K}{24 \, a_{min} \, p_K} \int\limits_{\partial K_{F}} \left( a \frac{\partial u_h}{\partial n} \right)^2 \differential{o}
-\end{align}
-where
+The error estimator is already implemented in \dealii{}. \todo{cite deal.II kelly error estimator website}
 
 We will use these error estimates to decide w. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
-
-
-This gives us a good estimate for the Laplace equation. But in other applications, we . Thus, we are able to identify those regions of the domain with the highest contribution to the global error, as well as those with the least.
 
 
 
 \subsection{Error prediction}
 \label{ssec:prediction}
 
-\cite{babuska1990} determined upper error bounds for numerical solutions based the distribution of finite elements. Both mesh resolution and polynomial degrees of the basis functions have a different, yet quantifiable influence on the error leading to eq.~(\ref{eq:errorbound_hp}).
+\cite{babuska1990} determined upper error bounds for numerical solutions based the distribution of finite elements. Both mesh resolution and polynomial degrees of the basis functions have a different, yet quantifiable influence on the error leading to Eq.~(\ref{eq:errorbound_hp}).
 
-Their findings are valid not only for the numerical solution on a global scope, but on subsets of the domain as well. Local changes by \h- and \p-adaptation will thus result in different local error bounds. This motivates a strategy to locally decide which type of adaptation to impose based on the refinement history: We can predict how the current error will change whenever certain areas of our domain are considered for adaptation in the following iteration. These predicted error estimates allow us to decide whether the choice of adaptation in the previous step was justified, and provide the foundation for it on the next one.
+Their findings are valid not only for the numerical solution on a global scope, but on subsets of the domain as well. Local changes by \h- and \p-adaptation will thus result in different local error bounds. This motivates a strategy to locally decide which type of adaptation to impose based on the refinement history which has been proposed by \textcite{melenk2001}: We can predict how the current error will change whenever certain areas of our domain are considered for adaptation in the following iteration. These predicted error estimates allow us to decide whether the choice of adaptation in the previous step was justified, and provide the foundation for it on the next one.
 
 We determine how the error bounds on two different distributions of finite elements will change by calculating their ratio. For this, we assume that both the actual error and its upper bound change with the same rate, which allows us to equate both ratios. We further assume that the solution is sufficiently regular ($m \gg p$). The ratio of errors then reads:
 \begin{align}
-\label{eq:errorratio_hp} \frac{||e_{h_f p_f}||_{H^{1}(\Omega)}}{||e_{h_a p_a}||_{H^{1}(\Omega)}} = \frac{h_f^{p_f}}{h_a^{p_a}} \, \left(\frac{p_f}{p_a}\right)^{-(m-1)} \,\text{,}
+\label{eq:errorratio_hp} \frac{||e_{h_f p_f}||_{H^{1}(K)}}{||e_{h_a p_a}||_{H^{1}(K)}} = \frac{h_f^{p_f}}{h_a^{p_a}} \, \left(\frac{p_f}{p_a}\right)^{-(m-1)} \,\text{,}
 \end{align}
 where subscripts $a$ and $f$ denote the finite element that is currently active or will be active after adaptation, respectively.
 
 If we only consider \h-adaptation and leave the polynomial degree of the basis function unchanged ($p_f = p_a \equiv p$), we end up with the classical error bound \todo{cite}:
 \begin{align}
-\label{eq:errorratio_h} \frac{||e_{h_f p}||_{H^{1}(\Omega)}}{||e_{h_a p}||_{H^{1}(\Omega)}} = \left( \frac{h_f}{h_a} \right)^p \,\text{.}
+\label{eq:errorratio_h} \frac{||e_{h_f p}||_{H^{1}(K)}}{||e_{h_a p}||_{H^{1}(K)}} = \left( \frac{h_f}{h_a} \right)^p \,\text{.}
 \end{align}
 
 However, if only \p-adaptation is considered and we keep the domain unchanged ($h_f = h_a \equiv h$), the ratio of errors still depends on the regularity of the actual solution which is not at our disposal in general.
 \begin{align}
-\label{eq:errorratio_p} \frac{||e_{h p_f}||_{H^{1}(\Omega)}}{||e_{h p_a}||_{H^{1}(\Omega)}} = h^{p_f - p_a} \, \left(\frac{p_f}{p_a}\right)^{-(m-1)}
+\label{eq:errorratio_p} \frac{||e_{h p_f}||_{H^{1}(K)}}{||e_{h p_a}||_{H^{1}(K)}} = h^{p_f - p_a} \, \left(\frac{p_f}{p_a}\right)^{-(m-1)}
 \end{align}
 Following the considerations of \cite{melenk2001}, we expect \p-adaptation to change the error exponentially with the increment of the polynomial degree
 \begin{align}
-\label{eq:errorratio_p_exp} \frac{||e_{h p_f}||_{H^{1}(\Omega)}}{||e_{h p_a}||_{H^{1}(\Omega)}} \simeq c^{p_f - p_a} \,\text{,}
+\label{eq:errorratio_p_exp} \frac{||e_{h p_f}||_{H^{1}(K)}}{||e_{h p_a}||_{H^{1}(K)}} \simeq c^{p_f - p_a} \,\text{,}
 \end{align}
 where $c$ is a constant independent of the cell diameter $h$.
 
-We suggest a similar approach for the hp-adaptation case as well. The above ratio assumes that the underlying mesh has not been changed. We thus identify eq.~(\ref{eq:errorratio_p_exp}) with an unaltered cell diameter ($h \equiv h_a$) in eq.~(\ref{eq:errorratio_hp}) resulting in:
+We suggest a similar approach for the hp-adaptation case as well. The above ratio assumes that the underlying mesh has not been changed. We thus identify Eq.~(\ref{eq:errorratio_p_exp}) with an unaltered cell diameter ($h \equiv h_a$) in Eq.~(\ref{eq:errorratio_hp}) resulting in:
 \begin{align}
-\label{eq:errorratio_hp_exp} \frac{||e_{h_f p_f}||_{H^{1}(\Omega)}}{||e_{h_a p_a}||_{H^{1}(\Omega)}} \simeq \left( \frac{h_f}{h_a} \right)^{p_f} \, c^{p_f - p_a} \,\text{.}
+\label{eq:errorratio_hp_exp} \frac{||e_{h_f p_f}||_{H^{1}(K)}}{||e_{h_a p_a}||_{H^{1}(K)}} \simeq \left( \frac{h_f}{h_a} \right)^{p_f} \, c^{p_f - p_a} \,\text{.}
 \end{align}
 We will take this factor in all following considerations to predict how errors will change.
 
@@ -155,9 +189,16 @@ Similarly for coarsening, we can do this.
 
 Another approach would be to treat the difference of predicted and estimated error as an indicator for each cell. From all cells that would be refined, we will consider those with the greatest values for p-refinement and the others for h-refinement. Analougously, those cells with the least difference will be \p-coarsened, while the
 
+The error predictor has been implemented in the \dealii library as part of this dissertation. A development log can be found here.
+
 
 
 \subsection{Smoothness estimation}
 \label{ssec:smoothness}
 
 Text.
+
+\cite{mavriplis1994} introduced with the Legendre coefficient decay..
+
+
+\cite{bangerth2009} introduced Fourier coefficient decay.
