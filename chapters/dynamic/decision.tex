@@ -26,49 +26,26 @@ Hence we need to elaborate on algorithms to automatically decide which subsets o
 In this section, we present different ways to identify areas whose adaptation will be most profitable, and to choose the most beneficial type of adaptation. A selection of strategies for the latter have been reviewed and compared in detail by \textcite{mitchell2014}. We present a subset of their recommendations in terms of performance and applicability.
 
 
+This involves adaptation strategies to find the right cells to adapt, and to find certain indicators
+
+For hp-adaptation strategies, mitchell ....
+
+Those strategies that only require locally relevant cells and only the locally relevant part of the solution, since we claim those to be the most efficient ones.
+
+
 
 \subsection{Adaptation strategies}
 \label{ssec:strategy}
 
-With these indicators, we
+We will decide on the basis of adaptation criteria for every cell which ones will be considered to be adapted. Typical criteria are errors or their estimates, but also predicted errors or smoothness indicators are used, which will be presented in the following sections. \textcite[Sec.~5.2]{bangerth2003} describe different strategies on how to decide based on these adaptation criteria, from which we present a commonly used selection.
 
+So called \textit{fixed-error-reduction} or \textit{fixed-fraction} strategies select subsets of cells whose criteria accumulate to a predefined fraction of their global sum. This strategy is only applicable when the sum of all criteria actually has meaning, for example local errors which add up to the global one. Further, it may lead to optimal meshes for several problems, but tends to only adapt very few cells whenever singularities are encountered.
 
-We will decide on the basis of criteria for every cell which ones will be considered to be adapted. Typically errors or their estimates. Other indicators involve predicted errors or smoothness indicators which will be presented in the following sections.
+On the other hand, strategies known as \textit{fixed-rate} or \textit{fixed-number} pick predefined fractions of cells with the lowest or highest criteria for adaptation. This allows to predict the growth of cells, but may not lead to an optimal mesh since more cells may be adapted than necessary.
 
-\textcite[Sec.~5.2]{bangerth2003} describe different strategies, from which we present a commonly used selection.
+For either strategy, when using actual errors or error indicators as adaptation criteria, we typically select the subset of cells corresponding to the higher error for refinement, while the subset with the lower error is considered for coarsening.
 
-
-
-So called fixed-error-reduction or fixed-fraction strategy takes that subset of cells whose indicators
-
-with the that accumulated for a certain fraction of the error
-
-This strategy only makes sense when the global sum of indicators actual has , for example local errors contribute to the global error in a global sum.
-
-leads to optimal meshes
-
-
-In practise, we need to find the maximum and minimum over all indicators, and interpolate the corresponding thresholds. In parallel, we have to do find a global maximum and minimum over all participating processors. And find a cer
-
-
-
-So called fixed-rate or fixed-number strategy takes a predefined fraction of cells with the highest and lowest indicators, which will be considered for either refinement or coarsening, respectively. This allows us to predict the growth of cells, but may not lead to an optimal mesh since more cells than necessary may be adapted.
-
-In practise, we need a binary search 
-
-For parallel computations, we need a binary search. We will use the one presented by \textcites[Sec.~3.1]{burstedde2008}[Sec.~5.1]{bangerth2012}.
-
-
-
-to find the maximum and minimum over all indicators, and interpolate the corresponding thresholds.
-
-
-
-
-
-First, we need to identify those regions of the domain with the highest or least contribution to the global error, and we want to adapt these regions locally.
-
-With these indicators, we are able to identify those regions of the domain with the highest or least contribution to the global error. We want to adapt these regions locally.
+Applicable implementations of these strategies involve binary searches to determine the section of cells relevant for adaptation. For parallel computations, according algorithms have been developed by \textcites[Sec.~3.1]{burstedde2008}[Sec.~5.1]{bangerth2012}.
 
 
 
