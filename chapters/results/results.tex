@@ -26,6 +26,11 @@ with \(r = \sqrt{x^2 + y^2}\) and \(\theta = \arctan(x,y) \)
 with \(\vec{e}_r = \cos(\theta) \vec{e}_x - \sin(\theta) \vec{e}_y\) and \(\vec{e}_\theta = \sin(\theta) \vec{e}_x + \cos(\theta) \vec{e}_y\)
 
 
+We will compared different refinement strategies. We will use \textit{fixed-fraction} adaptation so that every cell is refined. This allows us to compare the choices of all strategies since always the same amount of cells is taken into account. \todo{see slack text}
+
+Values for control parameters are $\gamma_n = 1$, $\gamma_h = 1$, and $\gamma_p = \sqrt{0.4}$, which corresponds to the values used by \textcites{melenk2001}{mitchell2014}.
+
+
 \input{chapters/results/heuristics}
 \input{chapters/results/errorvsperformance}
 \input{chapters/results/scalability}
