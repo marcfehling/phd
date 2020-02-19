@@ -30,7 +30,7 @@ In this section, we present different ways to identify areas whose adaptation wi
 \subsection{Adaptation strategies}
 \label{ssec:strategy}
 
-We will decide on the basis of adaptation criteria for every cell which ones will be considered to be adapted. Typical criteria are errors or their estimates, but also predicted errors or smoothness indicators are used, which will be presented in the following sections. \textcite[Sec.~5.2]{bangerth2003} describe different strategies on how to decide based on these adaptation criteria, from which we present a commonly used selection.
+We will decide on the basis of adaptation criteria for every cell which ones will be considered to be adapted. Typical criteria involve comparing errors or their estimates to some absolute or relative threshold. Alternatively, also predicted errors or smoothness indicators are used for this purpose, as presented in the following sections. \textcite[Sec.~5.2]{bangerth2003} describe non-trivial strategies on how to decide based on these adaptation criteria, from which we present a commonly used selection.
 
 So called \textit{fixed-error-reduction} or \textit{fixed-fraction} strategies select subsets of cells whose criteria accumulate to a predefined fraction of their global sum. This strategy is only applicable when the sum of all criteria actually has meaning, for example local errors which add up to the global one. Further, it may lead to optimal meshes for several problems, but tends to only adapt very few cells whenever singularities are encountered. We will use this strategy in our applications presented in Ch.~\ref{ch:results}.
 
@@ -126,6 +126,8 @@ According to Eq.~(\ref{eq:errorbound_hp}), we notice that a successfull refineme
 
 Thus, the smoothness of a finite element approximation would be a reasonable indicator to decide between \h- and \p-adaptation.
 
+Thus, we need to find a way to estimate regularity. which can be by smoothness
+
 We present two ways to estimate its smoothness by  by the decay of coefficients from series expansions, namely for Legendre and Fourier series.
 
 There a ways to find out whether a solution is sufficiently smooth.
@@ -133,12 +135,75 @@ There a ways to find out whether a solution is sufficiently smooth.
 For these is to expand the finite element approximation into a series 
 
 
-\cite{mavriplis1994} introduced with the Legendre coefficient decay.
+\textcite{mavriplis1994} introduced with the Legendre coefficient decay.
+
+
+
+Spectral discretization
+
+Expand in power series of Legendre polynomials $P_j$ up to the order $p$ of the assigned finite element:
 \begin{align}
-???
+\hat{u}_\text{hp} (\hat x) \simeq \hat{u}_\text{hp}^\text{k} (\hat x) = \sum\limits_{j=0}^{p_K} a_j \, P_j(\hat x) \,\text{,} \quad \forall \, \hat{x} \in \hat{K} \,\text{.}
+\end{align}
+with $a_j$
+\begin{align}
+a_j = \frac{2j+1}{2} \int\limits_K \hat{u}_\text{hp}(\hat{x}) P_j(\hat{x}) \differential{\hat{x}}
+\end{align}
+and polynomials can be calculated following rodrigues formula.
+
+Legendre polynomials solve the Legendre partial differential equation. There are many to generate them, from which we leave Rodriguez formula for completion:
+\begin{align}
+P_j(x) = \frac{1}{2^j j!} \frac{\text{d}^n}{\text{d}x^n} \left( \left(x^2 - 1\right)^n \right)
+\end{align}
+which make complete orthonormal system and thus allow an expansion.
+
+
+The corresponding expansion coefficients $a_j$ are supposed to decay for exponential convergence:
+\begin{align}
+|a_j| &\sim c \, \exp(-\sigma j) \,\text{,} &\text{or equivalently}&& \ln\left(|a_j|\right) &\sim C - \sigma \, j \,\text{.}
+\end{align}
+where a high decay rate $\sigma$ indicates a good resolution for the choice of expansion functions.
+
+
+
+\begin{align}
+L_{ij} = \frac{2i+1}{2} \int\limits_K P_i(x) \, \Psi_j \, \differential{x}
+\end{align}
+and
+\begin{align}
+a_i = L_{ij} u_j
 \end{align}
 
-Decide for \p-adaptation with $\sigma > 1$, and \h-adaptation with $\sigma > 1$.
+We will thus perform a linear regression on all Legendre coefficients $a_j$, 
+
+Thus, they propose to pick \p-adaptation with $\sigma > 1$, and \h-adaptation with $\sigma > 1$.
+
+\cite[Ch.~4]{eibner2007}
+
+\textcite[Sec.~2.4]{houston2005}
+
+ expanded this to multi dimension. They develop series expansion in each direction, and pick the largest 
+\begin{align*}
+  content...
+\end{align*}
+
+\cite{davydov2017}.
 
 
 \cite{bangerth2009} introduced Fourier coefficient decay.
+\begin{align}
+u_? = \sum\limits_{\vec{k}} U_j \exp\left(-i \, \vec{k} \cdot \vec{x}\right)
+\end{align}
+with
+\begin{align}
+U_j = \int \exp\left(i \, \vec{k} \cdot \vec{x}) u_{hp}(\vec{x}\right) dx
+\end{align}
+
+
+Perform linear regression in modes.
+
+% in practice
+
+We generate transformation matrices on the reference cell only. Simple matrix multiplication suffices in converting the solution from the finite element approximation into the series expansion.
+
+Both strategies only on reference cell.
