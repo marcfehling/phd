@@ -52,15 +52,23 @@
     \map{
       \perdatasource{bibliography.bib}
       \step[fieldset=KEYWORDS, fieldvalue=primary, append]
+      % print the following fields only if there is no doi
+      \step[fieldsource=doi,final]
+      \step[fieldset=url,null]
+      \step[fieldset=urldate,null]
+      \step[fieldset=isbn,null]
+      \step[fieldset=issn,null]
     }
     \map{
       \perdatasource{references.bib}
       \step[fieldset=KEYWORDS, fieldvalue=secondary, append]
+      % print the following fields only if there is no doi
+      \step[fieldsource=doi,final]
+      \step[fieldset=url,null]
+      \step[fieldset=urldate,null]
+      \step[fieldset=isbn,null]
+      \step[fieldset=issn,null]
     }
-    % print url and urldate only if there is no doi
-    \step[fieldsource=doi,final]
-    \step[fieldset=url,null]
-    \step[fieldset=urldate,null]
   }
 }
 
