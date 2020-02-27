@@ -1,11 +1,36 @@
 \begin{tikzpicture}
 \begin{loglogaxis}[
   xlabel=Number of \glspl{dof},
-  ylabel=Walltime {[seconds]}]
+  ylabel=Wall time {[seconds]},
+  legend pos=outer north east]
 
-\addplot table [y=full cycle, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+% auxiliary lines
+\begin{scope}
+  \draw[green] ({axis cs:307200000,0}|-{rel axis cs:0,1}) -- ({axis cs:307200000,0}|-{rel axis cs:0,0});
+  \draw[blue] ({axis cs:51625521,0}|-{rel axis cs:0,1}) -- ({axis cs:51625521,0}|-{rel axis cs:0,0});
+\end{scope}
 
-\addplot[very thick, samples=2, domain=12591105:2073075769] {10^(-3)*x};
+% data
+\addplot table [y=solve, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{linear solver and preconditioner};
+
+\addplot table [y=setup, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{setup data structures};
+
+\addplot table [y=assembly, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{assemble linear system};
+
+\addplot table [y=compute errors, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{estimate error};
+
+\addplot table [y=calculate indicators, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{estimate smoothness};
+
+\addplot table [y=refine, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{coarsen and refine};
+
+% optimal line
+\addplot[very thick, samples=2, domain=12591105:2073075769] {10^(-7.2)*x};
 
 \end{loglogaxis}
 \end{tikzpicture}

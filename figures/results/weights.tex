@@ -1,10 +1,16 @@
 \begin{tikzpicture}
 \begin{axis}[
   xlabel=Weighting exponent,
-  ylabel=Walltime {[seconds]}]
+  ylabel=Wall time {[seconds]},
+  legend pos=outer north east]
 
 \addplot table [y=full cycle, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addlegendentry{full cycle};
+
 \addplot table [y=assembly, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addlegendentry{assemble linear system};
+
 \addplot table [y=solve, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addlegendentry{linear solver and preconditioner};
 \end{axis}
 \end{tikzpicture}

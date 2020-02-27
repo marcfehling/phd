@@ -1,11 +1,35 @@
 \begin{tikzpicture}
 \begin{loglogaxis}[
   xlabel=Number of \gls{mpi} processes,
-  ylabel=Walltime {[seconds]}]
+  ylabel=Wall time {[seconds]},
+  legend pos=outer north east]
 
-\addplot table [y=full cycle, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+% auxiliary lines
+\begin{scope}
+  \draw[green] ({axis cs:507.36415,0}|-{rel axis cs:0,1}) -- ({axis cs:507.36415,0}|-{rel axis cs:0,0});
+\end{scope}
 
-\addplot[very thick, samples=2, domain=48:6144] {10^(3)*x^(-1)};
+% data
+\addplot table [y=solve, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+\addlegendentry{linear solver and preconditioner};
+
+\addplot table [y=setup, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+\addlegendentry{setup data structures};
+
+\addplot table [y=assembly, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+\addlegendentry{assemble linear system};
+
+\addplot table [y=compute errors, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+\addlegendentry{estimate error};
+
+\addplot table [y=calculate indicators, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+\addlegendentry{estimate smoothness};
+
+\addplot table [y=refine, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+\addlegendentry{coarsen and refine};
+
+% optimal line
+\addplot[very thick, samples=2, domain=48:6144] {10^(3.8)*x^(-1)};
 
 \end{loglogaxis}
 \end{tikzpicture}
