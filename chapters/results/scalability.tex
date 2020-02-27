@@ -4,29 +4,36 @@
 Text.
 
 \begin{figure}
-\centering
-\input{figures/results/weak-nodes16}
-\caption{Weak scaling on 16 nodes or 768 \gls{mpi} processes.}
-\label{fig:weak-nodes16}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \input{figures/results/weak-nodes16}
+  \caption{Weak scaling on 16 nodes or 768 \gls{mpi} processes.}
+  \label{fig:weak-nodes16}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \input{figures/results/weak-nodes64}
+  \caption{Weak scaling on 64 nodes or 3,072 \gls{mpi} processes.}
+  \label{fig:weak-nodes64}
+\end{subfigure}
+\caption{Weak scaling.}
+\label{fig:weak}
 \end{figure}
 
+\todo{Add remaining data points}
 \begin{figure}
-\centering
-\input{figures/results/weak-nodes64}
-\caption{Weak scaling on 64 nodes or 3,072 \gls{mpi} processes.}
-\label{fig:weak-nodes64}
-\end{figure}
-
-\begin{figure}
-\centering
-\input{figures/results/strong-nrefs10}
-\caption{Strong scaling with a fixed problem size of roughly 50 million \glspl{dof}.}
-\label{fig:strong-nrefs10}
-\end{figure}
-
-\begin{figure}
-\centering
-\input{figures/results/strong-nrefs12}
-\caption{Strong scaling with a fixed problem size of roughly 900 million \glspl{dof}.}
-\label{fig:strong-nrefs12}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \input{figures/results/strong-nrefs10}
+  \caption{Strong scaling with a fixed problem size of roughly 50 million \glspl{dof}.}
+  \label{fig:strong-nrefs10}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \input{figures/results/strong-nrefs12}
+  \caption{Strong scaling with a fixed problem size of roughly 900 million \glspl{dof}.}
+  \label{fig:strong-nrefs12}
+\end{subfigure}
+\caption{Strong scaling.}
+\label{fig:strong}
 \end{figure}

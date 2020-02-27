@@ -4,15 +4,18 @@
 Text.
 
 \begin{figure}
-\centering
-\input{figures/results/errorworkload}
-\caption{Error vs workload.}
-\label{fig:errorworkload}
-\end{figure}
-
-\begin{figure}
-\centering
-\input{figures/results/errorwalltime}
-\caption{Error vs walltime.}
-\label{fig:errorwalltime}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \input{figures/results/errorworkload}
+  \caption{Error vs workload.}
+  \label{fig:errorworkload}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+  \centering
+  \input{figures/results/errorwalltime}
+  \caption{Error vs walltime.}
+  \label{fig:errorwalltime}
+\end{subfigure}
+\caption{Error plots.}
+\label{fig:error}
 \end{figure}
