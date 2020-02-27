@@ -1,23 +1,20 @@
 \chapter{Application on Poisson's problem}
 \label{ch:results}
-Text.
-
-Case 0: step-27
-\begin{align}
-  \Omega &= [-1,1]^d \setminus \left(-\frac{1}{2}, \frac{1}{2}\right)^d ,\\
-  - \nabla^2 u(\vec{x}) &= \prod\limits_{j=1}^{d} (x_j + 1) \quad\text{on}\quad \Omega,\\
-  u(\vec{x}) &= 0 \quad\text{on}\quad \partial\Omega
-\end{align}
-for $u$ scalar solution and $\vec{x} = (x_1, x_2, \dots, x_d)$ vector with $d$-components.
-
+%Case 0: step-27
+%\begin{align}
+%  \Omega &= [-1,1]^d \setminus \left(-\frac{1}{2}, \frac{1}{2}\right)^d ,\\
+%  - \nabla^2 u(\vec{x}) &= \prod\limits_{j=1}^{d} (x_j + 1) \quad\text{on}\quad \Omega,\\
+%  u(\vec{x}) &= 0 \quad\text{on}\quad \partial\Omega
+%\end{align}
+%for $u$ scalar solution and $\vec{x} = (x_1, x_2, \dots, x_d)$ vector with $d$-components.
 
 Case 1: Reentrant corner
 \begin{align}
-  \Omega &= [-1,1]^2 \setminus (0,\frac{1}{2})^2 ,\\
+  \Omega &= \left[-1,1\right]^2 \setminus \left(0,\frac{1}{2}\right)^2 ,\\
   - \nabla^2 u(\vec{x}) &= 0 \quad\text{on}\quad \Omega,\\
   u(\vec{x}) &= u_\text{sol}(\vec{x}) \quad\text{on}\quad \partial\Omega
 \end{align}
-with \(r = \sqrt{x^2 + y^2}\) and \(\theta = \arctan(x,y) \)
+with \(r = \sqrt{x^2 + y^2}\) and \(\theta = \arctan(x,y) \) has a solution
 \begin{align}
   u_\text{sol}(\vec{x}) &= r^\alpha \sin(\alpha \, \theta) \\
   \nabla u_\text{sol}(\vec{x}) &= \partial_r u_\text{sol}(\vec{x}) \vec{e}_r + \frac{1}{r} \partial_\theta u_\text{sol}(\vec{x}) \vec{e}_\theta \\
@@ -25,6 +22,12 @@ with \(r = \sqrt{x^2 + y^2}\) and \(\theta = \arctan(x,y) \)
 \end{align}
 with \(\vec{e}_r = \cos(\theta) \vec{e}_x - \sin(\theta) \vec{e}_y\) and \(\vec{e}_\theta = \sin(\theta) \vec{e}_x + \cos(\theta) \vec{e}_y\)
 
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{figures/results/solution.png}
+\caption{Reentrant corner problem.}
+\label{fig:solution}
+\end{figure}
 
 We will compared different refinement strategies. We will use \textit{fixed-fraction} adaptation so that every cell is refined. This allows us to compare the choices of all strategies since always the same amount of cells is taken into account. \todo{see slack text}
 
