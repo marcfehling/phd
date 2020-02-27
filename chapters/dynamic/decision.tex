@@ -122,24 +122,29 @@ The error predictor has been implemented in the \dealii{} library as part of thi
 \subsection{Smoothness estimation}
 \label{ssec:smoothness}
 
-According to Eq.~(\ref{eq:errorbound_hp}), we notice that a successfull refinement with \p-adaptation requires the solution to be reasonably regular.
+According to Eq.~(\ref{eq:errorbound_hp}), we notice that \p-adaptation has the largest impact on the error of the finite element approximation if it is sufficiently regular. Thus, its smoothness presents a reasonable indicator to decide between \h- and \p-adaptation.
 
-Thus, the smoothness of a finite element approximation would be a reasonable indicator to decide between \h- and \p-adaptation.
+The basic idea to quantify smoothness involves the transformation of the finite element approximation into its spectral representation. For this, we expand the solution into a series of orthonormal basis functions $(P_n)_{n\in\mathbb{N}_0}$ on a given interval $I = [a,b]$ with:
+\begin{align}
+u_{hp}(x) &= \sum\limits_{n=0}^\infty a_n P_n(x) \,\text{,} & \int\limits_a^b P_m(x) \, P_n(x) \differential{x} &= \delta_{mn} \,\text{,}
+\end{align}
+and identify the smoothness as the rate of decay of the expansion coefficients $a_n$ by performing a least-squares fit on them.
 
-Thus, we need to find a way to estimate regularity. which can be by smoothness
-
-We present two ways to estimate its smoothness by  by the decay of coefficients from series expansions, namely for Legendre and Fourier series.
-
-There a ways to find out whether a solution is sufficiently smooth.
-
-For these is to expand the finite element approximation into a series 
+In the finite element context, we will apply these considerations on the reference cell.
 
 
-\textcite{mavriplis1994} introduced with the Legendre coefficient decay.
+Further for practical calculations, we limit the number of expansion function used for all considerations up to these function from which we think they have no contribution.
 
 
 
-Spectral discretization
+- Do everything on the reference cell, thus interval corrresponds to
+
+- Number of expansion functions is limited.
+
+
+In the following, we will present two different ways to estimate its smoothness with this method, namely with Legendre and Fourier series expansions.
+
+\textcite{mavriplis1994} introduced smoothness estimation with the Legendre coefficient decay.
 
 Expand in power series of Legendre polynomials $P_j$ up to the order $p$ of the assigned finite element:
 \begin{align}
@@ -190,7 +195,7 @@ Thus, they propose to pick \p-adaptation with $\sigma > 1$, and \h-adaptation wi
 \cite{davydov2017}.
 
 
-\cite{bangerth2009} introduced Fourier coefficient decay.
+\textcite{bangerth2009} introduced Fourier coefficient decay. \textcite{dealiistep-27}
 \begin{align}
 u_? = \sum\limits_{\vec{k}} U_j \exp\left(-i \, \vec{k} \cdot \vec{x}\right)
 \end{align}
