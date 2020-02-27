@@ -212,3 +212,5 @@ Perform linear regression in modes.
 We generate transformation matrices on the reference cell only. Simple matrix multiplication suffices in converting the solution from the finite element approximation into the series expansion.
 
 Both strategies only on reference cell.
+
+In practice, we noticed that this strategy offers poor results on linear elements. We suspect that linear polynomials do not offer sufficient information to make a well-founded statement about the smoothness attribute of the finite element approximation on the cell itself. We thus suggest to refrain from using them in this context and work with at least quadratic elements instead.
