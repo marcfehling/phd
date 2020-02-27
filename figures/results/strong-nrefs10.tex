@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+\begin{loglogaxis}[
+  xlabel=Number of \gls{mpi} processes,
+  ylabel=Walltime {[seconds]}]
+
+\addplot table [y=full cycle, x=ncpus, col sep=comma] {data/strong/strong-nrefs10_withoutlarge.csv};
+
+\addplot[very thick, samples=2, domain=48:6144] {10^(3)*x^(-1)};
+
+\end{loglogaxis}
+\end{tikzpicture}

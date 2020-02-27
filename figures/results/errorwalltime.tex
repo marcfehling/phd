@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+\begin{loglogaxis}[
+  xlabel=Total walltime {[seconds]},
+  ylabel=H1 error]
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/h.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/p.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/hp-legendre.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/hp-fourier.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/hp-prediction.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/hp-legendre-naive.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/hp-fourier-naive.csv};
+\addplot table [y=H1 error, x=walltime, col sep=comma] {data/error/hp-prediction-naive.csv};
+\end{loglogaxis}
+\end{tikzpicture}

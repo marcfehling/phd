@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+\begin{axis}[
+  xlabel=Weighting exponent,
+  ylabel=Walltime {[seconds]}]
+
+\addplot table [y=full cycle, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addplot table [y=assembly, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addplot table [y=solve, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\end{axis}
+\end{tikzpicture}
