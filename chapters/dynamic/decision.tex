@@ -59,9 +59,9 @@ denotes the jump of the approximation's gradient on the face between two adjacen
 
 The constant $c_F$ depends on the characteristics of each individual face of the cell. \textcite{kelly1983} originally used the constant $c_F = \frac{h_K}{24 \, a_\text{min} \, p_K}$ on each face, on which we determine the minimum $a_\text{min}$ of the given function. Here, $h_K$ and $p_K$ denote both cell diameter and polynomial degree of the finite element on cell $K$, respectively. \textcite{davydov2017} proposed a different constant for \hp-adaptive \gls{fem}: They recommend $c_F = \frac{h_F}{2 \, a_\text{min} \, p_F}$ with $h_F$ the face diagonal and $p_F = \max\left(p_K, p_J\right)$ the largest polynomial degree of adjacent elements $K$ and $J$ on this particular face.
 
-This estimator has been worked out for the Poisson equation, but has proven its applicability on other problems as well, where this is no longer meant to be an estimator, but rather an error indicator\todo{cite deal.II kelly error estimator website}.
+This estimator has been worked out for the Poisson equation, but has proven its applicability on other problems as well, where this is no longer meant to be an estimator, but rather an error indicator \cite{dealiikelly}.
 
-The error estimator is already implemented in \dealii{}. \todo{cite deal.II kelly error estimator website}
+The error estimator is already implemented in \dealii{} \cite{dealiikelly}.
 
 We will use these error estimates to decide w. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
 
@@ -115,61 +115,114 @@ An alternative approach would be to use the \textit{fixed-fraction} adaptation s
 
 In practice, we need all predicted errors already for the initialization of this method. We provide them with an initial \h- or \p-adaptation of the mesh, by setting all predicted errors to $\eta_K^\text{pred} = 0$ or $\eta_K^\text{pred} = \infty$, respectively. We recommend to begin with an initial \h-refinement since its error predictor from Eq.~(\ref{eq:errorratio_h}) tends to be more reliable.
 
-The error predictor has been implemented in the \dealii{} library as part of this dissertation. A development log can be found here \todo{cite deal.ii website}.
+The error predictor has been implemented in the \dealii{} library as part of this dissertation. A development log can be found here \textcite{dealiipr8341}.
 
 
 
 \subsection{Smoothness estimation}
 \label{ssec:smoothness}
 
-According to Eq.~(\ref{eq:errorbound_hp}), we notice that \p-adaptation has the largest impact on the error of the finite element approximation if it is sufficiently regular. Thus, its smoothness presents a reasonable indicator to decide between \h- and \p-adaptation.
+According to Eq.~(\ref{eq:errorbound_hp}), we notice that \p-adaptation has the largest impact on the error if its corresponding solution is sufficiently regular. Thus, determining the smoothness of the finite element approximation presents a reasonable indicator to decide between \h- and \p-adaptation.
 
-The basic idea to quantify smoothness involves the transformation of the finite element approximation into its spectral representation. For this, we expand the solution into a series of orthonormal basis functions $(P_n)_{n\in\mathbb{N}_0}$ on a given interval $I = [a,b]$ with:
+The basic idea to quantify smoothness involves the transformation of the finite element approximation into its spectral representation. In one dimension, we expand it into a series of $L_2$-orthogonal basis functions $(P_k)_{k\in\mathbb{N}_0}$ on an interval $I = [a,b]$ with:
 \begin{align}
-u_{hp}(x) &= \sum\limits_{n=0}^\infty a_n P_n(x) \,\text{,} & \int\limits_a^b P_m(x) \, P_n(x) \differential{x} &= \delta_{mn} \,\text{,}
+u_{hp}(x) &= \sum\limits_{k \geq 0} c_k P_k(x) \,\text{,} && \forall x \in I \,\text{,} \\
+\langle P_k, P_l \rangle &= 0 \,\text{,} && \forall k,l \in \mathbb{N}_0 \text{,}~ k \neq l \,\text{,}
 \end{align}
-and identify the smoothness as the rate of decay of the expansion coefficients $a_n$ by performing a least-squares fit on them.
-
-In the finite element context, we will apply these considerations on the reference cell.
-
-
-Further for practical calculations, we limit the number of expansion function used for all considerations up to these function from which we think they have no contribution.
-
-
-
-- Do everything on the reference cell, thus interval corrresponds to
-
-- Number of expansion functions is limited.
-
+and identify the smoothness as the rate of decay of the expansion coefficients $c_n$. In multi-dimensional cases, we formulate the expansion in the multi-index notation with tuples $\mathbf{k} = (k_1, \dots, k_\text{dim}) \in N_0^\text{dim}$ on each cell $K$:
+\begin{align}
+u_{hp}(\vec{x}) &= \sum\limits_{k_1 \geq 0} \dots \sum\limits_{k_\text{dim} \geq 0} c_{k_1, \dots, k_{\text{dim}}} P_{k_1, \dots, k_{\text{dim}}}(\vec{x}) = \sum_{\mathbf{k} \geq 0} c_\mathbf{k} P_\mathbf{k}(\vec{x}) \,\text{,}  & \forall \vec{x} \in K \,\text{,}
+\end{align}
+where we consider the multi-dimensional expansion as a product of basis functions for every coordinate direction:
+\begin{align}
+\label{eq:spectral_multi} P_{\mathbf{k}}(\vec{x}) &\coloneqq P_{k_1}(x_1) \dots P_{k_\text{dim}}(x_\text{dim}) \,\text{.}
+\end{align}
 
 In the following, we will present two different ways to estimate its smoothness with this method, namely with Legendre and Fourier series expansions.
 
-\textcite{mavriplis1994} introduced smoothness estimation with the Legendre coefficient decay.
-
-Expand in power series of Legendre polynomials $P_j$ up to the order $p$ of the assigned finite element:
+\textcite{mavriplis1994} were the first to attribute smoothness characteristics to the decay of coefficients from a Legendre series expansion. Legendre polynomials are solutions to the Legendre differential equation on the interval $I=[-1,1]$:
 \begin{align}
-\hat{u}_\text{hp} (\hat x) \simeq \hat{u}_\text{hp}^\text{k} (\hat x) = \sum\limits_{j=0}^{p_K} a_j \, P_j(\hat x) \,\text{,} \quad \forall \, \hat{x} \in \hat{K} \,\text{.}
+\frac{d}{d x}\left(\left(1-x^{2}\right) \frac{d}{d x} P_{n}(x)\right)+ n \left(n+1\right) P_{n}(x)=0 \,\text{.}
 \end{align}
-with $a_j$
+They can be constructed with Rodrigues formula and fulfill the orthogonality criterion
 \begin{align}
-a_j = \frac{2j+1}{2} \int\limits_K \hat{u}_\text{hp}(\hat{x}) P_j(\hat{x}) \differential{\hat{x}}
+P_j(x) &= \frac{1}{2^j j!} \frac{\text{d}^n}{\text{d}x^n} \left( \left(x^2 - 1\right)^n \right) \,\text{,} \\
+\label{eq:legendre_orthogonal} \langle P_{m}, P_{n}\rangle &= \frac{2}{2 n+1} \delta_{m n} \,\text{.}
 \end{align}
-and polynomials can be calculated following rodrigues formula.
+The first few polynomials are depicted in Fig.~\ref{fig:legendre}. \textcite{dealiilegendre}
 
-Legendre polynomials solve the Legendre partial differential equation. There are many to generate them, from which we leave Rodriguez formula for completion:
+\begin{figure}
+\centering
+\input{figures/dynamic/legendre}
+\caption{The first six Legendre polynomials.}
+\label{fig:legendre}
+\end{figure}
+
+In the finite element context, we perform calculations on the reference cell. Thus we need to construct a $L_2$-orthogonal basis on its domain, that is $\Omega = [0,1]^\text{dim}$. Furthermore, we require the multi-dimensional representation of Legendre polynomials from Eq.~(\ref{eq:spectral_multi}). These so designed functions similarly correspond to the orthogonality requirement from Eq.~(\ref{eq:legendre_orthogonal}):
 \begin{align}
-P_j(x) = \frac{1}{2^j j!} \frac{\text{d}^n}{\text{d}x^n} \left( \left(x^2 - 1\right)^n \right)
+\widetilde{P}_k(\vec{x}) &= \sqrt{2} \, P_k(2\vec{x} - 1) \,\text{,} \\
+\left\langle \widetilde{P}_k, \widetilde{P}_l \right\rangle &= \left(\prod\limits_{j \in \mathbf{k}} \frac{2}{2j+1}\right) \delta_{kl} \,\text{.}
 \end{align}
-which make complete orthonormal system and thus allow an expansion.
-
-
-The corresponding expansion coefficients $a_j$ are supposed to decay for exponential convergence:
+We will calculate the expansion coefficients with this basis as follows:
 \begin{align}
-|a_j| &\sim c \, \exp(-\sigma j) \,\text{,} &\text{or equivalently}&& \ln\left(|a_j|\right) &\sim C - \sigma \, j \,\text{.}
+c_k = \left(\prod\limits_{j \in \mathbf{k}} \frac{2j+1}{2}\right) \int\limits_K u_\text{hp}(\vec{x}) \widetilde{P}_k(\vec{x}) \differential{\vec{x}} \,\text{.}
 \end{align}
-where a high decay rate $\sigma$ indicates a good resolution for the choice of expansion functions.
+Some outro text. \textcite{dealiilegendre}
+
+For one-dimensional scenarios, \textcite{mavriplis1994} expanded the finite element approximation in a power series of Legendre polynomials up to the order $p_K$ of the assigned finite element on cell $K$. \textcites{houston2005}{eibner2007} generalized their approach by considering multi-dimensional Legendre polynomials:
+\begin{align}
+u_\text{hp} (x) \simeq u_\text{hp}^\text{k} (x) = \sum\limits_{0 \leq \|k\|_1 \leq p_k} c_k \, P_k(x) \,\text{,} \quad \forall \, x \in K \,\text{.}
+\end{align}
+
+\textcite[Prop.~2]{eibner2007} argued that a function is analytic, i.e.\@ representable by a power series, if and only if the absolute values of the expansion coefficients decay exponentially with an increasing index $k$:
+\begin{align}
+|c_k| \leq C \exp\left( - \sigma \|k\|_1\right)
+\end{align}
+with constants $C,~ \sigma > 0$. Thus a higher rate of decay $\sigma$ corresponds to a function that is more easily represented by lower order polynomials. \textcites[Sec.~2.4]{houston2005}[Ch.~4]{eibner2007} interpreted the rate of decay $\sigma$ as a measure for the local smoothness of the finite element approximation and determine it on each cell $K$ by performing a least squares fit on
+\begin{align}
+\ln \left( \max\limits_{\|k\|_1} |c_{k,K}| \right) \sim C_K - \sigma_K \|k\|_1 \,\text{,}
+\end{align}
+where we take the maximum value over all expansion coefficients $c_k$ that correspond to the same sum of elements $\|k\|_1$ of the multi-index tuple $k$. \textcite{mavriplis1994} considered a similar approach in one dimension, but only used the last four expansion coefficients for the fit.
+
+\textcite{mavriplis1994, eibner2007} treated the rate of decay as a decision criterion for \hp-refinement by comparing it to a user-provided absolute threshold $\delta$: A decay rate larger than the threshold indicates a good resolution of the finite element basis functions and would entail \p-refinement, while a smaller rate would express a bad resolution and thus suggest \h-refinement. They considered a threshold of $\delta = 1$ as sufficient.
 
 
+As an alternative strategy, \textcites{bangerth2009}{dealiistep-27} proposed to use the coefficients of a Fourier series expansion to determine the rate of decay. We will use sinusoidal functions taht form an orthogonal basis on $I=[0,1]^dim$ as follows:
+\begin{align}
+P_k(x) &= \exp{i \, 2\pi k \cdot x} \,\text{,} & \langle P_k, P_l \rangle &= \delta_{kl}
+\end{align}
+Then the function is
+\begin{align}
+u_? = \sum\limits_{\vec{k}} U_j \exp\left(-i \, \vec{k} \cdot \vec{x}\right)
+\end{align}
+with
+\begin{align}
+U_j = \int \exp\left(i \, \vec{k} \cdot \vec{x}) u_{hp}(\vec{x}\right) dx
+\end{align}
+
+\begin{figure}
+\centering
+\input{figures/dynamic/fourier}
+\caption{The real parts of the first five basis functions of the Fourier expansion.}
+\label{fig:fourier}
+\end{figure}
+
+Perform linear regression in modes.
+
+% in practice
+
+
+In our investigations, we will follow the argumentation of \textcite{melenk2001} and expand it to utilize \hp-coarsening as well.
+
+
+We generate transformation matrices on the reference cell only. Simple matrix multiplication suffices in converting the solution from the finite element approximation into the series expansion.
+
+Both strategies only on reference cell.
+
+
+In practice, we will apply these considerations only on the reference cell in the finite element context. This way we only have to perform the costly calculation of transformation matrices for the determination of expansion coefficients just once and are able to reuse them later.
+
+We can create one transformation. We can thus  by a simple matrix multiplication.
 
 \begin{align}
 L_{ij} = \frac{2i+1}{2} \int\limits_K P_i(x) \, \Psi_j \, \differential{x}
@@ -179,38 +232,14 @@ and
 a_i = L_{ij} u_j
 \end{align}
 
-We will thus perform a linear regression on all Legendre coefficients $a_j$, 
+On the downside, these transformations only yield applicable results if mapping from the reference to the actual cell is linear, resulting in a constant Jacobi determinant.
 
-Thus, they propose to pick \p-adaptation with $\sigma > 1$, and \h-adaptation with $\sigma > 1$.
-
-\cite[Ch.~4]{eibner2007}
-
-\textcite[Sec.~2.4]{houston2005}
-
- expanded this to multi dimension. They develop series expansion in each direction, and pick the largest 
-\begin{align*}
-  content...
-\end{align*}
-
-\cite{davydov2017}.
-
-
-\textcite{bangerth2009} introduced Fourier coefficient decay. \textcite{dealiistep-27}
-\begin{align}
-u_? = \sum\limits_{\vec{k}} U_j \exp\left(-i \, \vec{k} \cdot \vec{x}\right)
-\end{align}
-with
-\begin{align}
-U_j = \int \exp\left(i \, \vec{k} \cdot \vec{x}) u_{hp}(\vec{x}\right) dx
-\end{align}
-
-
-Perform linear regression in modes.
-
-% in practice
-
-We generate transformation matrices on the reference cell only. Simple matrix multiplication suffices in converting the solution from the finite element approximation into the series expansion.
-
-Both strategies only on reference cell.
+Further for practical calculations, we limit the number of basis functions used for all considerations up to these from which we think they have no contribution.
 
 In practice, we noticed that this strategy offers poor results on linear elements. We suspect that linear polynomials do not offer sufficient information to make a well-founded statement about the smoothness attribute of the finite element approximation on the cell itself. We thus suggest to refrain from using them in this context and work with at least quadratic elements instead.
+
+\cite{davydov2017} determine coefficients in every direction and perform least squares fit, and then take. We do not consider this approach in out investigations.
+
+Sobolev regularity estimation. \textcite{ainsworth1998}. \textcite{houston2003}. \textcite[Sec.~2.4]{houston2005}
+
+These strategies will be basis of future enhancements of decision strategies for \hp-adaptation.
