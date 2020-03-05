@@ -12,3 +12,10 @@ Important things to consider:
 <li> Bibliography type is BibLaTex. Use `biber` as a parser.
 <li> Generate document with `pdflatex`.
 </ul>
+
+Chapters finished:
+- [ ] Introduction
+- [ ] Parallel hp-adaptive methods
+- [x] Dynamic hp-adaptive methods
+- [ ] Application on Poisson's problem
+- [ ] Summary

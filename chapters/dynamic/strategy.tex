@@ -1,20 +1,13 @@
-\section{Adaptation realization}
+\section{Realization of \hp-adaptation}
 \label{sec:adaptation}
 
-% \cite{melenk2001} \cite{ainsworth1998} und so weiter
+For \hp{}-adaptive methods we need to find ways to prescribe which cells are subject to which kind of adaptation. This grants awareness on how the mesh will change if adaptation is executed.
 
-To indicate whetehr refinement or coarsening is going to happen by adding flags. Additionally, we want to set . Upon execution of refinement, the adaptation flags will we translated to \h-adaptation and all future fe indices will be considered as \p-adaptation.
+To indicate that adaptation is about to happen, we introduce general flags for refinement and coarsening, respectively. We are left to distinguish between \h- and \p-adaptation. To do this, we specify so called \textit{future finite element} indices that determine the finite element that will be associated to that particular cell after adaptation has been performed. If such a future finite element is defined on marked cells, \p-adaptation will be performed, while cells will be \h-adapted if none is specified. This approach offers full flexibility to let either users decide manually how to adapt, but also provides a sufficient interface for an automatic specification of these mesh attributes.
 
-But how do
+To determine the extent to which cells change during the adaptation process, the affected cell properties have to be hierarchically ordered. While for \h-adaptive methods, a grid hierarchy naturally evolves from the underlying tree or forest data structure, this is not necessarily the case for \p-adaptation. Here, a hierarchy needs to be provided for the collection of finite elements, so that we can assign superior and subordinate elements in case of \p-refinement or \p-coarsening, respectively. For example, we arrange Lagrangian finite elements by their polynomial degree in ascending order with the largest degree on the highest level.
 
-Which finite element to pick on coarsened cells?
-
-We found it to introduce so called \texttt{future fe indices} that determine the finite element that will be associated to its cell after refinement has happened.
-
-We need to indicate which individual cell we will refine. Force p over h. Choose p over h.
-
-This provides the basic functionality to \hp-adaptation on finite element data structures on distributed memory.
-
+Executing \h-adaptation on a \p-adaptive mesh reveals another challenge. We need to find a suitable finite element on cells that will be \h-adapted. During \h-refinement, we can easily choose the finite element from the parent cell for all of its children, but for \p-coarsening, the choice is not trivial. From all cells that are going to be \h-coarsened, we pick the one finite element for the parent cell from those assigned to its children that encapsulates all of them. With simultaneous \h- and \p-adaptation, future finite elements will be considered instead of the active one. This conforms to the finite element domination logic that has been introduced by \textcite{bangerth2009} and is described in Ch.~\todo{Add reference to chapter}. An example on how finite elements are distributed during \h-adaptation is shown in Fig.~\ref{fig:adaptation}.
 
 \begin{figure}
 \begin{subfigure}{.5\textwidth}
@@ -27,6 +20,6 @@ This provides the basic functionality to \hp-adaptation on finite element data s
   \input{figures/strategy/hpcoarsening}
   \caption{\hp-coarsening.}
 \end{subfigure}
-\caption{Inheritance of cell characteristics through \hp-adaptation. We say $Q_1 \subset Q_2 \subset Q_3$.}
-\label{fig:adaptation.}
+\caption[Inheritance of cell characteristics through \hp-adaptation.]{Inheritance of cell characteristics through \hp-adaptation. With \hp-refinement, all children will be associated with the parent finite element, while during \hp-coarsening, the finite element space chosen on the parent cell encapsulates all those of its children ($Q_1 \subset Q_2 \subset Q_3$).}
+\label{fig:adaptation}
 \end{figure}

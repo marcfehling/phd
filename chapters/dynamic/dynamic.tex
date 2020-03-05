@@ -1,11 +1,14 @@
 \chapter{Dynamic \hp-adaptive \glsfmtlongpl{fem}}
 \label{ch:dynamic}
 
-A static distribution of different finite element.
+Up to this point, we have only dealt with static \hp-adaptive meshes, in which the grid resolution and the distribution of finite elements is prescribed from the outset. Those can be used for multi-physics applications, in which different characteristics can be assigned to certain parts of the domain using dedicated finite elements.
 
-Typically, we want to change the mesh dynamically during a simulation.
+However, the key feature of \hp-adaptive methods is the dynamic distribution of these attributes. The goal is to reduce the overall error of the approximation on basis of the complexity of the current solution. With dynamic methods, meshes can be tailored on a specific problem iteratively with so called SOLVE-ESTIMATE-MARK-REFINE cycles: After solving the problem on a coarse mesh, it will be adapted based on an error estimate several times. Also, time dependent problems benefit from dynamic adaptation, in which mesh attributes will be adjusted on basis of the solution that evolves in time.
 
-SOLVE-ESTIMATE-MARK-REFINE cycles, time dependent problem
+In practice, we distinguish between two ways of imposing these \hp-adaptive methods: either manually or automatically. Combining both \h- and \p-adaptation poses new challenges. We will present these issues in this chapter along with algorithms to automatically determine which regions to adapt and which type of adaptation to impose.
+
+New features for \hp-adaptation as well as a generalized interface have been introduced in \dealii{} during the course of preparing this dissertation. A development log on all features introduced in the context of dynamic \hp-adaptive \gls{fem} can be found here \cite{dealiiissue7515}.
+
 
 \input{chapters/dynamic/strategy}
 \input{chapters/dynamic/decision}

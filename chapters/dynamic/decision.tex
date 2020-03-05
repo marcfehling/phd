@@ -61,9 +61,7 @@ The constant $c_F$ depends on the characteristics of each individual face of the
 
 This estimator has been worked out for the Poisson equation, but has proven its applicability on other problems as well, where this is no longer meant to be an estimator, but rather an error indicator \cite{dealiikelly}.
 
-The error estimator is already implemented in \dealii{} \cite{dealiikelly}.
-
-We will use these error estimates to decide w. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
+We will use these error estimates to decide on which cells we will adapt. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
 
 
 
@@ -115,7 +113,7 @@ An alternative approach would be to use the \textit{fixed-fraction} adaptation s
 
 In practice, we need all predicted errors already for the initialization of this method. We provide them with an initial \h- or \p-adaptation of the mesh, by setting all predicted errors to $\eta_K^\text{pred} = 0$ or $\eta_K^\text{pred} = \infty$, respectively. We recommend to begin with an initial \h-refinement since its error predictor from Eq.~(\ref{eq:errorratio_h}) tends to be more reliable.
 
-The error predictor has been implemented in the \dealii{} library as part of this dissertation. A development log can be found here \textcite{dealiipr8341}.
+This strategy is useful for scenarios to generate a tailored mesh after a few refinement iterations, but lacks applicability for time dependent problems since the refinement history is also connected to the time evolution here. However, this method is well suited to determine the initial grid for the initial values iteratively.
 
 
 
@@ -267,10 +265,8 @@ Since the Fourier basis function do not correspond to polynomials, but to sinuso
 
 In practice, we noticed that the coefficient decay strategies offer poor results on linear elements. We suspect that linear polynomials do not offer sufficient information to make a well-founded statement about the smoothness attribute of the finite element approximation on the cell itself. We thus suggest to refrain from using them in this context and work with at least quadratic elements instead.
 
-The coefficient decay strategies have already been part of the \dealii{} library, but have been parallelized and majorly revised as part of this dissertation. A development log can be found here \textcite{dealiipr7513}.
-
 A variety of different ideas and implementations for smoothness indication strategies have been elaborated in the past. \textcite{davydov2017} also used the method of Legendre coefficients, but determined their decay in each coordinate direction separately and took the minimum over all decay rates as the smoothness indicator. This approach ignores all multi-indices with more than one non-zero entry, which is why we do not consider this approach in our investigations.
 
 A different approach is to estimate the Sobolev regularity locally and use it as a means for deciding between \h- and \p-adaptation. \textcite{ainsworth1998} presented a way to determine the regularity by solving the problem on smaller patches of the domain, which is rather expensive approach. On the other side, \textcite{houston2003} proposed a strategy which estimates the local Sobolev regularity directly from a Legendre series expansion (see also \textcite[Sec.~2.4]{houston2005}). The latter method will form the basis of future enhancements on our \hp-adaptation strategies.
 
-Further, we will investigate whether the determination of Fourier coefficients via fast Fourier transformation (FFT) methods \todo{place citation} offers a more efficient and generally applicable alternative to the method of \textcite{bangerth2009} presented above.
+Further, we will investigate whether the determination of Fourier coefficients via fast Fourier transformation (FFT) methods \cite{fftw338} offers a more efficient and generally applicable alternative to the method presented above by \textcite{bangerth2009}.
