@@ -87,7 +87,8 @@
     \setlength{\parsep}{\bibparsep}}%
   \renewcommand*{\makelabel}[1]{\hss##1}}
 {\endlist}
-{\item}
+{\iffieldequalstr{labeldatesource}{url}{\clearfield{labelyear}}{}% clear labelyear if no date specified
+\item}
 
 \assignrefcontextkeyws[sorting=none]{secondary}
 
@@ -140,7 +141,7 @@
 % --- document information ---
 \author{Marc Fehling}
 \title{Algorithms for massively parallel hp--adaptive finite element methods}
-\date{31. April 2020}
+\date{15. April 2020}
 
 
 
@@ -181,8 +182,8 @@
   
   % Acknowledgements
   
-  \listoftables
-  \clearpage
+  % \listoftables
+  % \clearpage
   
   \listoffigures
   \clearpage
