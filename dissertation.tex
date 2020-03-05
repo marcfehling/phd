@@ -1,6 +1,6 @@
 \documentclass[10pt,a4paper,twoside,openright]{memoir}
 \usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage[ngerman,english]{babel}
 
 % ----- pgfplots -----
 \usepackage{femtikz} % pgfplots, tikz, graphicx
@@ -163,9 +163,11 @@
   \frontmatter
   
   \abstractintoc
-  \begin{abstract}
-    Abstract.
-  \end{abstract}
+  \input{abstract/abstract.tex}
+  \clearpage
+  \begin{otherlanguage}{ngerman}
+    \input{abstract/zusammenfassung.tex}
+  \end{otherlanguage}
   \clearpage
   
   % Approval page
