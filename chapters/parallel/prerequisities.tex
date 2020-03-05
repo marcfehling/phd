@@ -1,78 +1,77 @@
 \section{Prerequisities}
 \label{sec:prerequisities}
 
-%\subsection{Basics of the \glsfmtlong{fem}}
+% \subsection{Basics of the \glsfmtlong{fem}}
 
 The basic idea of the \glsfmtlong{fem} conforms to the specification of a function space and finding a solution to the investigated problem in it. To be more precise, we pick a suitable set of basis functions for which the solution is a linear combination. Its coefficients are called unknowns or \glspl{dof}, since their values are determined after solving the problem.
 
-In general, \gls{fem} requires a subdivision of the domain $\Omega$ into smaller cells $K$, where $\cup_{i} K_i = \Omega$\todo{make this beautiful} and each cell $K$ corresponds to a connected Lipschitz domain with nonempty interior \todo{Check Ciarlet definition?}.
+In general, \gls{fem} requires a subdivision of the domain $\Omega$ into smaller cells $K$, where $\Omega = \cup_{i} K_i$ and each cell $K$ corresponds to a connected Lipschitz domain with nonempty interior \todo{Check Ciarlet definition?}. Typical choices for cells are triangles or quadrilaterals in two and tetrahedra or hexahedra in three dimensions.
 %All these cells are mappings of a reference cell, to which we assign a set of shape functions with corresponding support points.
 %Those functions are designed to have the value one on exactly one support point and the value zero on all others.
 Further, on each cell $K$, we define a finite-dimensional function space $P$, accompanied by a set of functionals $N = {\Psi_1, \dots, \Psi_n}$ that are a basis to its dual space $P'$, where $n$ corresponds the number of nodes. The tuple $(K,P,N)$ is called a finite element. \todo{Cite Ciarlet or Brenner. Depends on definition of K.}
 
-With this definition, we are able to find a set of basis functions ${\phi_1, \dots, \phi_n}$ of $P$ dual to $N$ fulfilling $\Psi_i(\phi_j) = \delta_{ij}$. In other words, these basis functions span\todo{Is this the right word?} the function space $P$ while each of them has the value one on their associated node and zero on the other.
+With this definition, we are able to find a set of basis functions ${\varphi_1, \dots, \varphi_n}$ of $P$ dual to $N$ fulfilling $\Psi_i(\varphi_j) = \delta_{ij}$. In other words, these basis functions span the function space $P$ while each of them has the value one on their associated node and zero on the other. They form our finite element approximation as a linear combination $u_{\text{hp}}(\vec{x}) = \sum_{j} U_j \, \varphi_j(\vec{x})$, where coefficients $U_j$ are known as \glsfmtlongpl{dof}.
 
-When dealing with finite elements in practice, it is sufficient to work with nodes and shape functions once the type of element is known.
+We transform the original problem into a variation one by converting it to a weak formulation. This process belongs to the class of Galerkin methods, of which we distinguish between continuous and discontinuous methods. For the former, we require that our finite element approximation is continuous across cell interfaces resulting in shared \glspl{dof} on all transitions. For discontinuous methods, jumps of the approximation are possible on cell interfaces, and thus each cell has its own set of \glspl{dof} from which none are shared. Here, relations between cells are quantified via penalty methods that correlate \glspl{dof} on interfaces of neighboring cells.
 
-To be more specific, it is even sufficient to work on a reference cell and provide mappings on each mesh cell.
+With the weak formulation of the investigated problem, we are left to assemble and solve the corresponding system of linear equations for the unknown coefficients or \glspl{dof}. In practice, we calculate the corresponding integrals using quadrature rules and basis functions which have been mapped from a reference cell $\widehat{K}$.
 
-The most common type of finite element are Lagrangian elements, that base on Lagrangian interpolation. A showcase of Lagrangian elements up to third order polynomials are showcased in fig.~\ref{eq:lagrange}.
+When dealing with finite elements in practice, it is sufficient to work with nodes and shape functions once the type of element is specified. One of the most common types of finite elements are Lagrangian elements, that are based on Lagrangian interpolation. The distribution of nodes on quadrilaterals in Lagrangian elements up to fourth order polynomials are depicted in Fig.~\ref{fig:lagrange}.
 
 \begin{figure}
+\begin{subfigure}{.24\textwidth}
   \centering
-  \caption{Nodes of Lagrangian elements on quadrilateral reference cells.}
-  \label{eq:lagrange}
+  \input{figures/parallel/q1}
+  \caption{$Q_1$ element.}
+\end{subfigure}
+\begin{subfigure}{.24\textwidth}
+  \centering
+  \input{figures/parallel/q2}
+  \caption{$Q_2$ element.}
+\end{subfigure}
+\begin{subfigure}{.24\textwidth}
+  \centering
+  \input{figures/parallel/q3}
+  \caption{$Q_3$ element.}
+\end{subfigure}
+\begin{subfigure}{.24\textwidth}
+  \centering
+  \input{figures/parallel/q4}
+  \caption{$Q_4$ element.}
+\end{subfigure}
+\caption[Lagrangian elements $Q_p$.]{First four Lagrangian elements $Q_p$ on quadrilateral unit cells with $(1+p)^\text{dim}$ nodes each.}
+\label{fig:lagrange}
 \end{figure}
-
-
-In practice, we define a reference finite element for which all pro
-
-
-common choices are triangles or quadrilaterals in two and tetrahedra or hexahedra in three dimensions.
-
-%All these cells are mappings of a reference cell. Furthermore, we specify a finite-dimensional function space on the reference cell, called space of shape functions, in which we will find the solution of the investigated problem.
-
-Ultimately, we require a basis to the dual space $P'$ 
-
-With node functional, that are a basis to the dual space $P'$ of the function space $P$.
-
-nodal basis.
-
-
-The composition of cell, shape functions and support points is defined as a finite element. In computational applications, we will map a reference finite element to all others. Thus, we have a reference cell, reference shape functions and reference support points.
-
- we assign a set of shape functions with corresponding nodes to the reference cell.
-
-The collection of all cells with their corresponding finite elements assigned form the aforementioned function space. In the global mesh, each node for each finite element will be uniquely identified with a \gls{dof} on each cell. Consulting the weak formulation of the investigated problem, we are then able to formulate and solve the corresponding system of linear equations.
-
-\todo{add some equations and math symbols}
-$u_h(\vec{x}) = \sum_{j=0}^{N-1} U_j \varphi_j(\vec{x})$
-% $u_h \in V_h$
-
-\todo{Galerkin}
-Differences between continous and discontinuoius Galerkin methods.
 
 This is just a brief introduction to \gls{fem} in order to provide the fundamentals for this chapter and to specify the nomenclature used. More details on this topic can be found in common literature \parencite[e.g.][]{girault1986, elman2014, kuzmin2015} \todo{add more literature?}. Especially \textcite{brenner2008} provided a more rigorous and mathematically sound definition on finite elements.
 
 
-%\subsection{Adaptive methods for \glsfmtshort{fem}}
+\subsection{Adaptive methods for \glsfmtshort{fem}}
 
 In computational applications, adaptive methods are used to align the resolution or rather the processing power to the complexity of the investigated problem, i.e.\@ to specific sections of the domain. In terms of grid refinement, cells will be split twice per dimension, resulting in two, four or eight children in one, two or three dimensions, respectively. On the contrary, we join the corresponding amount of cells to their parent cell for grid coarsening. This process is also known as \h-adaptation, referring to adjusting the cell's length or diameter \(h\) locally. We require hierarchic relations between parent cells and their children that motivate the use of tree structures rooting in each cell of the initial coarse mesh. Combined this leads to a forest structure, in which each level corresponds to a full representation of the domain. The entirety of all leaves in this forest resembles the computational domain relevant for assembling and solving the system of equations. These particular cells, which have no children, are called active cells and are the only ones carrying \glspl{dof}.
 
+To be more specific, it is even sufficient to work on a reference cell and provide mappings on each mesh cell.
+
 Refinement level differences of neighboring active cells lead to hanging nodes which are vertices with no counterpart on the opposite side of the interface.
 
-Hanging nodes.
-fig.~\ref{fig:hangingnodes}
+Hanging nodes. From both \h- and \p-adaptation.
+Fig.~\ref{fig:hpadaptivity}
 
 For convenience, the level difference of neighboring cells is usually limited to one level in order to simplify interpolation between cell interfaces.
 
-
-
-\todo{Add figure with femtikz showcasing hanging nodes}
 \begin{figure}
+\begin{subfigure}{0.5\textwidth}
   \centering
-  \caption{Example of an \h-adapted mesh consisting of quadrilateral cells. Differences in the refinement level of neighboring cells gives rise to hanging nodes.}
-  \label{fig:hangingnodes}
+  \input{figures/parallel/hadaptivity}
+  \caption{\h-adaptation.}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \input{figures/parallel/padaptivity}
+  \caption{\p-adaptation.}
+\end{subfigure}
+\caption{Example of an \h-adapted mesh consisting of quadrilateral cells. Differences in the refinement level of neighboring cells gives rise to hanging nodes.}
+\label{fig:hpadaptivity}
 \end{figure}
 
 % irrelevant - Further, we require that two neighboring cells should not differ by more than one level of refinement. For quadrilateral or hexahedral meshes, this \textit{2:1 balance} ensures to limit the occurrence of hanging nodes.
@@ -80,11 +79,14 @@ For more information, \textcite{bangerth2003} have elaborated more rigorously on
 
 As an alternative to modifying the grid resolution, we can also adapt the function space using various finite elements associated with each cell. These finite elements may differ in the polynomial degree $p$ of their shape functions, offering the unique possibility for \p-adaptation, or \hp-adaptation when used together with grid adaptation.
 
-When using continuous Galerkin approximations, we need to .
+When using continuous Galerkin approximations, we need to formulate hanging node constraints.
 
 When the function space is a subset of a different finite element, we say that it dominates the other finite element.
 
 Dominating finite elements own \glspl{dof} on cell interfaces, with some minor exceptions as elaborated by \textcite{bangerth2009} who also provide more information on \hp-refinement.
+
+
+\subsection{Parallelization of \glsfmtshort{fem}}
 
 For distributed computing.
 
@@ -98,4 +100,21 @@ We distinguish between locally owned cells.
 
 Locally relevant cells are all active cells that are either locally owned or ghost cells, whereas artificial cells describe cells that are neither nor.
 
+\begin{figure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \input{figures/parallel/distribution_rank0}
+  \caption{Process with rank 0.}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \input{figures/parallel/distribution_rank1}
+  \caption{Process with rank 1.}
+\end{subfigure}
+\caption{Parallel distribution of a mesh on two processes.}
+\label{fig:paralleldistribution}
+\end{figure}
+
 This is just a brief outline of all the requirements that \textcite{bangerth2012} worked out, which is crucial for the upcoming section.
+
+We work with \dealii{}. This library works with quadrilaterals and hexahedrals only. All the considerations in this dissertation should be easily applicable on triangles and tetrahedra as well.
