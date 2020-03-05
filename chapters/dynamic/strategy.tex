@@ -12,12 +12,12 @@ Executing \h-adaptation on a \p-adaptive mesh reveals another challenge. We need
 \begin{figure}
 \begin{subfigure}{.5\textwidth}
   \centering
-  \input{figures/strategy/hprefinement}
+  \input{figures/dynamic/hprefinement}
   \caption{\hp-refinement.}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
   \centering
-  \input{figures/strategy/hpcoarsening}
+  \input{figures/dynamic/hpcoarsening}
   \caption{\hp-coarsening.}
 \end{subfigure}
 \caption[Inheritance of cell characteristics through \hp-adaptation.]{Inheritance of cell characteristics through \hp-adaptation. With \hp-refinement, all children will be associated with the parent finite element, while during \hp-coarsening, the finite element space chosen on the parent cell encapsulates all those of its children ($Q_1 \subset Q_2 \subset Q_3$).}
