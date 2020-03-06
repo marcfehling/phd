@@ -94,15 +94,19 @@ During the assembly of equation systems, we need to refer to surrounding cells t
 Further, we require that every process stores a copy of the common coarse mesh. This allows an easy construction of the whole grid during repartitioning just with adaptive methods. We establish the 2:1 mesh balance on all cells of the local mesh, leaving refined cells that are not actually used. These cells that are not locally relevant will be called \textit{artificial cells}. An example of a distributed, adapted mesh is shown in Fig.~\ref{fig:paralleldistribution} with all presented classes of cells.
 
 \begin{figure}
-\begin{subfigure}{.49\textwidth}
+\begin{subfigure}[t]{.35\textwidth}
   \centering
   \input{figures/parallel/distribution_rank0}
   \caption{Process with rank 0.}
 \end{subfigure}
-\begin{subfigure}{.49\textwidth}
+\begin{subfigure}[t]{.35\textwidth}
   \centering
   \input{figures/parallel/distribution_rank1}
   \caption{Process with rank 1.}
+\end{subfigure}
+\begin{subfigure}[t]{.28\textwidth}
+  \centering
+  \input{figures/parallel/distribution_legend}
 \end{subfigure}
 \caption{Parallel distribution of an \h-adapted mesh on two processes.}
 \label{fig:paralleldistribution}
