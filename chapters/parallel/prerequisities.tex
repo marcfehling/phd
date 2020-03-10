@@ -50,35 +50,43 @@ This is just a brief introduction to \gls{fem} in order to provide the fundament
 
 In computational applications, adaptive methods are used to align the resolution or rather the processing power to the complexity of the investigated problem, i.e.\@ to specific sections of the domain. In terms of grid refinement, cells will be split twice per dimension, resulting in two, four or eight children in one, two or three dimensions, respectively. On the contrary, we join the corresponding amount of cells to their parent cell for grid coarsening. This process is also known as \h-adaptation, referring to adjusting the cell's length or diameter \(h\) locally. We require hierarchic relations between parent cells and their children that motivate the use of tree structures rooting in each cell of the initial coarse mesh. Combined this leads to a forest structure, in which each level corresponds to a full representation of the domain. The entirety of all leaves in this forest resembles the computational domain relevant for assembling and solving the system of equations. These particular cells, which have no children, are called active cells and are the only ones carrying \glspl{dof}. For more information, \textcite{bangerth2003} have elaborated more rigorously on grid adaptation, especially for the \gls{fem} method.
 
-As an alternative to modifying the grid resolution, we can also adapt the function space using various finite elements associated with each cell. These finite elements may differ in the polynomial degree $p$ of their shape functions, offering the unique possibility for \p-adaptation, or \hp-adaptation when used together with grid adaptation.
+As an alternative to modifying the grid resolution, we can also adapt the function space using various finite elements associated with each cell. These finite elements may differ in the polynomial degree $p$ of their shape functions, offering the unique possibility for \p-adaptation, or \hp-adaptation when used together with grid adaptation. In practice, we specify a collection of finite elements, one of which is assigned to each cell in the domain. We identify the currently assigned finite element with an \textit{active finite element index} on each cell.
 
-Refinement level differences on quadrilateral or hexahedral meshes, as well as varying finite elements on neighboring active cells lead to hanging nodes which are nodes with no counterpart on the opposite side of the interface. In combination with \gls{cg} methods, the finite element approximation needs to be continuous on these nodes as well, which requires  constraining them to the surrounding ones. A depiction of \h- and \p-adaptive domains along with hanging nodes is presented in Fig.~\ref{fig:hpadaptivity}.
+Refinement level differences on quadrilateral or hexahedral meshes, as well as varying finite elements on neighboring active cells lead to hanging nodes which are nodes with no counterpart on the opposite side of the interface. A depiction of \h- and \p-adaptive domains along with hanging nodes is presented in Fig.~\ref{fig:hpadaptivity}.
 
 \begin{figure}
 \begin{subfigure}{0.49\textwidth}
   \centering
   \input{figures/parallel/hadaptivity}
   \caption{\h-adaptation.}
+  \label{fig:hapaptivity}
 \end{subfigure}
 \begin{subfigure}{0.49\textwidth}
   \centering
   \input{figures/parallel/padaptivity}
   \caption{\p-adaptation.}
+  \label{fig:papaptivity}
 \end{subfigure}
-\caption{Example of an \h-adapted mesh consisting of quadrilateral cells. Differences in the refinement level of neighboring cells gives rise to hanging nodes.}
+\caption{Example of an \h-adapted mesh consisting of quadrilateral cells. Differences in the refinement level of neighboring cells gives rise to hanging nodes. Note that both scenarios have the same number of \glspl{dof}.}
 \label{fig:hpadaptivity}
 \end{figure}
 
-For convenience, the level difference of neighboring cells is usually limited to one level in order to simplify interpolation between cell interfaces. For quadrilateral or hexahedral meshes, this \textit{2:1 mesh balance} ensures to limit the occurrence of hanging nodes.
+In combination with \gls{cg} methods, the finite element approximation needs to be continuous on these hanging nodes, which requires constraining them to the surrounding ones on the shared interface.
 
-Adaptive methods in the finite element context have been elaborated by \textcites{bangerth2003}{bangerth2009}.
+For \h-adaptive methods, we need to constrain hanging nodes from cells of a finer refinement level to the neighboring coarser cell by interpolation. A typical situation is depicted in Fig.~\ref{fig:hapaptivity}. For convenience, the level difference of neighboring cells is usually limited to one level in order to simplify interpolation between cell interfaces. For quadrilateral or hexahedral meshes, this \textit{2:1 mesh balance} ensures to limit the occurrence of hanging nodes.
+
+However, when different finite elements face each other in case of \p-adaptation, we need to impose continuity on these interfaces as well. This is performed by restricting the element with the higher polynomial degree to the continuity of the lower one. Following the example from Fig.~\ref{fig:papaptivity}, we would have to restrict the additional nodes of the $Q_4$ element to the ones of the $Q_2$ element on their shared line. To formulate it in a more general way, we need to constrain continuity of all neighboring finite elements to their largest common finite element subspace. We say that this particular element \textit{dominates} the others.
+
+There may be cases in which neighboring elements do not dominate each other, since they do not pose compatible continuity requirements. In this case, we pick a common subspace from the full collection. As an example, this would be the case for two neighboring vector-valued elements $(Q_2 \times Q_1)$ and $(Q_1 \times Q_2)$, which would be dominated by a $(Q_1 \times Q_1)$ element.
+
+This summary recaps data structures and algorithms for \hp-adaptive \gls{fem} which have been elaborated in great detail by \textcite{bangerth2009}.
+
+%This summary recaps data structures and algorithms for \hp-adaptive \gls{fem} as well as parallel \h-adaptive \gls{fem} which have been elaborated in great detail by \textcites{bangerth2012}{bangerth2009}, respectively.
 
 % make this part of the next chapter?
 %When the function space is a subset of a different finite element, we say that it dominates the other finite element.
 
 %Dominating finite elements own \glspl{dof} on cell interfaces, with some minor exceptions as elaborated by \textcite{bangerth2009} who also provide more information on \hp-refinement.
-
-
 
 
 \subsection{Parallelization of \glsfmtshort{fem}}
@@ -87,7 +95,7 @@ Adaptive methods in the finite element context have been elaborated by \textcite
 
 These ambitions pose different challenges on the design of data structures and information exchange between processes. Especially dynamic changes of the domain by \hp-adaptation are difficult, since they require the redistribution of the workload by repartitioning the global mesh, as well as the transfer of data not only between processes, but also between the former and the updated mesh. Here, we distinguish between different subsets of cells and \glspl{dof} which will be introduced in the following.
 
-Each process will only store data of cells that belong to its owned section of the domain. Those cells are called \textit{locally owned cells}, and all \glspl{dof} on them are referred to as \textit{locally active \glspl{dof}}. Every \gls{dof} will be uniquely enumerated on the global mesh. With \gls{cg} methods, \glspl{dof} on interfaces between cells of different processes may be owned by either one or the other. Thus, not all \glspl{dof} on locally owned cells have to be \textit{locally owned \glspl{dof}}.
+Each process will only store data of cells that belong to its owned section of the domain, which we call \textit{subdomain}. Those cells are called \textit{locally owned cells}, and all \glspl{dof} on them are referred to as \textit{locally active \glspl{dof}}. Every \gls{dof} will be uniquely enumerated on the global mesh. With \gls{cg} methods, \glspl{dof} on interfaces between cells of different processes may be owned by either one or the other. Thus, not all \glspl{dof} on locally owned cells have to be \textit{locally owned \glspl{dof}}.
 
 During the assembly of equation systems, we need to refer to surrounding cells that do not belong to the local domain. Typically, the halo spanning one level of cells around the locally owned domain is sufficient. We call these cells \textit{ghost cells}. Data from ghost cells has to be requested from the owning process. The combination of locally owned and ghost cells and their corresponding \glspl{dof} are labeled \textit{locally relevant}.
 
