@@ -15,8 +15,71 @@ We apply the algorithm step-by-step on this particular example and present its i
 \end{figure}
 
 \todo{Add step-by-step figures.}
+
+{% scope of variables
+\let\oldthesubfigure\thesubfigure
+\renewcommand{\thesubfigure}{Phase \arabic{subfigure}}
+
+\def\Length{1}
+\def\Radius{0.03}
+
 \begin{figure}
-  \centering
-  \caption{Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted. The left domain corresponds to the full mesh of processor with rank 0, the right one belongs to rank 1.}
-  \label{fig:enumdemosteps}
+\centering
+\begin{subfigure}{\textwidth}
+  \resizebox{\textwidth}{!}{
+    \input{figures/appendix/phase1_cpu0}
+    \hfill{}
+    \input{figures/appendix/phase1_cpu1}
+  }
+  \caption{Local enumeration.}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+  \resizebox{\textwidth}{!}{
+    \input{figures/appendix/phase2_cpu0}
+    \hfill{}
+    \input{figures/appendix/phase2_cpu1}
+  }
+  \caption{Tie-break.}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+  \resizebox{\textwidth}{!}{
+    \input{figures/appendix/phase3_cpu0}
+    \hfill{}
+    \input{figures/appendix/phase3_cpu1}
+  }
+  \caption{Unification.}
+\end{subfigure}
+\caption[]{(continued) Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted. The left domain corresponds to the full mesh of processor with rank 0, the right one belongs to rank 1.}
 \end{figure}
+
+\begin{figure}
+\ContinuedFloat
+\begin{subfigure}{\textwidth}
+  \resizebox{\textwidth}{!}{
+    \input{figures/appendix/phase4_cpu0}
+    \hfill{}
+    \input{figures/appendix/phase4_cpu1}
+  }
+  \caption{Global re-enumeration.}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+  \resizebox{\textwidth}{!}{
+    \input{figures/appendix/phase5_cpu0}
+    \hfill{}
+    \input{figures/appendix/phase5_cpu1}
+  }
+  \caption{Ghost exchange.}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+  \resizebox{\textwidth}{!}{
+    \input{figures/appendix/phase6_cpu0}
+    \hfill{}
+    \input{figures/appendix/phase6_cpu1}
+  }
+  \caption{Merge on interfaces.}
+\end{subfigure}
+\caption[]{(continued) Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted. The left domain corresponds to the full mesh of processor with rank 0, the right one belongs to rank 1.}
+\end{figure}
+
+\renewcommand{\thesubfigure}{\oldthesubfigure}
+}
