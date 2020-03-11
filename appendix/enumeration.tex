@@ -3,7 +3,13 @@
 
 This section delivers the lengthy demonstration of the enumeration algorithm for \glspl{dof} on the corresponding benchmark from Sec.~\ref{sec:enumeration}.
 
-The test case is composed out of four adjacent cells, from which two catty-cornered ones are assigned to the same Lagrangian finite element of either order two or four. The mesh is divided into two subdomains, each containing two neighboring cells of different finite elements. In this configuration, cells are either locally owned or ghost cells. The setup of the benchmark is shown in Fig.~\ref{fig:enumdemosetup}. This scenario covers all combinations of adjacent finite elements in the parallel \hp-adaptive context, which makes it a perfect minimal example. Here, we encounter neighboring cells with similar and different finite elements on the same and another subdomain, with dominating finite elements on either a locally owned or a ghost cell. We apply the algorithm step-by-step on this particular example and present its intermediate states in Fig.~\ref{fig:enumdemosteps}.
+The test case is composed out of four adjacent cells, from which two catty-cornered ones are assigned to the same Lagrangian finite element of either order two or four. The mesh is divided into two subdomains, each containing two neighboring cells of different finite elements. In this configuration, cells are either locally owned or ghost cells. The setup of the benchmark is shown in Fig.~\ref{fig:enumbenchmark}. %Fig.~\ref{fig:enumdemosetup}.
+
+This scenario covers all combinations of adjacent finite elements in the parallel \hp-adaptive context, which makes it a perfect minimal example. Here, we encounter neighboring cells with similar and different finite elements on the same and another subdomain, with dominating finite elements on either a locally owned or a ghost cell.
+
+For the bulk enumeration of locally owned \glspl{dof}, we comply to the scheme that is used in the \dealii{} library. We summarize how \glspl{dof} on Lagrangian element \textcite{dealiifeq} are enumerated in two dimensions: We iterate over all cells following a Z-order or Morton space filling curve, starting from the bottom left corner. On each cell, we first enumerate all \glspl{dof} on vertices in the same Z-order. Next, all interfaces in the order left, right, bottom, top are enumerated, each starting from the bottom left corner. Finally, all \glspl{dof} inside the quad are enumerated row-wise starting from the bottom left.
+
+We apply the algorithm step-by-step on this particular example and present its intermediate states in Fig.~\ref{fig:enumdemosteps}.
 
 {% scope of variables
 \let\oldthesubfigure\thesubfigure
@@ -12,13 +18,13 @@ The test case is composed out of four adjacent cells, from which two catty-corne
 \def\Length{1}
 \def\Radius{0.03}
 
-\begin{figure}
-\centering
-\input{figures/appendix/enumeration/setup}
-\input{figures/appendix/enumeration/setuplegend}
-\caption{Test setup for the enumeration algorithm for \glspl{dof}.}
-\label{fig:enumdemosetup}
-\end{figure}
+%\begin{figure}
+%\centering
+%\input{figures/appendix/enumeration/setup}
+%\input{figures/appendix/enumeration/setuplegend}
+%\caption{Test setup for the enumeration algorithm for \glspl{dof}.}
+%\label{fig:enumdemosetup}
+%\end{figure}
 
 \begin{figure}
 \centering
