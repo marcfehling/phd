@@ -1,20 +1,9 @@
 \chapter{Enumeration of \glsfmtlongpl{dof}: Demonstration}
 \label{app::enumeration}
 
-This section delivers the lengthy demonstration of the enumeration algorithm for \glspl{dof} on the corresponding benchmark from sec.\@ \ref{sec:enumeration}.
+This section delivers the lengthy demonstration of the enumeration algorithm for \glspl{dof} on the corresponding benchmark from Sec.~\ref{sec:enumeration}.
 
-The test case is composed out of four adjacent cells, from which two catty-cornered ones are assigned to the same Lagrangian finite element of either order two or four. The mesh is divided into two subdomains, each containing two neighboring cells of different finite element. In this configuration, cells are either locally owned or ghost cells. The setup of the benchmark is shown in fig.\@ \ref{fig:enumdemosetup}.
-
-We apply the algorithm step-by-step on this particular example and present its intermediate states in fig.\@ \ref{fig:enumdemosteps}.
-
-\todo{Add benchmark test figure.}
-\begin{figure}
-  \centering
-  \caption{Test setup for the enumeration algorithm for \glspl{dof}.}
-  \label{fig:enumdemosetup}
-\end{figure}
-
-\todo{Add step-by-step figures.}
+The test case is composed out of four adjacent cells, from which two catty-cornered ones are assigned to the same Lagrangian finite element of either order two or four. The mesh is divided into two subdomains, each containing two neighboring cells of different finite elements. In this configuration, cells are either locally owned or ghost cells. The setup of the benchmark is shown in Fig.~\ref{fig:enumdemosetup}. This scenario covers all combinations of adjacent finite elements in the parallel \hp-adaptive context, which makes it a perfect minimal example. Here, we encounter neighboring cells with similar and different finite elements on the same and another subdomain, with dominating finite elements on either a locally owned or a ghost cell. We apply the algorithm step-by-step on this particular example and present its intermediate states in Fig.~\ref{fig:enumdemosteps}.
 
 {% scope of variables
 \let\oldthesubfigure\thesubfigure
@@ -25,56 +14,65 @@ We apply the algorithm step-by-step on this particular example and present its i
 
 \begin{figure}
 \centering
+\input{figures/appendix/enumeration/setup}
+\input{figures/appendix/enumeration/setuplegend}
+\caption{Test setup for the enumeration algorithm for \glspl{dof}.}
+\label{fig:enumdemosetup}
+\end{figure}
+
+\begin{figure}
+\centering
 \begin{subfigure}{\textwidth}
   \resizebox{\textwidth}{!}{
-    \input{figures/appendix/phase1_cpu0}
+    \input{figures/appendix/enumeration/phase1_cpu0}
     \hfill{}
-    \input{figures/appendix/phase1_cpu1}
+    \input{figures/appendix/enumeration/phase1_cpu1}
   }
   \caption{Local enumeration.}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
   \resizebox{\textwidth}{!}{
-    \input{figures/appendix/phase2_cpu0}
+    \input{figures/appendix/enumeration/phase2_cpu0}
     \hfill{}
-    \input{figures/appendix/phase2_cpu1}
+    \input{figures/appendix/enumeration/phase2_cpu1}
   }
   \caption{Tie-break.}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
   \resizebox{\textwidth}{!}{
-    \input{figures/appendix/phase3_cpu0}
+    \input{figures/appendix/enumeration/phase3_cpu0}
     \hfill{}
-    \input{figures/appendix/phase3_cpu1}
+    \input{figures/appendix/enumeration/phase3_cpu1}
   }
   \caption{Unification.}
 \end{subfigure}
-\caption[]{(continued) Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted. The left domain corresponds to the full mesh of processor with rank 0, the right one belongs to rank 1.}
+\caption[Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case.]{Step-by-step demonstration of the enumeration algorithm for \glspl{dof} on the test case. Changes made at each step are highlighted. The left domain corresponds to the full mesh of processor with rank 0, the right one belongs to rank 1.}
+\label{fig:enumdemosteps}
 \end{figure}
 
 \begin{figure}
 \ContinuedFloat
 \begin{subfigure}{\textwidth}
   \resizebox{\textwidth}{!}{
-    \input{figures/appendix/phase4_cpu0}
+    \input{figures/appendix/enumeration/phase4_cpu0}
     \hfill{}
-    \input{figures/appendix/phase4_cpu1}
+    \input{figures/appendix/enumeration/phase4_cpu1}
   }
   \caption{Global re-enumeration.}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
   \resizebox{\textwidth}{!}{
-    \input{figures/appendix/phase5_cpu0}
+    \input{figures/appendix/enumeration/phase5_cpu0}
     \hfill{}
-    \input{figures/appendix/phase5_cpu1}
+    \input{figures/appendix/enumeration/phase5_cpu1}
   }
   \caption{Ghost exchange.}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
   \resizebox{\textwidth}{!}{
-    \input{figures/appendix/phase6_cpu0}
+    \input{figures/appendix/enumeration/phase6_cpu0}
     \hfill{}
-    \input{figures/appendix/phase6_cpu1}
+    \input{figures/appendix/enumeration/phase6_cpu1}
   }
   \caption{Merge on interfaces.}
 \end{subfigure}
