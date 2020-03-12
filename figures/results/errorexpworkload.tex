@@ -1,0 +1,33 @@
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+%  scale only axis,
+  xlabel=Number of \glspl{dof},
+  ylabel=H1 error,
+  legend pos=outer north east]
+%\addplot table [y=H1 error, x=ndofs, col sep=comma] {data/error/h.csv};
+%\addlegendentry{\h};
+
+\addplot table [y=H1 error, x=ndofs, col sep=comma, select coords between index={0}{5}] {data/error/p.csv};
+\addlegendentry{\p};
+
+\addplot table [y=H1 error, x=ndofs, col sep=comma, select coords between index={0}{5}] {data/error/hp-legendre.csv};
+\addlegendentry{\hp{}-Legendre};
+
+\addplot table [y=H1 error, x=ndofs, col sep=comma, select coords between index={0}{5}] {data/error/hp-fourier.csv};
+\addlegendentry{\hp{}-Fourier};
+
+\addplot table [y=H1 error, x=ndofs, col sep=comma, select coords between index={0}{6}] {data/error/hp-prediction.csv};
+\addlegendentry{\hp{}-prediction};
+
+%\addplot table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-legendre-naive.csv};
+%\addlegendentry{\hp{}-Legendre naive};
+%
+%\addplot table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-fourier-naive.csv};
+%\addlegendentry{\hp{}-Fourier naive};
+%
+%\addplot table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-prediction-naive.csv};
+%\addlegendentry{\hp{}-prediction naive};
+
+%\addplot[very thick, samples=100, domain=10000:50000] {10^(-2)*exp(10^(-3.9)*(-x+10000))}; % {10^(-4)*(-x+10000)};
+\end{semilogyaxis}
+\end{tikzpicture}

@@ -9,7 +9,8 @@
 %\usetikzlibrary{external}
 %\tikzexternalize[prefix=tikz/]
 
-% environment for tikzpicture containing legend only (see: http://tex.stackexchange.com/questions/54794/using-a-pgfplots-style-legend-in-a-plain-old-tikzpicture/54834#54834)
+% environment for tikzpicture containing legend only
+% see: http://tex.stackexchange.com/questions/54794/using-a-pgfplots-style-legend-in-a-plain-old-tikzpicture/54834#54834)
 % argument #1: any options
 \newenvironment{customlegend}[1][]{
   \begingroup
@@ -23,6 +24,16 @@
 }
 % makes \addlegendimage available (typically only available within an axis environment):
 \def\addlegendimage{\csname pgfplots@addlegendimage\endcsname}
+
+% Style to select only points from #1 to #2 (inclusive)
+% see: https://tex.stackexchange.com/questions/199376/how-to-plot-the-first-n-rows-of-a-table-using-pgfplots
+\pgfplotsset{select coords between index/.style 2 args={
+  x filter/.code={
+    \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+    \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+  }
+}}
+
 
 % ----- formatting -----
 \usepackage{titling}
