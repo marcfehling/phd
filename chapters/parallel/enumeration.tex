@@ -63,7 +63,7 @@ In detail, the complete algorithm consists of the following six steps, starting 
   \item \textit{Tie-break.}
   Go over all locally owned cells $K \in \cellsp{loc}$. If $K$ neighbors a ghost cell which has the same finite element assigned and belongs to a subdomain of lower rank $q < p$, then invalidate all \glspl{dof} on their shared interface.
   \item \textit{Unification.}
-  Go over all locally relevant cells $K \in \cellsp{rel}$. For all shared \glspl{dof} on interfaces to neighboring cells, assign the index from the dominating finite element to the \gls{dof}. If no dominating index has been found, pick the lower one. On interfaces to ghost cells, unify the indices only if the dominating element is assigned to the ghost cell. We will never overwrite a valid index on ghost interfaces.
+  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, assign the index from the dominating finite element to the \gls{dof}. If no dominating index has been found, pick the lower one. On interfaces to ghost cells, invalidate the indices if the dominating element is assigned to the ghost cell. We will never overwrite a valid index on ghost interfaces.
 %  This has to happen after the tie-break.
 \end{enumerate}
 At this stage, each process knows which indices are owned by him.
@@ -94,7 +94,9 @@ At this stage, all locally owned cells $K \in \cellsp{loc}$ have their correct \
   \item \textit{Ghost exchange.}
   Some ghost cells may still have invalid \gls{dof} indices assigned since the owning process did not know all correct indices on this particular cell when the last communication happened. Another ghost exchange closes this gap by repeating step 5. However this time, only data from those cells has to be communicated which had invalid \gls{dof} indices prior to step 5d.
 \end{enumerate}
-At the end of this algorithm, all global \gls{dof} indices have been set correctly, and every process knows the indices of all locally relevant \glspl{dof}. No new communication steps in addition to the two original ones from the \h-adaptive variant are introduced.
+One variant of this algorithm would be to modify steps 2 and 3 inasmuch as we apply the tie-break criterion on all \glspl{dof} on ghost interfaces and exclude them from \gls{dof} unification entirely. However, this would not assign shared \glspl{dof} to the dominating finite element on ghost interfaces, which would be inconsistent to the locally owned parts of the domain.
+
+At the end of this algorithm, all global \gls{dof} indices have been set correctly, and every process knows the indices of all locally relevant \glspl{dof}: All \glspl{dof} on interfaces belong to the dominating finite element on the process with the smallest rank. No new communication steps in addition to the two original ones from the \h-adaptive variant are introduced.
 
 A suitable benchmark that we used to test the enumeration algorithm consists of a two-dimensional domain of four neighboring cells. We provide two different Lagrangian elements that share at least one additional \gls{dof} per cell interface than only on vertices. For this purpose, we choose Lagrangian elements $Q_2$ and $Q_4$. Each of these finite elements will be assigned to two catty-cornered cells. Further, we divide the mesh into two subdomains containing two neighboring cells of differing finite elements. The whole setup is shown in Fig.~\ref{fig:enumbenchmark} and covers all aforementioned hanging node scenarios that we have encountered so far in parallel \hp-adaptive meshes. A step-by-step demonstration of the algorithm on this particular benchmark is presented in app.~\ref{app::enumeration}.
 
