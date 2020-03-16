@@ -57,20 +57,22 @@ In short, we take most parts of the parallel algorithm. We will add a \gls{dof} 
 In detail, the complete algorithm consists of the following six steps, starting with an initialization step flagged with `0`.
 \begin{enumerate}
   \item[0.] \textit{Initialization.}
-  On all locally relevant cells $K \in \cellsp{rel}$, \gls{dof} indices are set to an invalid value, for example $-1$.
+  On all locally relevant cells $K \in \cellsp{rel}$, \gls{dof} indices are set to an invalid value, for example $i \coloneqq -1$.
   \item \textit{Local enumeration.}
   Iterate over all locally owned cells $K \in \cellsp{loc}$ and assign valid \gls{dof} indices in ascending order, starting from zero.
   \item \textit{Tie-break.}
-  Go over all locally owned cells $K \in \cellsp{loc}$. If $K$ neighbors a ghost cell which has the same finite element assigned and belongs to a subdomain of lower rank $q < p$, then invalidate all \glspl{dof} on their shared interface.
+  Go over all locally owned cells $K \in \cellsp{loc}$. If $K$ neighbors a ghost cell which has the same finite element assigned and belongs to a subdomain of lower rank $q < p$, then invalidate all \glspl{dof} on their shared interface by setting their index to the invalid value $i$.
   \item \textit{Unification.}
-  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, constrain the \gls{dof} of the dominated finite element to the one of the dominating element. If no dominating \gls{dof} can be determined, constrain the \gls{dof} with the higher index to the lower one. Populate a list with identifiers of these constrained \gls{dof} pairs. In addition to that, invalidate the indices on interfaces to ghost cells if the dominating element is assigned to the ghost cell. Note that at this stage, we will never overwrite a valid index on ghost interfaces.
+  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, constrain the \gls{dof} of the dominated finite element to the one of the dominating element. If no dominating \gls{dof} can be determined, constrain the \gls{dof} with the higher index to the lower one. On interfaces to ghost cells, constrain \glspl{dof} to the invalid value $i$ if the dominating element is assigned to the ghost cell.
+%  Note that at this stage, we will never overwrite a valid index on ghost interfaces.
+  Populate a list with identifiers of these constrained \gls{dof} pairs.
 %  This has to happen after the tie-break.
 \end{enumerate}
 At this stage, each process knows which indices are owned by them.
 \begin{enumerate}[resume]
   \item \textit{Global re-enumeration.}
   Iterate over all locally owned cells $K \in \cellsp{loc}$
-  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned, while considering all constraints from the previous step. Remember the number of all valid \gls{dof} indices on this subdomain as $n_p$. In a next step, shift all indices by the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, by $\sum_{q=0}^{p-1} n_q$. This corresponds to a prefix sum or exclusive scan, and can be obtained via \texttt{MPI\_Exscan} \textcite{mpi31}.
+  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned, while considering all constraints from the previous step. Store the number of all valid \gls{dof} indices on this subdomain as $n_p$. In a next step, shift all indices by the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, by $\sum_{q=0}^{p-1} n_q$. This corresponds to a prefix sum or exclusive scan, and can be obtained via \texttt{MPI\_Exscan} \textcite{mpi31}.
 \end{enumerate}
 At this stage, all subdomains and processes have the correct index assigned to all locally owned \glspl{dof}.
 \begin{enumerate}[resume]
