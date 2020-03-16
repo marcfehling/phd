@@ -63,14 +63,14 @@ In detail, the complete algorithm consists of the following six steps, starting 
   \item \textit{Tie-break.}
   Go over all locally owned cells $K \in \cellsp{loc}$. If $K$ neighbors a ghost cell which has the same finite element assigned and belongs to a subdomain of lower rank $q < p$, then invalidate all \glspl{dof} on their shared interface.
   \item \textit{Unification.}
-  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, assign the index from the dominating finite element to the \gls{dof}. If no dominating index has been found, pick the lower one. On interfaces to ghost cells, invalidate the indices if the dominating element is assigned to the ghost cell. We will never overwrite a valid index on ghost interfaces.
+  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, constrain the \gls{dof} of the dominated finite element to the one of the dominating element. If no dominating \gls{dof} can be determined, constrain the \gls{dof} with the higher index to the lower one. Populate a list with identifiers of these constrained \gls{dof} pairs. In addition to that, invalidate the indices on interfaces to ghost cells if the dominating element is assigned to the ghost cell. Note that at this stage, we will never overwrite a valid index on ghost interfaces.
 %  This has to happen after the tie-break.
 \end{enumerate}
-At this stage, each process knows which indices are owned by him.
+At this stage, each process knows which indices are owned by them.
 \begin{enumerate}[resume]
   \item \textit{Global re-enumeration.}
   Iterate over all locally owned cells $K \in \cellsp{loc}$
-  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned. Remember the number of all valid \gls{dof} indices on this subdomain as $n_p$. In a next step, shift all indices by the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, by $\sum_{q=0}^{p-1} n_q$. This corresponds to a prefix sum or exclusive scan, and can be obtained via \texttt{MPI\_Exscan} \textcite{mpi31}.
+  and enumerate those \gls{dof} indices in ascending order that have a valid value assigned, while considering all constraints from the previous step. Remember the number of all valid \gls{dof} indices on this subdomain as $n_p$. In a next step, shift all indices by the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, by $\sum_{q=0}^{p-1} n_q$. This corresponds to a prefix sum or exclusive scan, and can be obtained via \texttt{MPI\_Exscan} \textcite{mpi31}.
 \end{enumerate}
 At this stage, all subdomains and processes have the correct index assigned to all locally owned \glspl{dof}.
 \begin{enumerate}[resume]
