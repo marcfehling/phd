@@ -1,0 +1,91 @@
+% Two bibliographies with different styles and sortings for publications and weblinks, respectively.
+%   based on: https://tex.stackexchange.com/questions/299064/
+
+\DeclareSourcemap{
+  % append keywords to identify different bibliography entries.
+  \maps[datatype=bibtex, overwrite]{
+    \map{
+      \perdatasource{bibliography.bib}
+      \step[fieldset=KEYWORDS, fieldvalue=primary, append]
+      % print the following fields only if there is no doi
+      \step[fieldsource=doi,final]
+      \step[fieldset=url,null]
+      \step[fieldset=urldate,null]
+      \step[fieldset=isbn,null]
+      \step[fieldset=issn,null]
+    }
+    \map{
+      \perdatasource{references.bib}
+      \step[fieldset=KEYWORDS, fieldvalue=secondary, append]
+      % print the following fields only if there is no doi
+      \step[fieldsource=doi,final]
+      \step[fieldset=url,null]
+      \step[fieldset=urldate,null]
+      \step[fieldset=isbn,null]
+      \step[fieldset=issn,null]
+    }
+  }
+}
+
+\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{#1}}
+\defbibenvironment{bibliographyNUM}
+{\list
+  {\printtext[labelnumberwidth]{%
+      \printfield{prefixnumber}%
+      \printfield{labelnumber}}}
+  {\setlength{\labelwidth}{\labelnumberwidth}%
+    \setlength{\leftmargin}{\labelwidth}%
+    \setlength{\labelsep}{\biblabelsep}%
+    \addtolength{\leftmargin}{\labelsep}%
+    \setlength{\itemsep}{\bibitemsep}%
+    \setlength{\parsep}{\bibparsep}}%
+  \renewcommand*{\makelabel}[1]{\hss##1}}
+{\endlist}
+{\iffieldequalstr{labeldatesource}{url}{\clearfield{labelyear}}{}% clear labelyear if no date specified
+\item}
+
+\assignrefcontextkeyws[sorting=none]{secondary}
+
+% modify cite and textcite macros for 'authoryear'
+%   based on: https://github.com/plk/biblatex/blob/dev/tex/latex/biblatex/cbx/authoryear.cbx
+
+\newbibmacro*{cite}{%
+  \ifkeyword{secondary}
+  % modification for additional bibliography
+  {\mkbibbrackets{\printtext[bibhyperref]{%
+    \printfield{labelprefix}\printfield{labelnumber}}}}
+  % original macro
+  {\iffieldundef{shorthand}
+  {\ifthenelse{\ifnameundef{labelname}\OR\iffieldundef{labelyear}}
+    {\usebibmacro{cite:label}%
+      \setunit{\printdelim{nonameyeardelim}}}
+    {\printnames{labelname}%
+      \setunit{\printdelim{nameyeardelim}}}%
+    \usebibmacro{cite:labeldate+extradate}}
+  {\usebibmacro{cite:shorthand}}}}
+
+\newbibmacro*{textcite}{%
+  \ifkeyword{secondary}
+  % modification for additional bibliography
+  {\mkbibbrackets{\printtext[bibhyperref]{%
+    \printfield{labelprefix}\printfield{labelnumber}}}}
+  % original macro
+  {\ifnameundef{labelname}
+  {\iffieldundef{shorthand}
+    {\usebibmacro{cite:label}%
+      \setunit{%
+        \global\booltrue{cbx:parens}%
+        \printdelim{nonameyeardelim}\bibopenparen}%
+      \ifnumequal{\value{citecount}}{1}
+      {\usebibmacro{prenote}}
+      {}%
+      \usebibmacro{cite:labeldate+extradate}}
+    {\usebibmacro{cite:shorthand}}}
+  {\printnames{labelname}%
+    \setunit{%
+      \global\booltrue{cbx:parens}%
+      \printdelim{nameyeardelim}\bibopenparen}%
+    \ifnumequal{\value{citecount}}{1}
+    {\usebibmacro{prenote}}
+    {}%
+    \usebibmacro{citeyear}}}}
