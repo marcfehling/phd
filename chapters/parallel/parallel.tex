@@ -1,14 +1,14 @@
-\chapter{Static \hp-adaptive \glsfmtlongpl{fem}}
+\chapter{Static parallel \hp-adaptive \glsfmtlongpl{fem}}
 \label{ch:parallel}
 \glsresetall
 
 Any kind of numerical method requires thorough thought on designing suitable algorithms and data structures with respect to correctness, robustness and performance. In general, the ideas behind implementations of these methods are similar and can be generalized.
 %, especially when they are based on the same numerical method.
-This is also the case for additional enhancements that improve basic realizations. In case of the \gls{fem} such features are, for example, parallelisation, adaptive methods, continuous or discontinuous Galerkin methods, and the support for complex geometries.
+This is also the case for additional enhancements that improve basic realizations. In case of the \gls{fem} such features are, for example, parallelization, adaptive methods, continuous or discontinuous Galerkin methods, and the support for complex geometries.
 
 In this chapter, we will present algorithms and data structures for parallel, \hp-adaptive \glsfmtlongpl{fem}. Generalized thoughts on each of the two aspects have already been presented: \textcite{bangerth2009} developed a general implementation for \hp-adaptive \gls{fem} software; and a generalized distributed computing approach of the \glsfmtlong{fem} has been introduced by \textcite{bangerth2012}. However, the consolidation of both features is not trivial, thus this chapter should be understood as an enhancement of the two aforementioned contributions and bases on large parts on it. We recommend a previous reading of both articles.
 
-We will elaborate on the trickiest facets in the following sections, after providing a brief overview about the basics that are necessary for its understanding.
+We will elaborate on the trickiest facets in the following sections, after providing a brief overview about the basics that are necessary for its understanding. A development log on all features introduced in the context of \hp-adaptive \gls{fem} can be found here \textcite{dealiiissue3511}.
 
 
 

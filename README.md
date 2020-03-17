@@ -15,7 +15,7 @@ Important things to consider:
 
 Chapters finished:
 - [ ] Introduction
-- [ ] Parallel hp-adaptive methods
-- [x] Dynamic hp-adaptive methods
+- [X] Static parallel hp-adaptive methods
+- [x] Dynamic parallel hp-adaptive methods
 - [ ] Application on Poisson's problem
 - [ ] Summary
