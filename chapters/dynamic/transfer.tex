@@ -21,9 +21,9 @@ A major requirement for a general parallel \hp-adaptive \gls{fem} application is
 
 In sequential and parallel applications with shared memory, each process has access to the complete memory set. However in \gls{hpc} applications with distributed memory, we need to transfer data on cells from processes that have previously owned them to processes that will own them after each adaptation or repartitioning.
 
-For MPI communication, we need to know the size of the data to be transferred, so that each process needs to know how much it will send and is going to receive. Since we measure and distribute workload per cell, we know how much data will be sent in case of \h-adaptation, since all cells share the same attributes. However, for \p-adaptation, the amount of \glspl{dof} might vary from cell to cell.
+For communication via \gls{mpi}, we need to know the size of the data to be transferred, so that each process needs to know how much it will send and is going to receive. Since we measure and distribute workload per cell, we know how much data will be sent in case of \h-adaptation, since all cells share the same attributes. However, for \p-adaptation, the amount of data might vary from cell to cell.
 %Without \p-adaptivity, the number of \glspl{dof} or rather the amount of data to store per cell does not differ. Thus, we know how much data to send or receive on each cell. This is no longer the case with \p-adaptivity.
-A first attempt to make data transfer available on \hp-adaptive meshes would be to make the buffer size as large as the number of \glspl{dof} of the highest polynomial finite element. But this would be highly inefficient, since buffers will be way larger than necessary. We need to find a way to send data efficiently.
+A first attempt to make data transfer available on \hp-adaptive meshes would be to make the buffer size as large as the biggest data chunk among all cells. But this would be highly inefficient, since buffers will be way larger than necessary. We need to find a way to send data efficiently.
 
 \textcite[Sec.~5.2]{burstedde2018} proposed to divide the data transfer into two separate ones that are optimized for each kind of transfer: One for fixed size data transfer, and one for variable size data transfer in this specific order. Information about sizes of the variable data buffers on each individual cell will be sent during the fixed size transfer. In either case, they use non-blocking communication for this purpose, which requires information about the association of cells to their owning process from both the old and the updated mesh as source and destination for the data transfer.
 
@@ -34,7 +34,7 @@ In the application scope, users will be required to provide functions that prepa
 \begin{figure}
 \centering
 \input{figures/dynamic/contiguousmemory}
-\caption[Division of contiguous memory chunks for data transfer.]{Division of contiguous memory chunks for data transfer. Data is arranged according to the order of the cells. Registering \textit{pack} functions as callbacks allows to add multiple data to each cell.}
+\caption[Division of contiguous memory chunks for data transfer.]{Division of contiguous memory chunks for data transfer. Data is arranged according to the order of the cells. Registering \textit{pack} functions as callbacks allows to add multiple data chunks from different sources to each cell.}
 \label{fig:memory}
 \end{figure}
 
@@ -42,13 +42,13 @@ For the preparation of data buffers, all refinement indicators need to be termin
 
 Simple data structures assigned on each cell can be easily packed and unpacked. On refined cells, we will distribute the same data from the parent on all children. However during coarsening, data needs to be merged from all children cells on the parent cell. Depending on the context, it is upon the user's decision to provide an appropriate strategy in this case, i.e.\@ the sum or average over all values, or to check whether data on all children is equal and choose these values.
 
-However, the transfer of full finite element approximations is slightly more complicated. Here, we need to prepare data on each cell not only depending on the adaptation context, but also on the currently active finite element. In fact, we will already prepare data from the old mesh for the adapted grid in such a way that it just has to be unpacked on the correct cells. \textcite{bangerth2012} developed an algorithm for transferring the solution across \h-adapted meshes in parallel, which we will expand to work with \hp-adaptation in the remaining part of this section.
+However, the transfer of full finite element approximations is slightly more complicated. Here, we need to prepare data on each cell not only depending on the adaptation context, but also on the currently active finite element. In fact, we will already prepare data from the old mesh for the adapted grid in such a way that it just has to be unpacked on the new mesh. \textcite{bangerth2012} developed an algorithm for transferring the solution across \h-adapted meshes in parallel, which we will expand to work with \hp-adaptation in the remaining part of this section.
 
 Once all adaptation indicators have been set, we know how cells will change during the execution of refinement and coarsening, so a corresponding \textit{pack} callback will look as follows: On all active cells which will not be coarsened, we interpolate or project all \gls{dof} values of the currently active finite element to the future finite element. On nonactive cells which have active children that will be coarsened, we interpolate or project all \gls{dof} values from the currently active finite elements on children to the future finite element of the parent cell, which is determined as the encapsulating finite element space among all children (see Sec.~\ref{sec:adaptation}).
 
 This way, all data has been prepared for the new mesh and has to be distributed on it with the following \textit{unpack} callbacks after \hp-adaptation happened and all \glspl{dof} have been enumerated on the updated mesh. On every active cell that has not been changed or that is the result of coarsening, we simply extract all \gls{dof} values. If an active cell is the result of refinement, we extract all \gls{dof} values from its parent cell and interpolate them on the refined cell. All extracted \gls{dof} values are left to be copied to the global data container corresponding to the finite element approximation.
 
-In the following, we give a detailed description of the algorithm implemented in the \dealii{} library which is tied to the usage of \pforest{} as an oracle and relies on features provided by it. Here, the \dealii{} triangulation will be stored independently from the \pforest{} mesh.
+In the following, we give a detailed description of the algorithm implemented in the \dealii{} library which is tied to the usage of \pforest{} \textcite{p4est22} as an oracle and relies on features provided by it. Here, the \dealii{} triangulation will be stored independently from the \pforest{} mesh.
 
 In the application scope before adaptation is executed, users attach \textit{pack} callback functions to the triangulation and specify whether they qualify for fixed or variable size data transfer.
 
@@ -62,15 +62,15 @@ We store a deep copy of the array of partition markers \parencite{burstedde2018}
 
 Comparing the meshes of the updated \pforest{} object with the \dealii{} triangulation lets us identify how cells have changed.
 %This way, we can compare both and determine how cells have changed in the adaptation process.
-With this information, we are able to prepare data from the old mesh for the new one. We create the contiguous memory buffers for fixed size and variable size data transfer, respectively, by triggering all callback functions that return buffers for the particular data on each cell. First, we will store how cells have changed with a corresponding flag and write it to the fixed size buffer.
+With this information, we are able to prepare data from the old mesh for the new one. We create the contiguous memory buffers for fixed size and variable size data transfer, respectively, by triggering all callback functions that return buffers for the particular data on each cell. In addition, we will store how cells have changed with a corresponding flag and write it to the fixed size buffer.
 
-We determine the sizes of every cell's data pack in each buffer. For fixed size data, we verify the equality of their size on all cells. We store a list with the data size of every cell from the variable size buffer. After that, the fixed size data buffer and a list of all sizes from the variable size data buffer will be communicated via the optimized fixed size transfer function provided by \pforest{} \parencite{burstedde2018}. Last, the variable size data buffer will be transferred using the analogously optimized function after the list of sizes is available on all processes.
+We determine the sizes of every cell's data pack in each buffer. For fixed size data, we verify the equality of their size on all cells. We store a list with the data size of every cell from the variable size buffer. After that, the fixed size data buffer and the list of sizes from the variable size buffer will be communicated via the optimized fixed size transfer function provided by \pforest{} \parencite{burstedde2018}. Last, the variable size data buffer will be transferred using the analogously optimized function after the list of sizes is available on all processes.
 
 %We will communicate the fixed size data buffer and a list of all sizes from the variable size data buffer via the optimized fixed size transfer function provided by \pforest{} \parencite{burstedde2018}. In a next step, variable size data will be transferred after the individual sizes are available.
 
 %We could also send the variable data sizes with the fixed size data transfer. However for convenience, we keep it like this.
 
-After adaptation has been performed and all data has been communicated, the user is left to reinitialize all data storing structures according to the updated mesh and \textit{unpack} the transferred data into them.
+After adaptation has been performed and all data has been communicated, the user is left to reinitialize all data structures according to the updated mesh and \textit{unpack} the transferred data into them.
 
 %We came up with the following code in application scope to perform data transfer across meshes: We will first register data to be transferred. Storing function pointers that deal with packing required data. We distinguish between fixed and variable size data.
 %
@@ -97,7 +97,7 @@ We need to determine the offset at which each process is supposed to write its l
 
 To resume the program successfully, we also need to store information about the data size of every cell, which we will prepend to the actual data in each file. In case of fixed size data, an integer corresponding to the data size per cell will be stored. For variable size data, we will collectively write the data size of every local cell in the global file, where each process's offset is determined by the global index of the first cell times the size of an integer.
 
-Finally with these information, we can write all data collectively to the file system using \texttt{MPI\_File\_write\_at}, which can later be read via \texttt{MPI\_File\_read\_at}. For the serialization of the global mesh structure, we use the provided save and load functions of \pforest{}.
+Finally with these information, we can write all data collectively to the file system using \texttt{MPI\_File\_write\_at} \textcite{mpi31}, which can later be read via \texttt{MPI\_File\_read\_at} \textcite{mpi31}. For the serialization of the global mesh structure, we use the provided save and load functions of \pforest{}.
 
 %With array of partition markers of the \pforest{} object \parencite{burstedde2018} combined with information about each cell's data size, we are able to determine the offset from the starting address that each processor needs to dump his data by a prefix sum over the cumulated data sizes.
 

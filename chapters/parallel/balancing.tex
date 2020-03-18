@@ -6,7 +6,7 @@ The efficient use of all computational resources requires a uniform distribution
 In most \h-adaptive applications, cells are similar and correspond to the same workload. Thus, we can simply balance the number of cells on all processes. However with \hp-adaptive application, this is no longer the case due to the diversity of finite elements. %Here, the workload varies with the number of \glspl{dof} on each cell. (and the quadrature)
 In this case, since the domain is partitioned on the basis of cells, we need to assign a corresponding weight to every cell that determines its individual workload and balance the cumulated weights among all processes.
 
-The workload of each cell depends on its assigned finite element and quadrature formula, and correlates to the number of \glspl{dof} and quadrature points, among other quantifiable values that depend on the individual problem. For example, Lagrangian elements of different order as depicted in Fig.~\ref{fig:lagrange} each have a distinct number of \glspl{dof} assigned.
+The workload of each cell depends on its assigned finite element and quadrature formula, and correlates to the number of \glspl{dof} and quadrature points, among other quantifiable values that depend on the individual problem. For example, Lagrangian elements of different order as depicted in Fig.~\ref{fig:lagrange} each have a distinct number of \glspl{dof}.
 
 %For example, consider Lagrangian elements of different polynomial degrees with different number of \glspl{dof} depicted in Fig.~\ref{fig:lagrange} require a different workload, mainly consumed by matrix assembly and the solution process.
 
@@ -27,11 +27,11 @@ For the purpose of load balancing, \textcite[Sec.~3.3]{burstedde2011} provided a
 
 In the context of \hp-adaptive \gls{fem} applications, we identify the assembly of the linear equation system and its solution as the most expensive tasks, and correlate their individual contribution to the workload on each cell with the number of \glspl{dof} from the assigned finite element.
 %As a first indicator for the workload, we make the number of \glspl{dof} responsible.
-The workload of efficient solvers scales with the number of \glspl{dof} $\mathcal{O}\left(n_\text{dofs}\right)$, while we suppose that the workload of the assembly will be of order $\mathcal{O}\left(n_\text{dofs}^2\right)$ since we fill quadratic matrices.
+The workload of efficient solvers scales with the number of \glspl{dof} $\mathcal{O}\left(n_\text{dofs}\right)$, while we suppose that the workload of the assembly will be of order $\mathcal{O}\left(n_\text{dofs}^2\right)$ since we fill quadratic semi-matrices.
 
 We expect that the actual workload of an \hp-adaptive \gls{fem} application will actually scale with an order somewhere in between the two, i.e.\@ $\mathcal{O}\left(n_\text{dofs}^c\right)$ with a constant exponent $c \in [1,2]$. We use this strategy for investigations in this dissertation in which we also determine a suitable exponent $c$.
 
-Alternatively, weighting each cell with a factor of $(a \, n_\text{dofs}^2 + b \, n_\text{dofs})$ appears conceivable, for which the partitioning results depend on the ratio of both constants $a$ and $b$.
+Alternatively, weighting each cell with a factor of $(a \, n_\text{dofs}^2 + b \, n_\text{dofs})$ also appears conceivable, for which the partitioning results depend on the ratio of both constants $a$ and $b$.
 
 %We will assign a weight $n_\text{dofs}^i$ to every cell, % and balance the cumulated sum of cells to be equal on all processes. We can do that with a prefix sum.
 
