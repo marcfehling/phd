@@ -7,3 +7,28 @@ Extensions:
 Geometric multigrid
 
 Regularity estimation (see houston 2005 for references), houston 2003
+
+
+How application on fluid problems. We could use different criteria to decide for \hp-adaptation. The vorticity $\vec{w} = (\nabla \times \vec{v})$ or the dimensionless Reynolds number $\mathrm{Re} = (v L / \nu)$ would make up a good measure, with the velocity $\vec{v}$, the kinematic viscosity $\nu$ and a characteristic length $L$. We would prefer \h-refinement on turbulent regions indicated by a high vorticity or Reynolds number, and \p-refinement in laminar regions.
+
+
+While static \hp-adaptive methods have been frequently used in multi-physics problems in \dealii{}, the actual application of \hp-adaptive methods stayed mostly experimental within \dealii{} because of its inconvenient application. With the current interface as redesigned in this dissertation hopefully simplifies its usage so taht it attracts for users and it hopefully becomes a widely used feature in the community.
+
+
+In parallel, \hp-adaptive methods have not been made publicly accessible in this scope before.
+
+for \gls{cg} methods
+
+We are left to provide an easily accessible tutorial program describing all features in the tradition of the \dealii{} library.
+
+
+Our implementation is still at an early stage of development, and there is still plenty of room for improvement, as we described throughout all chapters of this dissertation. These points involve ... proper parallel geometric multigrid preconditioning, new strategies to decide between \h- and \p-adaptation
+
+Enhancement to use matrix-free methods. Memory access is bottleneck on hpc machines. Instead of calculating matrix entries and storing them, it might be cheaper to calculate them on the fly when they are requested. Combined with vectorization, this is highly favorable on current \gls{hpc} machines.
+
+
+Future work involves figuring out if it is possible to combine \hp-adaptive methods with matrix-free methods.
+
+An implementation in the hyper.deal \parencite{munch2020} package would be highly interesting.
+
+Recently, this approach has been published as hyper.deal for high-order \gls{dg} methods.
