@@ -13,11 +13,11 @@ These modifications do not have to happen uniformly on a global scale, but can b
 \begin{align}
 \label{eq:error_sum} \left\|e_\text{hp}\right\|_{H^1(\Omega)}^2 = \sum\limits_{K \in \Omega} \left\|e_\text{hp}\right\|_{H^1(K)}^2 \,\text{.}
 \end{align}
-Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. \textcite[Thm.~5.1]{guo1986} predicted exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ on a suitable \hp-adapted mesh:
+Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. \textcites[Thm.~5.1]{guo1986}[Thm.~2.5.2, Thm.~3.5.1]{babuska1996} predicted exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ on a suitable \hp-adapted mesh if the solution $u$ is sufficiently regular:
 \begin{align}
-\label{eq:errorbound_exp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^{1 / 3}\right) \,\text{,}
+\label{eq:errorbound_exp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^\alpha \right) \,\text{,}
 \end{align}
-where constants $b > 0$ and $C$ are both independent of $n_\text{dofs}$.
+where constants $b > 0$ and $C$ are both independent of $n_\text{dofs}$, and $\alpha = 1/3$ for two or $\alpha = 1/5$ for three dimensional problems.
 
 With sufficient information about the investigated scenario, an \hp-adaptive grid can be tailored to its specifics manually. However, grid adjustments by hand may not be optimal. Furthermore, not all peculiarities about the scenario are generally known in advance, which is especially the case for problems with complex geometries and time dependent ones.
 
