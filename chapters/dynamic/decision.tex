@@ -15,12 +15,12 @@ These modifications do not have to happen uniformly on a global scale, but can b
 \end{align}
 Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation.
 
-On a family of suitably chosen \h-adaptive meshes, \textcite{babuska1996} found the following upper bounds for the global error relative to the number of \glspl{dof} $n_\text{dofs}$:
+On a reasonable family of quasiuniform meshes with an identical polynomial degree of all finite elements, \textcite{babuska1996} found the following upper bounds for the global error relative to the number of \glspl{dof} $n_\text{dofs}$:
 \begin{align}
 \label{eq:errorbound_ana} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, n_\text{dofs}^{\mu/\text{dim}} \,\text{,} \\
 \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^{1/\text{dim}} \right) \,\text{,}
 \end{align}
-where constants $b > 0$ and $C$ are both dependent on $m$, but independent of $n_\text{dofs}$. On suitable \hp-adaptive meshes however, \textcites[Thm.~5.1]{guo1986}[Thm.~2.5.2, Thm.~3.5.1]{babuska1996} predicted an even stronger exponential convergence for elliptic problems if the solution $u$ is sufficiently regular:
+where constants $b > 0$ and $C$ are both dependent on $m$, but independent of $n_\text{dofs}$. On suitably chosen \hp-adaptive meshes however, \textcites[Thm.~5.1]{guo1986}[Thm.~2.5.2, Thm.~3.5.1]{babuska1996} predicted an even stronger exponential convergence for elliptic problems if the solution $u$ is sufficiently regular:
 \begin{align}
 \label{eq:errorbound_exp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^\alpha \right) \,\text{,}
 \end{align}
