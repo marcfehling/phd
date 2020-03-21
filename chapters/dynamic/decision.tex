@@ -13,7 +13,11 @@ These modifications do not have to happen uniformly on a global scale, but can b
 \begin{align}
 \label{eq:error_sum} \left\|e_\text{hp}\right\|_{H^1(\Omega)}^2 = \sum\limits_{K \in \Omega} \left\|e_\text{hp}\right\|_{H^1(K)}^2 \,\text{.}
 \end{align}
-Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. \textcites[Thm.~5.1]{guo1986}[Thm.~2.5.2, Thm.~3.5.1]{babuska1996} predicted exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ on a suitable \hp-adapted mesh if the solution $u$ is sufficiently regular:
+Thus it all comes down to find those sections that have a significant contribution to the global error, and mitigate their impact by local adaptation. In relation to the global error on \h-adaptive meshes, \textcite{babuska1996} stated analytic convergence with the number of \glspl{dof} $n_\text{dofs}$:
+\begin{align}
+\label{eq:errorbound_ana} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, n_\text{dofs}^{\mu/\text{dim}} \,\text{,}
+\end{align}
+where $C$ denotes a constant dependent on $m$ but independent of $n_\text{dofs}$. On suitable \hp-adaptive meshes, \textcites[Thm.~5.1]{guo1986}[Thm.~2.5.2, Thm.~3.5.1]{babuska1996} even predicted exponential convergence with the number of \glspl{dof} $n_\text{dofs}$ if the solution $u$ is sufficiently regular:
 \begin{align}
 \label{eq:errorbound_exp} \left\|e_\text{hp}\right\|_{H^{1}(\Omega)} &\leq C \, \exp\left(- b \, n_\text{dofs}^\alpha \right) \,\text{,}
 \end{align}
