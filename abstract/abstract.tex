@@ -1,5 +1,9 @@
 \begin{abstract}
 Abstract.
 
+\hp-adaptive finite element methods for continous and discontinuous Galerkin methods on distributed memory systems.
+
+We present algorithms for the automatic identification of areas for adaptation and decision criterion to decide between \h- or \p-adaptation
+
 We provide a reference implementation in the \dealii{}\footnote{\url{https://www.dealii.org}} library and apply it to the Laplace problem on a domain with a reentrant corner which invokes a singularity. With this example, we demonstrate the benefits of the \hp{}-adaptive methods and show that our algorithm scales up to 49,152 \texttt{MPI} processes.
 \end{abstract}

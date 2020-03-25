@@ -53,11 +53,17 @@ This thesis presents the combination of both parallelization on distributed hard
 For spatial discretizations we use . The \gls{fem}
 
 
-Parallel \hp-adaptive \gls{fem} has been , but always in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcite{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} presented methods for shared memory machines. A general approach that also works with \gls{cg} methods is missing.
+Parallel \hp-adaptive \gls{fem} has been , but always in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} presented methods for shared memory machines. A general approach that also works with \gls{cg} methods is missing.
+
+%\textcite{paszynski2006}
+% demkovisz par
 
 However, \hp-adaptive methods have always stayed in an experimental scope and have never been prepared to be easily applied by a broader academic audience, especially in combination with parallelization.
 
-Though there are several open-source libraries that provide the bare functionality for \hp-adaptive \gls{fem} on distributed memory architectures using the \gls{mpi} protocol, namely the libraries \phaml{} \parencites{mitchell2002}{phaml1200}, \phg{} \parencites{zhanglin-bo2019}{phg094}, and \mofem{} \parencites{kaczmarczyk2020}{mofem090}. However, even here the application of these features is not immediately accessible to the end user and it is difficult to make an easy use out of these features.
+Though there are several open-source libraries available to the public that provide the bare functionality for \hp-adaptive \gls{fem} on distributed memory architectures using the \gls{mpi} protocol, such as the libraries \phaml{} \parencites{mitchell2002}{phaml1200}, \phg{} \parencites{zhanglin-bo2019}{phg094}, and \mofem{} \parencites{kaczmarczyk2020}{mofem090}. However, even here the application of these features is not immediately accessible to the end user and it is difficult to make an easy use out of these features.
+
+% par3dhp - not publicly available
+% hermes - only openmp parallelization
 
 Further, although parallel \hp-adaptive \glspl{fem} have been presented thoroughly, there is no systematic description on how to realize them yet as a software application. There are publications that highlight all necessary data structures and algorithms parallelization (parallel paper) and \hp-adaptive methods. % todo
 
@@ -66,3 +72,5 @@ The goal of this dissertation is to provide the connection between both algorith
 In the \dealii{} library, we rely on third party libraries. Parallel linear algebra by \trilinos{} and \petsc{}.
 
 The whole parallel grid adaptation is done with \pforest{}. While linear algebra with interfaces, we use \pforest{} as an oracle. That means we store a separate copy of the traingulation inside \pforest{} and apply their algorithms on it and then transfer the changes back to the \dealii{} data structures.
+
+Some of the algorithms presented in this dissertation have already been published in the current release of the \dealii{} library \parencite{arndt2019} and their entirety will be made available completely with the upcoming release. All numerical examples in this dissertation have been performed using a certain a version of the library published on a public fork \textcite{finaldissertation} of the corresponding \dealii{} repository \textcite{dealii}.
