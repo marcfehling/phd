@@ -3,7 +3,7 @@
 
 Formulating and solving the system of linear equations requires an identification of all involved \glspl{dof} in the global mesh by an integer number.
 
-For \gls{dg} methods, \glspl{dof} on interfaces are attributed to each cell. Thus, the enumeration of both \glspl{dof} and cells happens analogously. However, \gls{cg} methods require that shared \glspl{dof} on interfaces between neighboring cells are uniquely identified. Thus, each \gls{dof} has to be assigned to a single cell, or in other words, will be owned by a single cell.
+For \gls{dg} methods, \glspl{dof} on interfaces are attributed to each cell. Thus, the enumeration of both \glspl{dof} and cells happens analogously. However, \gls{cg} methods require that shared \glspl{dof} on interfaces between neighboring cells are uniquely identified. Thus, each \gls{dof} has to be assigned to a single cell, or in other words, will be owned by a single cell. This assignment is crucial for the preparation of relevant data structures.
 
 %Depending on which Galerkin method has been picked, we need to ... .
 %Continous Galerkin methods require a unique identification of \glspl{dof} on interfaces between cells, because of the continuity requirement on the solution.
