@@ -1,39 +1,55 @@
 \section{Load balancing heuristics}
 \label{sec:heuristics}
 
+% introduction
+
+For parallel computations on distributed memory systems, the global domain is partitioned into several subdomains, each of which is assigned to a single process. Such a mesh decomposition is showcased in Fig.~\ref{fig:decomposition}.
+
 \begin{figure}
 \centering
 Insert decomposition vtk plot here.
-\caption{Decomposition of the mesh from Fig.~\ref{fig:fedegrees} on 16 \gls{mpi} processes with default weighting. Each color represents a different subdomain.}
+\caption{Decomposition of the mesh from Fig.~\ref{fig:fedegrees} on 16 \gls{mpi} processes with constant weighting. Each color represents a different subdomain.}
 \label{fig:decomposition}
 \end{figure}
 
-Text. JURECA supercomputer \parencite{krause2016}. Each node is equipped with two Intel Xeon E5-??? with 12 cores running at 3.1 GHz and 128GB of memory. With multithreading, a total of 48 processes per node are available.
+Proper load balancing is necessary for an efficient use of all computational resources. Especially on \gls{hpc} systems with lots of available processors, this is a critical feature. For \hp-adaptive \gls{fem}, we presented approaches for load balancing in Sec.~\ref{sec:loadbalancing} by assigning weights to each individual cell. We relate the weight to the number of \glspl{dof} on each cell potentiated by an exponent that we will determine in the upcoming investigations. Or in other words, cell weights are chosen proportional to $n_\text{dofs}^i$ with the exponent $i$ to be ascertained.
 
-To make our problem relevant for parallel applications, we need to increase the problem size drastically. We decide to increase the number of initial global refinements to \todo{12?}. and perform our investigations on two distinct nodes which involves communication between two physically independent memory segments. Thus we have a total of 96 number of \gls{mpi} processes at our disposal. We expect that this setup will yield representative results that we can extrapolate on even larger problem sizes.
+Although all three \hp-adaptive strategies have demonstrated a similar performance as shown in Sec.~\ref{sec:errorvsperformance}, we pick only one adaptation strategy for our parallel investigations. We choose the smoothness estimation strategy based on the decay of Legendre coefficients as the most efficient one for this purpose.
 
-For our investigations, we use a flat \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for the analysis in this dissertation.
+% system specifications
 
-We provided approaches for load balancing in Sec.~\ref{sec:loadbalancing}. We will stick to the approach of finding a proper exponent for the strategy.
+Investigations are carried out on the JURECA supercomputer \parencite{krause2016}. Each computing node is equipped with two Intel Xeon E5-2680 v3 processors with twelve cores running at 2.5GHz and 128GB of memory. With simultaneous multithreading, a total of 48 processes are available per node. Communication between nodes happens via a Mellanox EDR InfiniBand high-speed network.
 
-Although all three \hp-adaptive strategies have demonstrated a similar performance as showcased in Fig.~\ref{fig:?}, we choose only one adaptation strategy for all parallel investigations. We pick the smoothness estimation strategy with Legendre coefficient decay for this.
+Our investigations are performed on two distinct nodes, which provides a total of 96 \gls{mpi} processes and involves communication between two physically independent memory segments. We expect that this setup yields representative results that can be extrapolate on even larger problem sizes.
 
-We will resume a scenario previously serialized on the file system with different weighting exponents. The scenario with \todo{12?} initial global refinements and adapt the mesh on \todo{6?} consecutive iterations before serializing it. For the strategy with the Legendre coefficient decay, this results in a total number of \todo{1,000,000?} \glspl{dof}, so that each process will be assigned with a number of \glspl{dof} in the order of \todo{100,000}. Any type of finite elements from the collection is at least represented once in the mesh.
+For our investigations, we use a 'flat' \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for all analyses in this dissertation.
 
-For resumed scenarios in which the mesh will be partioned according to weights with different weighting exponents, we relate the walltime of the program as well as these parts which are relevant for the , against the weighting in Fig.~\ref{fig:weights}.
+% problem specifications
 
-Again, to mitigate the impact of temporary slowdowns on the supercomputer due to a high loads on memory and network bandwidth, we repeat each run for a total of \todo{five?} times and take the minimal runtime in each category over all runs.
+To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with \todo{12?} global refinements and gets adapted by \todo{6?} iterations. For the strategy with the Legendre coefficient decay, this results in a total number of \todo{1,000,000?} \glspl{dof}, so that each process will be assigned with a number of \glspl{dof} in the order of \todo{100,000}. Each type of finite element from the provided collection is represented at least once in the mesh.
 
-We show those categories that whose runtime / workload is affected by the number of \glspl{dof}, which are the assembly of the equation system and their solution. We see that the solution of the equation system takes about 90\% of the total runtime and is the crucial factor in ... \todo{?}. Thus we find the minimum of both at a weighting exponent of $i = 1.9$.
+This advanced scenario will form the basis of our investigations to see how different weighting exponents affect the wall time, and which one provides a minimum. With serialization, we ensure that each of these runs conforms to the same conditions. Again, to mitigate the impact of temporary slowdowns on the supercomputer due to high loads on memory and network bandwidth, we repeat each run for a total of \todo{five?} times and take the minimum wall time in each category over all runs.
 
-We were expecting a minimum in the assembly at about $i = 2$, but found it was decaying even at higher exponents. We don't have an explanation for this.
+% results
 
-We set an weighting expoenent to a value of $i = 1.9$ for the following considerations regarding scalability.
+For varying weighting exponents, we compare the wall times of the full adaptation cycle and its relevant sections
+%For resumed scenarios in which the mesh will be partitioned according to weights with different weighting exponents, we compare the wall time of critical sections of the program as well as the total wall time
+%between runs with different weighting exponents
+in Fig.~\ref{fig:weights}.
 
 \todo{Second scale for assembly/discontinued axis with groupplot https://tex.stackexchange.com/questions/46422/axis-break-in-pgfplots}
 \begin{figure}
 \centering
 \input{figures/results/weights}
-\caption{Load balancing.}
+\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and its relevant parts for load balancing. Weights proportional to $n_\text{dofs}^i$ will be assigned to each cell with varying exponents $i$.}
 \label{fig:weights}
 \end{figure}
+
+The assembly of the equation system and the its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about \todo{90}\% of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $i = 1.9$.
+
+We were surprised to find the minimum wall time of the solver at such a high exponent, since we expected $i = 1$ for an efficient solver. This may be related to the implementation of the preconditioner combined with the disorder that \hp-adaptive methods cause in the system matrix. Further, we were expecting a minimum in the assembly at about $i = 2$, but found it was decaying at even higher exponents. We have no explanation for this behavior. Analyzing the effect of cell weighting on each individual section of the program
+%the load balancing
+will be subject of further investigations.
+
+% Next step
+%We set an weighting expoenent to a value of $i = 1.9$ for the following considerations regarding scalability.
