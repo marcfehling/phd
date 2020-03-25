@@ -28,5 +28,9 @@
 \addlegendentry{\hp{}-prediction naive};
 
 %\addplot[very thick, samples=100, domain=10000:50000] {10^(-2)*exp(10^(-3.9)*(-x+10000))}; % {10^(-4)*(-x+10000)};
+\addplot[very thick, samples=100, domain=100000:20000000] {10^(3.3)/(x)};
+\addlegendentry{$\propto n_\text{dof}^{-1}$};
+%\addplot[very thick, samples=100, domain=10000:10000000] {2/(sqrt(x))};
+%\addlegendentry{$n_\text{dof}^{-1/2}$};
 \end{loglogaxis}
 \end{tikzpicture}

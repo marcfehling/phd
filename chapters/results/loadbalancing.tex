@@ -1,9 +1,36 @@
 \section{Load balancing heuristics}
 \label{sec:heuristics}
 
-Text.
+\begin{figure}
+\centering
+Insert decomposition vtk plot here.
+\caption{Decomposition of the mesh from Fig.~\ref{fig:fedegrees} on 16 \gls{mpi} processes with default weighting. Each color represents a different subdomain.}
+\label{fig:decomposition}
+\end{figure}
 
-\todo{Second scale for assembly}
+Text. JURECA supercomputer \parencite{krause2016}. Each node is equipped with two Intel Xeon E5-??? with 12 cores running at 3.1 GHz and 128GB of memory. With multithreading, a total of 48 processes per node are available.
+
+To make our problem relevant for parallel applications, we need to increase the problem size drastically. We decide to increase the number of initial global refinements to \todo{12?}. and perform our investigations on two distinct nodes which involves communication between two physically independent memory segments. Thus we have a total of 96 number of \gls{mpi} processes at our disposal. We expect that this setup will yield representative results that we can extrapolate on even larger problem sizes.
+
+For our investigations, we use a flat \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for the analysis in this dissertation.
+
+We provided approaches for load balancing in Sec.~\ref{sec:loadbalancing}. We will stick to the approach of finding a proper exponent for the strategy.
+
+Although all three \hp-adaptive strategies have demonstrated a similar performance as showcased in Fig.~\ref{fig:?}, we choose only one adaptation strategy for all parallel investigations. We pick the smoothness estimation strategy with Legendre coefficient decay for this.
+
+We will resume a scenario previously serialized on the file system with different weighting exponents. The scenario with \todo{12?} initial global refinements and adapt the mesh on \todo{6?} consecutive iterations before serializing it. For the strategy with the Legendre coefficient decay, this results in a total number of \todo{1,000,000?} \glspl{dof}, so that each process will be assigned with a number of \glspl{dof} in the order of \todo{100,000}. Any type of finite elements from the collection is at least represented once in the mesh.
+
+For resumed scenarios in which the mesh will be partioned according to weights with different weighting exponents, we relate the walltime of the program as well as these parts which are relevant for the , against the weighting in Fig.~\ref{fig:weights}.
+
+Again, to mitigate the impact of temporary slowdowns on the supercomputer due to a high loads on memory and network bandwidth, we repeat each run for a total of \todo{five?} times and take the minimal runtime in each category over all runs.
+
+We show those categories that whose runtime / workload is affected by the number of \glspl{dof}, which are the assembly of the equation system and their solution. We see that the solution of the equation system takes about 90\% of the total runtime and is the crucial factor in ... \todo{?}. Thus we find the minimum of both at a weighting exponent of $i = 1.9$.
+
+We were expecting a minimum in the assembly at about $i = 2$, but found it was decaying even at higher exponents. We don't have an explanation for this.
+
+We set an weighting expoenent to a value of $i = 1.9$ for the following considerations regarding scalability.
+
+\todo{Second scale for assembly/discontinued axis with groupplot https://tex.stackexchange.com/questions/46422/axis-break-in-pgfplots}
 \begin{figure}
 \centering
 \input{figures/results/weights}

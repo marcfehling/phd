@@ -1,7 +1,21 @@
 \section{\Glsfmtlong{hpc} scalability}
 \label{sec:scaling}
 
-Text.
+Text. JURECA supercomputer \parencite{krause2016}.
+
+Discussion on \gls{amg} as a proper preconditioner in this context.
+
+We see
+
+These categories are the following:
+\begin{itemize}
+\item \textit{Setup data structures}. Text.
+\item \textit{Assemble linear system}. Text.
+\item \textit{Linear solver and preconditioner}. Text.
+\item \textit{Estimate error}. Text. Involves flagging cell for adaptation.
+\item \textit{Estimate smoothness}. Text. Involves flagging cells for \hp-adaptation.
+\item \textit{Coarsen and refine}. Perform coarsening and refinement on \pforest{} forest. Perform data transfer. Copy master mesh to \dealii{} triangulation.
+\end{itemize}
 
 \begin{figure}
 \begin{subfigure}{1\textwidth}
