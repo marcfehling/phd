@@ -26,9 +26,9 @@ For our investigations, we use a 'flat' \gls{mpi} model: Every thread will be as
 
 % problem specifications
 
-To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with \todo{12?} global refinements and gets adapted by \todo{6?} iterations. For the strategy with the Legendre coefficient decay, this results in a total number of \todo{1,000,000?} \glspl{dof}, so that each process will be assigned with a number of \glspl{dof} in the order of \todo{100,000}. Each type of finite element from the provided collection is represented at least once in the mesh.
+To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with nine global refinements and gets adapted in twelve iterations. For the strategy with the Legendre coefficient decay, this results in a total number of 46,369,440 \glspl{dof}, so that each process will be assigned with a number of 483,015 \glspl{dof} on average. Each type of finite element from the provided collection is represented at least once in the mesh.
 
-This advanced scenario will form the basis of our investigations to see how different weighting exponents affect the wall time, and which one provides a minimum. With serialization, we ensure that each of these runs conforms to the same conditions. Again, to mitigate the impact of temporary slowdowns on the supercomputer due to high loads on memory and network bandwidth, we repeat each run for a total of \todo{five?} times and take the minimum wall time in each category over all runs.
+This advanced scenario will form the basis of our investigations to see how different weighting exponents affect the wall time, and which one provides a minimum. With serialization, we ensure that each of these runs conforms to the same conditions. Again, to mitigate the impact of temporary slowdowns on the supercomputer due to high loads on memory and network bandwidth, we repeat each run for a total of five times and take the minimum wall time in each category over all runs.
 
 % results
 
@@ -45,7 +45,7 @@ in Fig.~\ref{fig:weights}.
 \label{fig:weights}
 \end{figure}
 
-The assembly of the equation system and the its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about \todo{90}\% of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $i = 1.9$.
+The assembly of the equation system and the its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about 90\% of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $i = 1.9$.
 
 We were surprised to find the minimum wall time of the solver at such a high exponent, since we expected $i = 1$ for an efficient solver. This may be related to the implementation of the preconditioner combined with the disorder that \hp-adaptive methods cause in the system matrix. Further, we were expecting a minimum in the assembly at about $i = 2$, but found it was decaying at even higher exponents. We have no explanation for this behavior. Analyzing the effect of cell weighting on each individual section of the program
 %the load balancing

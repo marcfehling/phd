@@ -17,13 +17,13 @@ The main motivation of \hp-adaptive methods are their superior error convergence
 
 The consecutively adapted meshes so created are by far not optimal for the problem, nor is finding such an optimal mesh subject of this dissertation. We are rather interested in comparing the performance and results of the decision algorithms presented in Sec.~\ref{sec:decision}, and whether they are capable of localizing regions with singularities, i.e.\@ the one at the point of origin for our numerical example. We will compare all types of adaptation at our disposal, i.e.\@ \h-, \p-, and \hp-adaptation. For the latter, we examine all three presented strategies in contrast, namely error prediction and smoothness estimation by either Legendre or Fourier coefficient decay.
 
-After solving the linear equation system in each step and calculating the error on basis of the analytic solution according to \textcite{kelly1983}, we use the \textit{fixed-number} \todo{check} strategy to indicate adaptation: The 30\% fraction of all cells with the highest error will be flagged for refinement, and 3\% of those with the lowest error will be marked for coarsening. This allows us to compare the results of each adaptation type under the same conditions, since always the same amount of cells is going to be changed. The idea behind additional coarsening is motivated by the fact that we tend to refine too many cells with error estimators providing an upper bound for the error, or error indicators based on heuristics. We would like to correct this from a previous iteration by coarsening a small amount of cells. The combination of fractions of 30\% for refinement and 3\% for coarsening has become a reasonable choice for two-dimensional applications within the \dealii{} library.
+After solving the linear equation system in each step and calculating the error on basis of the analytic solution according to \textcite{kelly1983}, we use the \textit{fixed-number} strategy to indicate adaptation: The 30\% fraction of all cells with the highest error will be flagged for refinement, and 3\% of those with the lowest error will be marked for coarsening. This allows us to compare the results of each adaptation type under the same conditions, since always the same amount of cells is going to be changed. The idea behind additional coarsening is motivated by the fact that we tend to refine too many cells with error estimators providing an upper bound for the error, or error indicators based on heuristics. We would like to correct this from a previous iteration by coarsening a small amount of cells. The combination of fractions of 30\% for refinement and 3\% for coarsening has become a reasonable choice for two-dimensional applications within the \dealii{} library.
 
 %We will compared different refinement strategies. We will use \textit{fixed-fraction} adaptation so that every cell is refined. This allows us to compare the choices of all strategies since always the same amount of cells is taken into account. \todo{see slack text}
 
 Further for \hp-adaptive strategies, we need to choose a decision strategy providing corresponding indicators that propose which type of adaptation we want to impose one each cell.
 %
-Again, we use the \textit{fixed-number} \todo{check} algorithm on all decision indicators. This allows us to compare the choices made by each strategy since always the same amount of cells is going to be changed in terms of both \h- and \p-adaptation, respectively.
+Again, we use the \textit{fixed-number} algorithm on all decision indicators. This allows us to compare the choices made by each strategy since always the same amount of cells is going to be changed in terms of both \h- and \p-adaptation, respectively.
 %
 As a first naive approach, we will impose the \h-variant on one half of all cells previously marked for adaptation, and the \p-variant on the other half.
 %As a first naive approach, we choose between \h- and \p-adaptation fifty fifty among all cells that have been previously marked for adaptation.
@@ -41,7 +41,7 @@ All calculations in this section have been carried out on a desktop machine, usi
 
 % results: error vs ndofs
 
-Representatively, we will show the grid and distribution of finite elements after \todo{six?} adaptation steps of the Legendre coefficient decay strategy with the educated guess approach in Fig.~\ref{fig:fedegrees}. All other meshes after equally many adaptation iterations from the other strategies are showcased in App.~\ref{app::strategies}.
+Representatively, we will show the grid and distribution of finite elements after six adaptation cycles of the Legendre coefficient decay strategy with the educated guess approach in Fig.~\ref{fig:fedegrees}. All other meshes after equally many adaptation iterations from the other strategies are showcased in App.~\ref{app::strategies}.
 
 We see that the Legendre strategy is able to locate the singularity in the center by preferring \h-adaptive refinement in this section, while using \p-adaptation in the other regions. This is also the case for all other strategies, naiive or not, as shown in App.~\ref{app::strategies}.
 
@@ -98,7 +98,7 @@ We observed that they occur if the finite element with the highest polynomial de
 
 % results: error vs walltime
 
-From a practical point of view, the error performance will now be compared to the actual wall time to measure whether we have an economic benefit in using \hp-adaptive methods. For each consecutive adaptation cycle, we again plot the calculated error against the workload, which is this time represented by the total run time accumulated over the current and all previous iterations. Each run will be repeated \todo{five?} times and the minimum over the total runtime over all runs will be picked to compensate for temporarily high loads on memory bandwidth. The results are shown in Fig.~\ref{fig:errorwalltime}.
+From a practical point of view, the error performance will now be compared to the actual wall time to measure whether we have an economic benefit in using \hp-adaptive methods. For each consecutive adaptation cycle, we again plot the calculated error against the workload, which is this time represented by the total run time accumulated over the current and all previous iterations. Each run will be repeated five times and the minimum over the total runtime over all runs will be picked to compensate for temporarily high loads on memory bandwidth. The results are shown in Fig.~\ref{fig:errorwalltime}.
 
 \begin{figure}
 %\begin{subfigure}{1\textwidth}
