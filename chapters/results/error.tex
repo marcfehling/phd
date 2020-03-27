@@ -89,9 +89,10 @@ and by factor of 10 less compared to their naive counterparts. This demonstrates
 
 %We conclude that \p-heavy refinement combined with \h-adaptation near the singularity perform the best error per workload ratio.
 
-In the course of adaptation with the Fourier strategy, some adaptation steps increase the number of \gls{dof} without decreasing the error, which we refer to as 'hickups'.
+In the course of adaptation with the Fourier strategy, some adaptation steps increase the number of \gls{dof} without decreasing the error.
+%, which we refer to as 'hickups'.
 %We see certain outliers in the plots for Fourier strategy.
-We observed that they occur if the finite element with the highest polynomial degree in our mesh increases from fourth to fifth order. This is perhaps not a causal relation, and we have not yet found the reason for these 'hickups'.
+We observed that this occurs if the finite element with the highest polynomial degree in our mesh increases from fourth to fifth order. This is perhaps not a causal relation, and we have not yet found the reason for this behavior.
 
 %Compared to \h- and naive \hp-approaches, \p- and \hp-strategies featuring the educated guess yield similar results.
 
