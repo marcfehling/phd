@@ -130,6 +130,8 @@ The Fourier strategy takes the longest wall time for initialization, during whic
 Among all \hp-strategies of either naive or educated guess category, we do not see major differences in their performance, but overall the Legendre coefficient decay strategy stands out in both categories with the best error per workload performance in either way workload is defined.
 %Compared to the Fourier strategy, it seems to be better suited for \gls{fem} since its basis functions are also based on polynomials.
 
+Note that the results presented in this section are specific for our numerical example, in which the solution is sufficiently smooth over the entire domain except for the singularity at the origin. The error performance might differ if the presented techniques will be applied to a different scenario.
+
 % write this in the next chaper
 %In the upcoming scalability analysis, we will thus pick this strategy with Legendre coefficient and the educated guess.
 
