@@ -1,53 +1,84 @@
 \section{\Glsfmtlong{hpc} scalability}
 \label{sec:scaling}
 
-Text. JURECA supercomputer \parencite{krause2016}.
+The final part of our investigations relates to the demonstration of the scalability of our algorithms and data structures on \gls{hpc} systems, for which we will again use the JURECA supercomputer \parencite{krause2016}.
 
-Discussion on \gls{amg} as a proper preconditioner in this context.
-
-We see
-
-These categories are the following:
+Again working with successively adapted meshes, we will measure the wall time spent in each particular section of each iteration SOLVE-ESTIMATE-MARK-REFINE cycle, which is supposed to increase linearly with the workload determined by the number of \glspl{dof} or decrease linearly with an increasing amount of workers, i.e.\@ number of \gls{mpi} processes. We distinguish between the following categories in each adaptation cycle:
 \begin{itemize}
-\item \textit{Setup data structures}. Text.
-\item \textit{Assemble linear system}. Text.
-\item \textit{Linear solver and preconditioner}. Text.
-\item \textit{Estimate error}. Text. Involves flagging cell for adaptation.
-\item \textit{Estimate smoothness}. Text. Involves flagging cells for \hp-adaptation.
-\item \textit{Coarsen and refine}. Perform coarsening and refinement on \pforest{} forest. Perform data transfer. Copy master mesh to \dealii{} triangulation.
+\item \textit{Setup data structures}. Enumerate all \glspl{dof}. Determine the sparsity pattern describing locations of nonzero matrix entries. Calculate constraints for hanging nodes and boundary values. Allocate memory for all distributed data structures. Communicate between processes which matrix or vector elements they will write to that they do not own locally.
+\item \textit{Assemble linear system}. Calculate the individual contribution of each locally owned cell to the global equation system. Exchange data if matrix or vector elements are stored on a different process.
+\item \textit{Linear solver and preconditioner}. Setup both the \gls{amg} preconditioner and the conjugate gradient solver and solve the equation system in parallel.
+\item \textit{Estimate error}. Calculate the error indicators on locally owned cells on basis of the current solution. Mark cells for either refinement or coarsening by computing global thresholds.
+\item \textit{Estimate smoothness}. Calculate the smoothness indicators on basis of the current solution on locally owned cells marked for either refinement or coarsening. Decide whether \h- or \p-adaptation is going to be applied by computing global thresholds.
+\item \textit{Coarsen and refine}. Perform coarsening and refinement and maintain the 2:1 cell balance on the \pforest{} master mesh, followed by its repartitioning. Transfer data between the outdated and updated mesh. Apply all changes made to the master mesh on the \dealii{} triangulation.
 \end{itemize}
+
+We will pick the parameters and features that proved suitable in our numerical example. Thus, we again choose the smoothness estimation by the decay of Legendre coefficients as our \hp-decision strategy. For load balancing, the cell weighting weighting happens again proportional to the number of \glspl{dof} on each cell potentiated by the exponent $c = 1.9$.
+
+
+% weak scaling
+
+For weak scaling, problems with increasing size are solved on a fixed number of \glspl{mpi} processes, which we will realize using consecutive adaptations. We choose two different numbers of computation nodes, namely 16 and 64 nodes with 768 and 3,072 \glspl{mpi} processes in total, respectively.
+
+We initialize the problem with ten initial global refinements and adapt the mesh for a total of 11 iterations with the smaller amount of nodes, and 12 iterations for the larger one. In the chosen configuration, all available memory is used on the assigned nodes, so no more adaptation cycles are possible without running out of memory. Again to exclude the influence of the current load on the supercomputer, all runs are performed multiple times and the minimum wall time of each category is taken. This time we repeat each run seven times. The results of weak scaling are shown in Fig.~\ref{fig:weak}.
 
 \begin{figure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/weak-nodes16}
+  \input{figures/results/weak-nodes16}%
   \caption{Weak scaling on 16 nodes or 768 \gls{mpi} processes.}
   \label{fig:weak-nodes16}
 \end{subfigure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/weak-nodes64}
+  \input{figures/results/weak-nodes64}%
   \caption{Weak scaling on 64 nodes or 3,072 \gls{mpi} processes.}
   \label{fig:weak-nodes64}
 \end{subfigure}
-\caption{Weak scaling.}
+\caption{Weak scaling for consecutively refined meshes on different numbers of \glspl{mpi} processes. Each \gls{mpi} process has more than $10^5$ \glspl{dof} assigned only to the right side of the indicated vertical line. Each finite element is represented at least once in the mesh only to the right side of the designated vertical line.}
 \label{fig:weak}
 \end{figure}
 
-\todo{Add remaining data points}
+\textcite{bangerth2012} proclaimed that linear scaling is observable in all categories if the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$. We can confirm this observation in our numerical example with \hp-adaptation. %, although 
+
+We spot a major increase of the wall time attributed to the actual solution of the equation system.
+
+After no higher order elements will be introduced, left of the indicated vertical line in Fig.~\todo{fig}, the properly sacles again.
+
+We suspect that the mixture of many different finite elements are the reason for this behavior
+
+that adding finite elements of a higher order than before results in a higher complexity in the matrix, that is responsible for a longer solution.
+
+It appears that our choice of the preconditioner is not well chosen. Although it was the best choice at our disposal at the time this dissertation was written, we may think about an alternative to this. Instead of \gls{amg} \todo{long}, we should take into account geometric multigrid methods. 
+
+GMG methods have been worked out for parallel \h-adaptive \gls{fem} by \textcite{janssen2011} and \textcite{clevenger2020}. The combination of GMG methods with \hp-adaptive methods has not been done yet, let alone combined with parallelization. The development of such a preconditioner will be subject of future investigations.
+
+
+% strong scaling
+
+For strong scaling, problems are set to a fixed size and being solved with a increasing amount of \gls{mpi} processes.
+
+This time, we just solve one individual adaptation cycle, that has been prepared from a consecutive run. With serialization, we prepare a tailored mesh for these consideration, and solve that particular cycle with a varying number of processors.
+
+For preparation, we consider two different scenarios which will be constructed as follows: A smaller scenario is initialized with ten global refinements, and a larger one with twelve initial refinements. Both will be adapted successively in six adaptation cycles, which results in all finite elements being represented at least once in the whole domain. This leads to number of \glspl{dof} of 50,736,415 and 969,257,276 in total for the respective scenario.
+
+With serialization, both problems will be solved at their advanced stage with varying amounts of \gls{mpi} processes, and the wall times of each section in the program will be recorded. We again repeat each run for a total of seven times and take the minimum wall time in each category, except for the largest run in order to solve the bigger problem on 1,024 nodes or 49,152 \gls{mpi} processes, which we could only repeat five times before we completely exhausted our entire computing time quota. The results of strong scaling are shown in Fig.~\ref{fig:strong}.
+
 \begin{figure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/strong-nrefs10}
-  \caption{Strong scaling with a fixed problem size of roughly 50 million \glspl{dof}.}
+  \input{figures/results/strong-nrefs10}%
+  \caption{Strong scaling for a fixed problem size of roughly 51 million \glspl{dof}.}
   \label{fig:strong-nrefs10}
 \end{subfigure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/strong-nrefs12}
-  \caption{Strong scaling with a fixed problem size of roughly 900 million \glspl{dof}.}
+  \input{figures/results/strong-nrefs12}%
+  \caption{Strong scaling for a fixed problem size of roughly 970 million \glspl{dof}.}
   \label{fig:strong-nrefs12}
 \end{subfigure}
-\caption{Strong scaling.}
+\caption{Strong scaling for one advanced adaptation cycle at different problem sizes. Each \gls{mpi} process has more than $10^5$ \glspl{dof} assigned only to the left side of the indicated vertical line.}
 \label{fig:strong}
 \end{figure}
+
+Again, we identify linear scaling whenever the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$, which again coincides with the observations of \textcite{bangerth2012}.

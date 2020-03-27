@@ -4,11 +4,6 @@
   ylabel=Wall time {[seconds]},
   legend pos=outer north east]
 
-% auxiliary lines
-\begin{scope}
-  \draw[green] ({axis cs:9692.57276,0}|-{rel axis cs:0,1}) -- ({axis cs:9692.57276,0}|-{rel axis cs:0,0});
-\end{scope}
-
 % data
 \addplot table [y=solve, x=ncpus, col sep=comma] {data/strong/strong-nrefs12.csv};
 \addlegendentry{linear solver and preconditioner};
@@ -30,6 +25,13 @@
 
 % optimal line
 \addplot[very thick, samples=2, domain=768:49152] {10^(5)*x^(-1)};
+\addlegendentry{optimal convergence};
 
+% auxiliary lines
+\begin{scope}
+  \draw[green] ({axis cs:9692.57276,0}|-{rel axis cs:0,1}) -- ({axis cs:9692.57276,0}|-{rel axis cs:0,0});
+\end{scope}
+\addlegendimage{color=green};
+\addlegendentry{$10^5$ \glspl{dof} per process};
 \end{loglogaxis}
 \end{tikzpicture}

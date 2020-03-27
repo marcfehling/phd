@@ -5,14 +5,24 @@
 
 For parallel computations on distributed memory systems, the global domain is partitioned into several subdomains, each of which is assigned to a single process. Such a mesh decomposition is showcased in Fig.~\ref{fig:decomposition}.
 
+\todo{Two different plots: One with constant weighting, one with ndofs exp 1.9 weighting.}
 \begin{figure}
 \centering
-Insert decomposition vtk plot here.
-\caption{Decomposition of the mesh from Fig.~\ref{fig:fedegrees} on 16 \gls{mpi} processes with constant weighting. Each color represents a different subdomain.}
+\begin{subfigure}[t]{.49\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{figures/results/corner-2d-error-hp-legendre-05_subdomain12.png}
+  \caption{Constant weighting.}
+\end{subfigure}
+\begin{subfigure}[t]{.49\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{figures/results/corner-2d-error-hp-legendre-05_subdomain12_customweighting.png}
+  \caption{Weighting with an individually potentiated number of \glspl{dof}, i.e.\@ $\propto n_\text{dofs}^{1.9}$.}
+\end{subfigure}
+\caption{Decomposition of the mesh from Fig.~\ref{fig:fedegrees} on 12 \gls{mpi} processes with various cell weighting. Each color represents a different subdomain.}
 \label{fig:decomposition}
 \end{figure}
 
-Proper load balancing is necessary for an efficient use of all computational resources. Especially on \gls{hpc} systems with lots of available processors, this is a critical feature. For \hp-adaptive \gls{fem}, we presented approaches for load balancing in Sec.~\ref{sec:loadbalancing} by assigning weights to each individual cell. We relate the weight to the number of \glspl{dof} on each cell potentiated by an exponent that we will determine in the upcoming investigations. Or in other words, cell weights are chosen proportional to $n_\text{dofs}^i$ with the exponent $i$ to be ascertained.
+Proper load balancing is necessary for an efficient use of all computational resources. Especially on \gls{hpc} systems with lots of available processors, this is a critical feature. For \hp-adaptive \gls{fem}, we presented approaches for load balancing in Sec.~\ref{sec:loadbalancing} by assigning weights to each individual cell. We relate the weight to the number of \glspl{dof} on each cell potentiated by an exponent that we will determine in the upcoming investigations. Or in other words, cell weights are chosen proportional to $n_\text{dofs}^c$ with the exponent $c$ to be ascertained.
 
 Although all three \hp-adaptive strategies have demonstrated a similar performance as shown in Sec.~\ref{sec:errorvsperformance}, we pick only one adaptation strategy for our parallel investigations. We choose the smoothness estimation strategy based on the decay of Legendre coefficients as the most efficient one for this purpose.
 
@@ -38,18 +48,19 @@ For varying weighting exponents, we compare the wall times of the full adaptatio
 in Fig.~\ref{fig:weights}.
 
 \todo{Second scale for assembly/discontinued axis with groupplot https://tex.stackexchange.com/questions/46422/axis-break-in-pgfplots}
+\todo{Maybe also add setup of data structure and other parts}
 \begin{figure}
 \centering
 \input{figures/results/weights}
-\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and its relevant parts for load balancing. Weights proportional to $n_\text{dofs}^i$ will be assigned to each cell with varying exponents $i$.}
+\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and its relevant parts for load balancing. The problem has a number of 46 million \glspl{dof} and is solved on 2 nodes with a total of 96 \gls{mpi} processes. Weights proportional to $n_\text{dofs}^i$ will be assigned to each cell with varying exponents $i$.}
 \label{fig:weights}
 \end{figure}
 
-The assembly of the equation system and the its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about 90\% of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $i = 1.9$.
+As discussed in Sec.~\ref{sec:balancing}, the assembly of the equation system and the its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about 90\% of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $c = 1.9$.
 
-We were surprised to find the minimum wall time of the solver at such a high exponent, since we expected $i = 1$ for an efficient solver. This may be related to the implementation of the preconditioner combined with the disorder that \hp-adaptive methods cause in the system matrix. Further, we were expecting a minimum in the assembly at about $i = 2$, but found it was decaying at even higher exponents. We have no explanation for this behavior. Analyzing the effect of cell weighting on each individual section of the program
+We were surprised to find the minimum wall time of the solver at such a high exponent, since we expected $c = 1$ for an efficient solver. This may be related to the implementation of the preconditioner combined with the disorder that \hp-adaptive methods cause in the system matrix. Further, we were expecting a minimum in the assembly at about $c = 2$, but found it was decaying at even higher exponents. We have no explanation for this behavior. Analyzing the effect of cell weighting on each individual section of the program
 %the load balancing
 will be subject of further investigations.
 
 % Next step
-%We set an weighting expoenent to a value of $i = 1.9$ for the following considerations regarding scalability.
+%We set an weighting expoenent to a value of $c = 1.9$ for the following considerations regarding scalability.

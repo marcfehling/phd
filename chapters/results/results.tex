@@ -1,4 +1,4 @@
-\chapter{Application on Poisson's problem}
+\chapter{Application on Laplace's problem}
 \label{ch:results}
 \glsresetall
 
@@ -41,9 +41,15 @@ A depiction of the solution on this particular domain is shown in Fig.~\ref{fig:
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{figures/results/solution.png}
-\caption{Reentrant corner problem.}
+\caption{Solution of the manufactured Laplace problem on a L-shaped domain.}
 \label{fig:solution}
 \end{figure}
+
+The solution of the Laplace problem with \gls{fem} requires the transformation of the original to a variational problem by writing it in its weak formulation:
+\begin{align}
+\left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
+\end{align}
+The shape functions of Lagrangian elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on boundaries.
 
 In this chapter, we will solve the so designed Laplace problem on the L-shaped domain on consecutively refined meshes, and evaluate certain aspects of our implementation, namely the error performance of the decision strategies and their parallel scalability.
 

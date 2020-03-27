@@ -4,12 +4,6 @@
   ylabel=Wall time {[seconds]},
   legend pos=outer north east]
 
-% auxiliary lines
-\begin{scope}
-  \draw[green] ({axis cs:307200000,0}|-{rel axis cs:0,1}) -- ({axis cs:307200000,0}|-{rel axis cs:0,0});
-  \draw[blue] ({axis cs:51625521,0}|-{rel axis cs:0,1}) -- ({axis cs:51625521,0}|-{rel axis cs:0,0});
-\end{scope}
-
 % data
 \addplot table [y=solve, x=ndofs, col sep=comma] {data/weak/weak-nodes64.csv};
 \addlegendentry{linear solver and preconditioner};
@@ -31,6 +25,16 @@
 
 % optimal line
 \addplot[very thick, samples=2, domain=12591105:2073075769] {10^(-7.2)*x};
+\addlegendentry{optimal convergence};
 
+% auxiliary lines
+\begin{scope}
+  \draw[green] ({axis cs:307200000,0}|-{rel axis cs:0,1}) -- ({axis cs:307200000,0}|-{rel axis cs:0,0});
+  \draw[blue] ({axis cs:51625521,0}|-{rel axis cs:0,1}) -- ({axis cs:51625521,0}|-{rel axis cs:0,0});
+\end{scope}
+\addlegendimage{color=green};
+\addlegendentry{$10^5$ \glspl{dof} per process};
+\addlegendimage{color=blue};
+\addlegendentry{each finite element in mesh};
 \end{loglogaxis}
 \end{tikzpicture}

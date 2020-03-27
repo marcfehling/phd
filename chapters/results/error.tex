@@ -45,10 +45,12 @@ Representatively, we will show the grid and distribution of finite elements afte
 
 We see that the Legendre strategy is able to locate the singularity in the center by preferring \h-adaptive refinement in this section, while using \p-adaptation in the other regions. This is also the case for all other strategies, naiive or not, as shown in App.~\ref{app::strategies}.
 
+\todo{Insert plot.}
 \begin{figure}
 \centering
-Insert distribution of finite elements for Legendre strategy after five iterations.
-\caption{Distribution of finite elements after five iterations with the Legendre coefficient decay strategy.}
+\includegraphics[width=0.49\textwidth]{figures/results/corner-2d-error-hp-legendre-05_fedegrees.png}
+\includegraphics[width=0.49\textwidth]{figures/results/corner-2d-error-hp-legendre-05_fedegrees_zoom.png}
+\caption{Distribution of finite elements after six iterations with the Legendre coefficient decay strategy.}
 \label{fig:fedegrees}
 \end{figure}
 
@@ -59,17 +61,17 @@ We will plot the $H_1$ error against the workload, which can be measured in two 
 \begin{figure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/errorworkload}
+  \input{figures/results/errorworkload}%
   \caption{Double logarithmic representation. The thick line corresponds to the reference Eq.~(\ref{eq:errorbound_ana}).}
   \label{fig:errordofsloglog}
 \end{subfigure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/errorexpworkload}
+  \input{figures/results/errorexpworkload}%
   \caption{Customly scaled coordinate system with the y-axis scaled exponentially and the x-axis scaled with the cubic root. The thick line corresponds to the reference Eq.~(\ref{eq:errorbound_exp}) with $b = 0.18$.}
   \label{fig:errordofscustom}
 \end{subfigure}
-\caption{Error vs workload.}
+\caption{Error performances of several adaptation strategies compared to their workload measured in the number of \glspl{dof}.}
 \label{fig:errordofs}
 \end{figure}
 
@@ -103,7 +105,7 @@ From a practical point of view, the error performance will now be compared to th
 \begin{figure}
 %\begin{subfigure}{1\textwidth}
 \centering
-\input{figures/results/errorwalltime}
+\input{figures/results/errorwalltime}%
 %  \caption{Error vs workload.}
 %  \label{fig:errorexpworkload}
 %\end{subfigure}
@@ -113,7 +115,7 @@ From a practical point of view, the error performance will now be compared to th
 %  \caption{Error vs walltime.}
 %  \label{fig:errorexpwalltime}
 %\end{subfigure}
-\caption{Double lagarithmic error vs walltime.}
+\caption{Double lagarithmic representation of error performances of several adaptation strategies compared to their workload measured in the wall time.}
 \label{fig:errorwalltime}
 \end{figure}
 
