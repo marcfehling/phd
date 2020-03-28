@@ -41,17 +41,18 @@ We initialize the problem with ten initial global refinements and adapt the mesh
 
 \textcite{bangerth2012} proclaimed that linear scaling is observable in all categories if the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$. We can confirm this observation in our numerical example with \hp-adaptation. %, although 
 
-We spot a major increase of the wall time attributed to the actual solution of the equation system.
+During the first few adaptation cycles in our application, the wall time attributed to the solution category shows a major increase which is much more than just linear. After six adaptation cycles, i.e.\@ right of the indicated vertical line in Fig.~\ref{fig:weak}, each finite element will be represented at least once in the domain due to the way we configured the scenario, and the aforementioned curve flattens and increases only linearly as expected.
 
-After no higher order elements will be introduced, left of the indicated vertical line in Fig.~\todo{fig}, the properly sacles again.
+%We suspect that the randomness of the distribution of 
 
-We suspect that the mixture of many different finite elements are the reason for this behavior
+%We suspect that the mixture of many different finite elements are the reason for this behavior
 
-that adding finite elements of a higher order than before results in a higher complexity in the matrix, that is responsible for a longer solution.
+%that adding finite elements of a higher order than before results in a higher complexity in the matrix, that is responsible for a longer solution.
+We suspect that the rather heterogeneous allocation of the finite elements by the decision algorithms%
+%has a negative influence on the conditioning of the system matrix and
+has a similar effect on the distribution of nonzero entries in the system matrix, for which \gls{amg} preconditioners are not designed for. It appears that we could make use of a more suitable preconditioner. Although it was the best option at our disposal at the time this dissertation was written, we may think about an alternative to this for future applications. Instead of relying on \gls{amg} methods, \gls{gmg} preconditioners are expected to work more robust and should be the method of choice.
 
-It appears that our choice of the preconditioner is not well chosen. Although it was the best choice at our disposal at the time this dissertation was written, we may think about an alternative to this. Instead of \gls{amg} \todo{long}, we should take into account geometric multigrid methods. 
-
-GMG methods have been worked out for parallel \h-adaptive \gls{fem} by \textcite{janssen2011} and \textcite{clevenger2020}. The combination of GMG methods with \hp-adaptive methods has not been done yet, let alone combined with parallelization. The development of such a preconditioner will be subject of future investigations.
+\Gls{gmg} methods for \hp-adaptive refinement in serial applications have already been developed by \textcite{mitchell2010}. \textcite{clevenger2019} worked out \gls{gmg} preconditioners for parallel \h-adaptive \gls{fem} and made their algorithm available in the \dealii{} library. The development of a corresponding preconditioner for parallel \hp-adaptive \gls{fem} will be subject of future work, as well as its application and comparison with the \gls{amg} equivalents.
 
 
 % strong scaling

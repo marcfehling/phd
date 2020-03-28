@@ -17,5 +17,5 @@ Chapters finished:
 - [ ] Introduction
 - [X] Static parallel hp-adaptive methods
 - [x] Dynamic parallel hp-adaptive methods
-- [ ] Application on Poisson's problem
+- [x] Application on Poisson's problem
 - [ ] Summary
