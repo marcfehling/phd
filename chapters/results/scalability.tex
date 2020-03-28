@@ -3,7 +3,7 @@
 
 The final part of our investigations relates to the demonstration of the scalability of our algorithms and data structures on \gls{hpc} systems, for which we will again use the JURECA supercomputer \parencite{krause2016}.
 
-Again working with successively adapted meshes, we will measure the wall time spent in each particular section of each iteration SOLVE-ESTIMATE-MARK-REFINE cycle, which is supposed to increase linearly with the workload determined by the number of \glspl{dof} or decrease linearly with an increasing amount of workers, i.e.\@ number of \gls{mpi} processes. We distinguish between the following categories in each adaptation cycle:
+Again working with successively adapted meshes, we will measure the wall time spent in each particular section of each SOLVE-ESTIMATE-MARK-REFINE iteration, which is supposed to increase linearly with the workload determined by the number of \glspl{dof} or decrease linearly with an increasing amount of workers, i.e.\@ number of \gls{mpi} processes. We distinguish between the following categories in each adaptation cycle:
 \begin{itemize}
 \item \textit{Setup data structures}. Enumerate all \glspl{dof}. Determine the sparsity pattern describing locations of nonzero matrix entries. Calculate constraints for hanging nodes and boundary values. Allocate memory for all distributed data structures. Communicate between processes which matrix or vector elements they will write to that they do not own locally.
 \item \textit{Assemble linear system}. Calculate the individual contribution of each locally owned cell to the global equation system. Exchange data if matrix or vector elements are stored on a different process.
@@ -13,14 +13,14 @@ Again working with successively adapted meshes, we will measure the wall time sp
 \item \textit{Coarsen and refine}. Perform coarsening and refinement and maintain the 2:1 cell balance on the \pforest{} master mesh, followed by its repartitioning. Transfer data between the outdated and updated mesh. Apply all changes made to the master mesh on the \dealii{} triangulation.
 \end{itemize}
 
-We will pick the parameters and features that proved suitable in our numerical example. Thus, we again choose the smoothness estimation by the decay of Legendre coefficients as our \hp-decision strategy. For load balancing, the cell weighting weighting happens again proportional to the number of \glspl{dof} on each cell potentiated by the exponent $c = 1.9$.
+We will pick the parameters and features that have proven to be suitable in our numerical example. Thus, we again choose smoothness estimation by the decay of Legendre coefficients as our \hp-decision strategy. For load balancing, cell weighting is imposed proportional to the number of \glspl{dof} on each cell potentiated by the exponent $c = 1.9$.
 
 
 % weak scaling
 
-For weak scaling, problems with increasing size are solved on a fixed number of \glspl{mpi} processes, which we will realize using consecutive adaptations. We choose two different numbers of computation nodes, namely 16 and 64 nodes with 768 and 3,072 \glspl{mpi} processes in total, respectively.
+For weak scaling, problems with increasing size are solved on a fixed number of \glspl{mpi} processes, which we will realize using consecutive adaptations. We choose two different numbers of computation nodes, namely 16 and 64 nodes with 768 and 3,072 \glspl{mpi} processes in total each.
 
-We initialize the problem with ten initial global refinements and adapt the mesh for a total of 11 iterations with the smaller amount of nodes, and 12 iterations for the larger one. In the chosen configuration, all available memory is used on the assigned nodes, so no more adaptation cycles are possible without running out of memory. Again to exclude the influence of the current load on the supercomputer, all runs are performed multiple times and the minimum wall time of each category is taken. This time we repeat each run seven times. The results of weak scaling are shown in Fig.~\ref{fig:weak}.
+We initialize the problem with ten initial global refinements and adapt the mesh for a total of 11 iterations with the smaller amount of computing nodes, and 12 iterations for the larger one. In the chosen configuration, all available memory is used on the assigned nodes, so no more adaptation cycles are possible without running out of memory. Again to exclude the influence of the current load on the supercomputer, all runs are performed multiple times and the minimum wall time of each category is taken. This time we repeat each run seven times. The results of weak scaling are shown in Fig.~\ref{fig:weak} up to problem sizes of 2,073,075,769 \glspl{dof}.
 
 \begin{figure}
 \begin{subfigure}{1\textwidth}
@@ -39,7 +39,7 @@ We initialize the problem with ten initial global refinements and adapt the mesh
 \label{fig:weak}
 \end{figure}
 
-\textcite{bangerth2012} proclaimed that linear scaling is observable in all categories if the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$. We can confirm this observation in our numerical example with \hp-adaptation. %, although 
+\textcite{bangerth2012} proclaimed that linear scaling is observable in all categories if the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$. We can confirm this observation in our numerical example with parallel \hp-adaptation as well.
 
 During the first few adaptation cycles in our application, the wall time attributed to the solution category shows a major increase which is much more than just linear. After six adaptation cycles, i.e.\@ right of the indicated vertical line in Fig.~\ref{fig:weak}, each finite element will be represented at least once in the domain due to the way we configured the scenario, and the aforementioned curve flattens and increases only linearly as expected.
 
@@ -48,7 +48,7 @@ During the first few adaptation cycles in our application, the wall time attribu
 %We suspect that the mixture of many different finite elements are the reason for this behavior
 
 %that adding finite elements of a higher order than before results in a higher complexity in the matrix, that is responsible for a longer solution.
-We suspect that the rather heterogeneous allocation of the finite elements by the decision algorithms%
+We suspect that the rather heterogeneous allocation of the finite elements by the decision algorithms
 %has a negative influence on the conditioning of the system matrix and
 has a similar effect on the distribution of nonzero entries in the system matrix, for which \gls{amg} preconditioners are not designed for. It appears that we could make use of a more suitable preconditioner. Although it was the best option at our disposal at the time this dissertation was written, we may think about an alternative to this for future applications. Instead of relying on \gls{amg} methods, \gls{gmg} preconditioners are expected to work more robust and should be the method of choice.
 
@@ -57,11 +57,10 @@ has a similar effect on the distribution of nonzero entries in the system matrix
 
 % strong scaling
 
-For strong scaling, problems are set to a fixed size and being solved with a increasing amount of \gls{mpi} processes.
+For strong scaling, problems are set to a fixed size and being solved with a increasing amount of \gls{mpi} processes. This time, we just solve one individual adaptation cycle on a tailored mesh, that has been prepared from a previous run via serialization.
+%, we prepare a tailored mesh for these considerations, and solve that particular cycle with a varying number of processors.
 
-This time, we just solve one individual adaptation cycle, that has been prepared from a consecutive run. With serialization, we prepare a tailored mesh for these consideration, and solve that particular cycle with a varying number of processors.
-
-For preparation, we consider two different scenarios which will be constructed as follows: A smaller scenario is initialized with ten global refinements, and a larger one with twelve initial refinements. Both will be adapted successively in six adaptation cycles, which results in all finite elements being represented at least once in the whole domain. This leads to number of \glspl{dof} of 50,736,415 and 969,257,276 in total for the respective scenario.
+To prepare these meshes, we consider two different scenarios which will be constructed as follows: A smaller scenario is initialized with ten global refinements, and a larger one with twelve refinements. Both will be adapted successively in six adaptation cycles, which results in each finite element being represented at least once in the whole domain. This leads to number of \glspl{dof} of 50,736,415 and 969,257,276 in total for the respective scenario.
 
 With serialization, both problems will be solved at their advanced stage with varying amounts of \gls{mpi} processes, and the wall times of each section in the program will be recorded. We again repeat each run for a total of seven times and take the minimum wall time in each category, except for the largest run in order to solve the bigger problem on 1,024 nodes or 49,152 \gls{mpi} processes, which we could only repeat five times before we completely exhausted our entire computing time quota. The results of strong scaling are shown in Fig.~\ref{fig:strong}.
 

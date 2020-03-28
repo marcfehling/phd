@@ -10,7 +10,7 @@
 %\end{align}
 %for $u$ scalar solution and $\vec{x} = (x_1, x_2, \dots, x_d)$ vector with $d$-components.
 
-With all algorithms and data structures elaborated in Chs.~\ref{ch:parallel}, \ref{ch:dynamic}, we now have all features at our disposal to solve partial differential equations with parallel, dynamic \hp-adaptive \gls{fem}. As a next step, we would like apply our implementation in the \dealii{} library on a certain exemplary problem that showcases its error performance and parallel scalability. To quantify its capabilities, we want to find a scenario for which an analytic solution $u_\text{sol}$ is available allowing us to calculate the actual error of the finite element approximation. This approach for code verification corresponds to the method of manufactured solutions \parencite{salari2000}. Our choice for a suitable problem falls on solving the Laplace problem with Dirichlet boundary conditions:
+With all algorithms and data structures elaborated in Chs.~\ref{ch:parallel} and \ref{ch:dynamic}, we now have all features at our disposal to solve partial differential equations with parallel, dynamic \hp-adaptive \glspl{fem}. As a next step, we would like to apply our implementation in the \dealii{} library on a certain exemplary problem that showcases its error performance and parallel scalability. To quantify its capabilities, we want to find a scenario for which an analytic solution $u_\text{sol}$ is available allowing us to calculate the actual error of the finite element approximation. This approach for code verification corresponds to the method of manufactured solutions \parencite{salari2000}. Our choice for a suitable problem falls on solving the Laplace problem with Dirichlet boundary conditions:
 \begin{align}
 - \nabla^2 u(\vec{x}) &= 0 \quad\text{on}\quad \Omega \,\text{,} & u(\vec{x}) &= u_\text{sol}(\vec{x}) \quad\text{on}\quad \partial\Omega \,\text{.}
 \end{align}
@@ -45,15 +45,13 @@ A depiction of the solution on this particular domain is shown in Fig.~\ref{fig:
 \label{fig:solution}
 \end{figure}
 
-The solution of the Laplace problem with \gls{fem} requires the transformation of the original to a variational problem by writing it in its weak formulation:
+In this chapter, we will solve the so designed Laplace problem on the L-shaped domain on consecutively refined meshes, and evaluate certain aspects of our implementation, namely the error performance of the decision strategies and their parallel scalability.
+
+Following the usual approach in \gls{fem}, we transfer our problem to its weak formulation using \gls{cg} methods:
 \begin{align}
 \left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
 \end{align}
-The shape functions of Lagrangian elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on boundaries.
-
-In this chapter, we will solve the so designed Laplace problem on the L-shaped domain on consecutively refined meshes, and evaluate certain aspects of our implementation, namely the error performance of the decision strategies and their parallel scalability.
-
-Following the usual approach in \gls{fem}, we transfer our problem to its weak formulation using \gls{cg} methods and solve it with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
+The shape functions of Lagrangian elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
 
 The \dealii{} library offers interfaces to parallel linear algebra of the third party libraries \petsc{} \textcite{petsc3124} and \trilinos{} \textcite{trilinos12181} for distributed memory architectures. In our investigations, we choose the latter using their \epetra{}
 %\textcite{epetra}

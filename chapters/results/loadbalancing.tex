@@ -5,7 +5,6 @@
 
 For parallel computations on distributed memory systems, the global domain is partitioned into several subdomains, each of which is assigned to a single process. Such a mesh decomposition is showcased in Fig.~\ref{fig:decomposition}.
 
-\todo{Two different plots: One with constant weighting, one with ndofs exp 1.9 weighting.}
 \begin{figure}
 \centering
 \begin{subfigure}[t]{.49\textwidth}
@@ -22,21 +21,21 @@ For parallel computations on distributed memory systems, the global domain is pa
 \label{fig:decomposition}
 \end{figure}
 
-Proper load balancing is necessary for an efficient use of all computational resources. Especially on \gls{hpc} systems with lots of available processors, this is a critical feature. For \hp-adaptive \gls{fem}, we presented approaches for load balancing in Sec.~\ref{sec:loadbalancing} by assigning weights to each individual cell. We relate the weight to the number of \glspl{dof} on each cell potentiated by an exponent that we will determine in the upcoming investigations. Or in other words, cell weights are chosen proportional to $n_\text{dofs}^c$ with the exponent $c$ to be ascertained.
+Proper load balancing is necessary for an efficient use of all computational resources. Especially on \gls{hpc} systems with lots of available processors, this is a critical feature. For \hp-adaptive \gls{fem}, we presented approaches for load balancing in Sec.~\ref{sec:loadbalancing} by assigning weights to each individual cell and balancing the accumulated weight among all processes. We relate the weight to the number of \glspl{dof} on each cell potentiated by an exponent that we will determine in the upcoming investigations. Or in other words, cell weights are chosen proportional to $n_\text{dofs}^c$ with the exponent $c$ to be ascertained.
 
 Although all three \hp-adaptive strategies have demonstrated a similar performance as shown in Sec.~\ref{sec:errorvsperformance}, we pick only one adaptation strategy for our parallel investigations. We choose the smoothness estimation strategy based on the decay of Legendre coefficients as the most efficient one for this purpose.
 
 % system specifications
 
-Investigations are carried out on the JURECA supercomputer \parencite{krause2016}. Each computing node is equipped with two Intel Xeon E5-2680 v3 processors with twelve cores running at 2.5GHz and 128GB of memory. With simultaneous multithreading, a total of 48 processes are available per node. Communication between nodes happens via a Mellanox EDR InfiniBand high-speed network.
+Investigations are carried out on the JURECA supercomputer \parencite{krause2016}. Each computing node is equipped with two Intel Xeon E5-2680 v3 processors with twelve cores running at 2.5GHz and either 128GB, 256GB or 512GB of memory. With simultaneous multithreading, a total of 48 threads are available per node. Communication between nodes happens via a Mellanox EDR InfiniBand high-speed network.
 
-Our investigations are performed on two distinct nodes, which provides a total of 96 \gls{mpi} processes and involves communication between two physically independent memory segments. We expect that this setup yields representative results that can be extrapolate on even larger problem sizes.
+In this section, our investigations are performed on two distinct nodes, which provide a total of 96 threads and involve communication between two physically independent memory segments. We expect that this setup yields representative results that can be extrapolated on even larger problem sizes.
 
-For our investigations, we use a 'flat' \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for all analyses in this dissertation.
+Further, we use a 'flat' \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for all parallel analyses in this dissertation.
 
 % problem specifications
 
-To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with nine global refinements and gets adapted in twelve iterations. For the strategy with the Legendre coefficient decay, this results in a total number of 46,369,440 \glspl{dof}, so that each process will be assigned with a number of 483,015 \glspl{dof} on average. Each type of finite element from the provided collection is represented at least once in the mesh.
+To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with nine global refinements and gets adapted in twelve iterations. For the strategy with the Legendre coefficient decay, this results in a total number of 46,369,440 \glspl{dof}, so that in the best case each process will be assigned to a number of 483,015 \glspl{dof} on average. Each type of finite element from the provided collection is represented at least once in the mesh.
 
 This advanced scenario will form the basis of our investigations to see how different weighting exponents affect the wall time, and which one provides a minimum. With serialization, we ensure that each of these runs conforms to the same conditions. Again, to mitigate the impact of temporary slowdowns on the supercomputer due to high loads on memory and network bandwidth, we repeat each run for a total of five times and take the minimum wall time in each category over all runs.
 
@@ -47,7 +46,8 @@ For varying weighting exponents, we compare the wall times of the full adaptatio
 %between runs with different weighting exponents
 in Fig.~\ref{fig:weights}.
 
-\todo{Second scale for assembly/discontinued axis with groupplot https://tex.stackexchange.com/questions/46422/axis-break-in-pgfplots}
+\todo{Second scale for assembly/discontinued axis with groupplot}
+%https://tex.stackexchange.com/questions/46422/axis-break-in-pgfplots
 \todo{Maybe also add setup of data structure and other parts}
 \begin{figure}
 \centering
