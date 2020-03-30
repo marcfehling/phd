@@ -1,34 +1,89 @@
 \chapter{Summary and outlook}
 \label{ch:summary}
-Text.
+\glsresetall
 
-Extensions:
+% summary
 
-Geometric multigrid
+The \gls{fem} offers the unique capability of \hp-adaptive methods with remarkable properties in error convergence relative to workload. However for \gls{hpc}, their parallel implementation for large scale computing architectures with distributed memory via \gls{mpi} is difficult.
 
-Regularity estimation (see houston 2005 for references), houston 2003
+We presented generic algorithms and data structures for massively parallel \hp-adaptive \gls{fem}, which allow for dynamic changes of both grid resolution and distribution of finite elements. Our findings are independent of the implementation and can be used to enhance any kind of \gls{fem} software, provided that their concepts conform to the elementary work of \textcite{bangerth2009,bangerth2012}, which forms the basis of our research.
+
+%can be enhanced with these findings, provided they already feature parallel \h-adaptive and sequential \hp-adaptive methods by \textcite{bangerth2009,bangerth2012}.
+
+%provided that their underlying structure is compatible with 
+
+%which can be used to enhance any existing \gls{fem} software. 
+
+In this dissertation, we elaborated on the nontrivial parts of combining both parallel \h-adaptive and sequential \hp-adaptive methods, which are briefly recapped in the following:
+%\begin{itemize}
+%\item%
+The unique enumeration of \glspl{dof} and their affiliation with the owning \gls{mpi} process poses challenges for \gls{cg} methods whenever finite elements of similar or different polynomial degree meet on subdomain boundaries. Our algorithm to solve this problem does not require more costly communication with ghost cells than the \h-adaptive pendant.
+
+%\item%
+For an automatic adaptation, refinement criteria on basis of error indicators are required to decide which parts of the domain should be adapted. In addition using \hp-adaptive methods, we also have to select the type of adaptation we would like to impose.
+%In addition to the determination of refinement criteria on basis of error indicators, we need to additionally decide which type of adaptation to impose for an automatic determination.
+We presented several state-of-the-art methods for \hp-refinement, prepared them for parallel applications, and enhanced them for \hp-coarsening as well.
+%\end{itemize}
+
+%\item%
+Cells are distributed on \gls{mpi} processes in such a way that the workload is balanced among all of them, which we ensure with weighted repartitioning. On each cell, we imposed a simple weight proportional to the \glspl{dof} potentiated by a factor which depends on the problem to investigate.
+
+%\item%
+Whenever the mesh itself changes in parallel applications, for example by adaptation, workload needs to be redistributed by repartitioning. Depending on the investigated problem, transferring data from the former to the updated mesh is necessary, e.g.\@ the finite element approximation itself. In addition using \hp-adaptive methods, the amount of data to be transferred might vary by cell. We present a general approach to provide contiguous memory sections which will be exchanged using optimized algorithms presented by \textcite{burstedde2018} for data of fixed and variable size, respectively.
+
+%We use optimized algorithms presented by .
+
+%Data transfer of variable size via \gls{mpi} and the necessity of contiguous memory chunks to easily address each processor's locally owned space.
+
+We provided a reference implementation in the \dealii{} library and applied it on the Laplace problem on an L-shaped domain, a common numerical benchmark for \hp-adaptive methods. We have demonstrated their superior error convergence and shown that our implementation scales on up to 49,152 \gls{mpi} processes.
+
+%While sequential, static \hp-adaptive methods have been frequently used in multi-physics problems in \dealii{}, the actual application of dynamic \hp-adaptive methods stayed mostly in an experimental state within \dealii{} because of its intricate application. With the current interface as redesigned in this dissertation hopefully simplifies its usage so that it attracts for users and it hopefully becomes a widely used feature in the community.
 
 
-How application on fluid problems. We could use different criteria to decide for \hp-adaptation. The vorticity $\vec{w} = (\nabla \times \vec{v})$ or the dimensionless Reynolds number $\mathrm{Re} = (v L / \nu)$ would make up a good measure, with the velocity $\vec{v}$, the kinematic viscosity $\nu$ and a characteristic length $L$. We would prefer \h-refinement on turbulent regions indicated by a high vorticity or Reynolds number, and \p-refinement in laminar regions.
+% extensions
 
+Parallel \hp-adaptive \glspl{fem} capable of handling both \gls{cg} and \gls{dg} methods have not been made publicly accessible in this scope before. However, our implementation is still at an early stage of development, and there is still plenty of room for improvement, as we described throughout this dissertation. Those Points that leave room for improvements are the following.
 
-While static \hp-adaptive methods have been frequently used in multi-physics problems in \dealii{}, the actual application of \hp-adaptive methods stayed mostly experimental within \dealii{} because of its inconvenient application. With the current interface as redesigned in this dissertation hopefully simplifies its usage so taht it attracts for users and it hopefully becomes a widely used feature in the community.
+We observed an unfavorable scaling behavior during the solution of the equation system in our \hp-adaptive \gls{fem} application, which we attribute to our choice of an \gls{amg} preconditioner. A more suitable one might solve this issue, for which \gls{gmg} methods are promising. For parallel \h-adaptive \gls{fem}, \textcite{clevenger2019} presented algorithms for \gls{gmg} preconditioners and provided an implementation in the \dealii{} library. Future work involves enhancing them for \hp-adaptive methods as well, combining their ideas with those of \textcite{mitchell2010}.
 
+%Geometric multigrid
+%Find a way to combine the parallel \h-adpative \gls{gmg} preconditioner by \textcite{clevenger2019} with the \hp-adaptive variant by \textcite{mitchell2010}.
 
-In parallel, \hp-adaptive methods have not been made publicly accessible in this scope before.
+%how to combine them with the ideas of melenk for \hp-adaptive \gls{gmg} methods.
 
-for \gls{cg} methods
+%new strategies to decide between \h- and \p-adaptation
+We described a handful of decision strategies to decide between types of adaptation. However, there are more strategies worth trying out.
+%Regularity estimation (see houston 2005 for references), houston 2003
+%\textcite{houston2003} \textcite{houston2005}
+\textcite{houston2003,houston2005} directly determined the regularity of the solution from the coefficients of a Legendre expansion of the finite element approximation. We could use those as decision indicators, or directly set the fitting finite element on basis of their result.
+%Enhancements for Fourier strategy using \gls{fft} (e.g. via \fftw{} \parencite{frigo2005,fftw338}).
+Further, we noticed that the preparation of the Fourier transformation matrices consumes a lot of wall time due to the high accuracy required, which we hope to accelerate using \gls{fft}, e.g. via \fftw{} \parencite{frigo2005,fftw338}.
 
-We are left to provide an easily accessible tutorial program describing all features in the tradition of the \dealii{} library.
+One could also imagine different decision indicators that are specific to the investigated problem. Hence for computational fluid dynamics, we could relate the decision criteria towards a measure for turbulence. The vorticity $\vec{w} = (\nabla \times \vec{v})$ as the rotation of the fluid velocity $\vec{v}$ would make up a good measure. We would prefer \h-refinement on turbulent regions indicated by a high vorticity or Reynolds number, and \p-refinement in laminar regions.
 
+%Let us consider for examples computational fluid dynamics. We could use different criteria to decide for \hp-adaptation. The vorticity $\vec{w} = (\nabla \times \vec{v})$ or the dimensionless Reynolds number $\mathrm{Re} = (v L / \nu)$ would make up a good measure, with the velocity $\vec{v}$, the kinematic viscosity $\nu$ and a characteristic length $L$. We would prefer \h-refinement on turbulent regions indicated by a high vorticity or Reynolds number, and \p-refinement in laminar regions.
 
-Our implementation is still at an early stage of development, and there is still plenty of room for improvement, as we described throughout all chapters of this dissertation. These points involve ... proper parallel geometric multigrid preconditioning, new strategies to decide between \h- and \p-adaptation
+Future work will involve examining the possibility to combine \hp-adaptive methods with so called matrix-free methods. Memory access is the current bottleneck on \gls{hpc} machines. Instead of calculating matrix entries and storing them, it might be faster to calculate them on the fly as they are requested. Combined with SIMD vectorization, this is highly favorable strategy on current \gls{hpc} machines. Matrix-free methods have been part of the \dealii{} for a long time \parencite{kronbichler2012}, and have been continuously enhanced during the last decade \parencite{kronbichler2019}. Further, \textcite{munch2020} recently published an open-source library named \texttt{hyper.deal} for high-order \gls{dg} methods which is built on top of \dealii{} and provides an easy to use interface to utilize these methods. An extension with \hp-adaptive methods would be highly promising in any case.
 
-Enhancement to use matrix-free methods. Memory access is bottleneck on hpc machines. Instead of calculating matrix entries and storing them, it might be cheaper to calculate them on the fly when they are requested. Combined with vectorization, this is highly favorable on current \gls{hpc} machines.
+% closing words
 
+We are left to see whether parallel dynamic \hp-adaptive will be well received by the community. At the very least, it has been a long requested feature of the \dealii{} library, which was first mentioned in the \dealii{} Google group\footnote{\url{https://groups.google.com/forum/\#!forum/dealii}} in late 2015 and has been in progress since late 2016 \textcite{dealiiissue3511}.
 
-Future work involves figuring out if it is possible to combine \hp-adaptive methods with matrix-free methods.
+In the past, \textcite{bangerth2009} provided algorithms and data structures for sequential \hp-adaptive methods and provided a reference implementation in \dealii{}. They have been widely used for multi-physics problems in \dealii{}, coupling different physical models in different parts of the domain by assigning corresponding finite elements. However, automatic \hp-adaptation stayed mostly in an experimental state within \dealii{} because of its intricate application. The current interface as redesigned in this dissertation simplifies its usage, so that it hopefully becomes a widely used feature in the community.
 
-An implementation in the hyper.deal \parencite{munch2020} package would be highly interesting.
+A good approach to make these features more accessible to all users of the library is to write a dedicated tutorial program as part of the \dealii{} library that showcases the new functionality presented in this dissertation. Tutorial programs are meant to demonstrate certain features of the library and give newcomers a fundamental insight into the numerical and computational background, as well as into implementation details due to extensive documentation. The \dealii{} library currently features a total of 62 of such tutorial programs in their most recent release \parencite{arndt2019}. For the demonstration of parallel \hp-adaptive \gls{fem}, we will translate the numerical example from Ch.~\ref{ch:results} into a new stand-alone tutorial.
 
-Recently, this approach has been published as hyper.deal for high-order \gls{dg} methods.
+% We are left to provide an easily accessible tutorial program describing all features in the tradition of the \dealii{} library.
+
+%Time will tell how this feature is going to be perceived by the scientific community.
+
+%It has been a long requested feature in the \dealii{} library, which was first mentioned in the \dealii{} Google group\footnote{\url{https://groups.google.com/forum/\#!forum/dealii}} in late 2015, and work began in late 2016 \textcite{dealiiissue3511}.
+
+% has now finally been implemented in a way that it is easily accessible by made
+
+%It was first requested by the community as a feature mentioned in late 2015 in the deal.
+%The first mention in the \dealii{} Google group\footnote{\url{https://groups.google.com/forum/\#!forum/dealii}} happened in late 2015, and work began in late 2016 \textcite{dealiiissue3511}.
+
+After all, parallel \hp-adaptive methods offer promising capabilities, and with all features left to add they are a very challenging yet exciting topic worth to continue working on.
+
+%And if the scientific interest will be underwhelming, we can at least still create nice pictures with it.
