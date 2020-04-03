@@ -32,10 +32,10 @@ Further, modern multi-processor systems require parallelization to make hardware
 %on which we will focus in this dissertation.
 %The choice of parallelization highly depends on hardware architecture, and are a requirement for large-scale supercomputers with distributed memory access.
 Depending on the hardware architecture, many different \glspl{api} have been developed over the last decades which allow developers to take opportunity of unified interfaces.
-For machines with shared memory access like modern desktop workstations, independent computing tasks can be distributed among all hardware threads subjecting to a work stealing policy, for which \gls{openmp} \textcite{openmp50} and \gls{tbb} \textcite{tbb2018} are the most prominent approaches.
+For machines with shared memory access like modern desktop workstations, independent computing tasks can be distributed among all hardware threads subjecting to a work stealing policy, for which \gls{openmp}\textsuperscript{\textregistered} \textcite{openmp50} and Intel\textsuperscript{\textregistered} \gls{tbb} \textcite{tbb2018} are the most prominent approaches.
 On large-scale supercomputers, \glspl{cpu} are spread out on multiple computing nodes with independent memory segments connected via network. To enable them to cooperate, data needs to be exchanged between all participating nodes. For communication between processes, the \gls{mpi} \textcite{mpi31} has become a standard. A hybrid combination of both techniques for shared and distributed memory is possible.
 %If architecture is distributed on nodes and thus have distributed memory access, the \gls{mpi} \textcite{mpi31} will be used.
-Recently, streaming multiprocessor architectures on \glspl{gpu} have become of more and more interest for scientific applications, which offer lots of theoretical throughput, but are strongly limited in memory size. \gls{openacc} \textcite{openacc27} or nVidia's \gls{cuda} \textcite{cuda10} provide interfaces for the scientific use of \glspl{gpu}.
+Recently, streaming multiprocessor architectures on \glspl{gpu} have become of more and more interest for scientific applications, which offer lots of theoretical throughput, but are strongly limited in memory size. \gls{openacc}\textsuperscript{\textregistered} \textcite{openacc27} and nVidia\textsuperscript{\textregistered} \gls{cuda}\textsuperscript{\textregistered} \textcite{cuda10} provide interfaces for the scientific use of \glspl{gpu}.
 
 % methods for spatial discretization
 
@@ -66,7 +66,7 @@ With \Gls{amr}, or \h-adaptive refinement, the spatial resolution of our discret
 The presented optimization methods can be applied on all sorts of problems involving partial differential equations from mathematics, nature, and engineering. They have already been extensively used for e.g.\@ structural and solid mechanics, as well as fluid dynamics to name just a few.
 A concrete application example describes the simulation of smoke spread in buildings.
 In general, fires remain spatially localized even after their ignition phase, so the dynamic allocation of both resolution and computational resources is highly favorable in this scenario.
-Their simulation on large scale buildings or connected facilities like underground tunnel systems as investigated in the ORPHEUS project \todo{cite}, yield an incredible amount of workload.
+Their simulation on large scale buildings or connected facilities like underground tunnel systems as investigated in the ORPHEUS project \parencite{orpheus}, yield an incredible amount of workload.
 %a use of adaptive methods . and the combination with parallelization on large-scale buildings, or even large connected facilities like underground stations as investigated in the \texttt{ORPHEUS} project, yield a lot of complexity and thus a lot of workload.
 
 %Further, the combination of an efficient use of computational ressource via parallelization as well as an intelligent assignment of these ressource on crucial areas of the problem via adaptation is incredibly important.
@@ -83,7 +83,7 @@ In this dissertation, we will focus on \hp-adaptive \gls{fem} with their excepti
 
 %\textcite{shahbazi2007}
 
-In the past, several algorithms for parallel \hp-adaptive \gls{fem} have been developed, but they always stayed in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} demonstrated methods for shared memory machines. A general approach that also works with \gls{cg} methods poses additional implementation challenges. %and has not been published yet.
+In the past, several algorithms for parallel \hp-adaptive \gls{fem} have been developed, but they always stayed in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} demonstrated methods for shared memory machines. A general approach which also works with \gls{cg} methods poses additional implementation challenges. %and has not been published yet.
 
 %\textcite{paszynski2006}
 % demkovisz par
@@ -103,9 +103,30 @@ Algorithms and data structures have already been presented in detail for paralle
 %However, the combination of both elaborations is not trivial and has not yet been carried out.
 The goal of this dissertation is to provide the connection between both algorithms, which highlights difficulties to combine both parallelization with \hp-adaptive methods. This dissertation is not meant to be an in-depth guide for the creation of \gls{fem} software. We would rather like to emphasize on the basic ideas for parallel hp-adaptive \gls{fem} and point out programming challenges. We will provide an example implementation in the \dealii{} library, so that the reader is able to either embed our findings into his own \gls{fem} code or use the \dealii{} implementation right away.
 
+\dealii{} is an open-source software library for the creation of general purpose \gls{fem} codes.
+
+With it, users can easily generate their own application for scientific research on basis of the expertise of their developers.
+
+\dealii{} is part of the \gls{xsdk} \parencite{bartlett2017,xsdk050} and builds upon interfaces to other libraries providing .
+
+combining efforts of many research software engineers to make their expertise available to all packages in this kit
+from which all packages in this kit profit.
+
+It is a joint effort to provide a set of tools for exascale computing.
+
+relying on the expertise of other developers and their 
+
+and offers lots of features 
+It offers lots of additional features for \gls{fem} that go beyond usual 
+
+
+Although the combination of \dealii{} and \pforest{} relies on quadrilateral and hexahedral cells in two and three dimensions for which they use a Z-order or Molton scheme, the presented ideas for algorithms and data structures are not restricted to these specifications.
+
+
+
 In the \dealii{} library, we rely on third party libraries. Parallel linear algebra by \trilinos{} \parencite{heroux2005,trilinos12181} and \petsc{} \parencite{balay2019,petsc3124}.
 
-The whole parallel grid adaptation is done with \pforest{} \parencite{burstedde2011, p4est22}. While linear algebra with interfaces, we use \pforest{} as an oracle. That means we store a separate copy of the traingulation inside \pforest{} and apply their algorithms on it and then transfer the changes back to the \dealii{} data structures.
+The whole parallel grid adaptation is done with \pforest{} \parencite{burstedde2011, p4est22}. While linear algebra with interfaces, we use \pforest{} as an oracle. That means we store a separate copy of the triangulation inside \pforest{} and apply their algorithms on it and then transfer the changes back to the \dealii{} data structures.
 
 Every cell related data is thus stored in both libs in the very same way. They both use Z-order or Molten-schemes to iterate over cells. (sth like that?)
 
