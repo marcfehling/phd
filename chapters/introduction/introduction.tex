@@ -35,7 +35,7 @@ Depending on the hardware architecture, many different \glspl{api} have been dev
 For machines with shared memory access like modern desktop workstations, independent computing tasks can be distributed among all hardware threads subjecting to a work stealing policy, for which \gls{openmp}\textsuperscript{\textregistered} \textcite{openmp50} and Intel\textsuperscript{\textregistered} \gls{tbb} \textcite{tbb2018} are the most prominent approaches.
 On large-scale supercomputers, \glspl{cpu} are spread out on multiple computing nodes with independent memory segments connected via network. To enable them to cooperate, data needs to be exchanged between all participating nodes. For communication between processes, the \gls{mpi} \textcite{mpi31} has become a standard. A hybrid combination of both techniques for shared and distributed memory is possible.
 %If architecture is distributed on nodes and thus have distributed memory access, the \gls{mpi} \textcite{mpi31} will be used.
-Recently, streaming multiprocessor architectures on \glspl{gpu} have become of more and more interest for scientific applications, which offer lots of theoretical throughput, but are strongly limited in memory size. \gls{openacc}\textsuperscript{\textregistered} \textcite{openacc27} and nVidia\textsuperscript{\textregistered} \gls{cuda}\textsuperscript{\textregistered} \textcite{cuda10} provide interfaces for the scientific use of \glspl{gpu}.
+Recently, streaming multiprocessor architectures on \glspl{gpu} have become of more and more interest for scientific applications, which offer lots of theoretical throughput, but are strongly limited in flexibility. \gls{openacc}\textsuperscript{\textregistered} \textcite{openacc27} and nVidia\textsuperscript{\textregistered} \gls{cuda}\textsuperscript{\textregistered} \textcite{cuda10} provide interfaces for the scientific use of \glspl{gpu}.
 
 % methods for spatial discretization
 
@@ -55,7 +55,7 @@ In addition to optimizing numerical methods to the hardware, we can also adjust 
 %On the other hand, focus computational ressources on critical sections of the domain, which are problem dependet and  These sections . adaptive
 This not only assures the full utilization of all available resources, but also their efficient usage.
 %The key to use those ausnutzen fully are efficient algorithms that either fit to the hardware or distribute resources on computing intensive operations.
-%A combinatation of both hardware and .. software driven algorithms can be supplied. However, their combination is not trivial. 
+%A combinatation of both hardware and .. software driven algorithms can be supplied. However, their combination is not trivial.
 %Adaptive methods assign resolution of the problem on interesting parts of the domain.
 %A common approach is adapting the numerical discretization to the specifics of the investigated problem.
 With \Gls{amr}, or \h-adaptive refinement, the spatial resolution of our discretization will be locally assigned, resulting in entities with different sizes $h$. While \gls{fdm} requires a regular topology for \gls{amr}, it is applicable on \gls{fvm} and \gls{fem} without major restrictions. In addition, \gls{fem} offers the unique capability for \p-adaptation, in which the polynomial degree of the basis functions will be locally set. The combination of both is possible, resulting in \hp-adaptive methods.
@@ -98,42 +98,38 @@ Though there are several open-source libraries available to the public that prov
 
 %Further, although parallel \hp-adaptive \glspl{fem} have been presented thoroughly, there is no systematic description on how to realize them yet as a software application. There are publications that highlight all necessary data structures and algorithms parallelization \parencite{bangerth2012} (parallel paper) and \hp-adaptive methods \parencite{bangerth2009}.
 
-Further, although parallel \hp-adaptive \glspl{fem} have been presented thoroughly, there is no systematic description on how to realize them yet as a software application.
+Further, although applications of parallel \hp-adaptive \glspl{fem} have been presented thoroughly, there is no systematic description on how to realize them yet as a software implementation.
 Algorithms and data structures have already been presented in detail for parallel \h-adaptive \gls{fem} by \textcite{bangerth2012} and sequential \hp-adaptive \gls{fem} by \textcite{bangerth2009}.
 %However, the combination of both elaborations is not trivial and has not yet been carried out.
-The goal of this dissertation is to provide the connection between both algorithms, which highlights difficulties to combine both parallelization with \hp-adaptive methods. This dissertation is not meant to be an in-depth guide for the creation of \gls{fem} software. We would rather like to emphasize on the basic ideas for parallel hp-adaptive \gls{fem} and point out programming challenges. We will provide an example implementation in the \dealii{} library, so that the reader is able to either embed our findings into his own \gls{fem} code or use the \dealii{} implementation right away.
+The goal of this dissertation is to provide the connection between both algorithms, which highlights difficulties to combine both parallelization with \hp-adaptive methods. This dissertation is not meant to be an in-depth guide for the creation of \gls{fem} software. We would rather like to emphasize on the basic ideas for parallel hp-adaptive \gls{fem} and point out programming challenges. We will provide an example implementation in the \dealii{} library \parencite{bangerth2007, dealii920pre}, so that the reader is able to either embed our findings into his own \gls{fem} code or use the \dealii{} implementation right away.
 
 \dealii{} is an open-source software library for the creation of general purpose \gls{fem} codes.
+%It offers lots of additional features for \gls{fem} that go beyond usual
+%With it, users can easily generate their own application for scientific research on basis of the expertise of their developers.
+It is part of the \gls{xsdk} \parencite{bartlett2017,xsdk050},
+%and builds upon interfaces to other libraries providing .
+which combines efforts of many research software engineers to make their expertise in optimized \gls{hpc} available and provides them to the public as a whole.
+%and combine it with to all packages in this kit
+%from which all packages in this kit profit.
+%share their own expertise and benefit from others
+%It is a joint effort to provide a set of tools for exascale computing.
+%relying on the expertise of other developers and their
+%and offers lots of features
+In this context of sharing knowledge, \dealii{} profits from parallel linear algebra provided by the open-source libraries \trilinos{} \parencite{heroux2005,trilinos12181} and \petsc{} \parencite{balay2019,petsc3124}, and utilizes their implementation via designated interfaces.
+%In the \dealii{} library, we rely on third party libraries. Parallel linear algebra by \trilinos{} \parencite{heroux2005,trilinos12181} and \petsc{} \parencite{balay2019,petsc3124}.
 
-With it, users can easily generate their own application for scientific research on basis of the expertise of their developers.
-
-\dealii{} is part of the \gls{xsdk} \parencite{bartlett2017,xsdk050} and builds upon interfaces to other libraries providing .
-
-combining efforts of many research software engineers to make their expertise available to all packages in this kit
-from which all packages in this kit profit.
-
-It is a joint effort to provide a set of tools for exascale computing.
-
-relying on the expertise of other developers and their 
-
-and offers lots of features 
-It offers lots of additional features for \gls{fem} that go beyond usual 
-
-
-Although the combination of \dealii{} and \pforest{} relies on quadrilateral and hexahedral cells in two and three dimensions for which they use a Z-order or Molton scheme, the presented ideas for algorithms and data structures are not restricted to these specifications.
-
-
-
-In the \dealii{} library, we rely on third party libraries. Parallel linear algebra by \trilinos{} \parencite{heroux2005,trilinos12181} and \petsc{} \parencite{balay2019,petsc3124}.
-
-The whole parallel grid adaptation is done with \pforest{} \parencite{burstedde2011, p4est22}. While linear algebra with interfaces, we use \pforest{} as an oracle. That means we store a separate copy of the triangulation inside \pforest{} and apply their algorithms on it and then transfer the changes back to the \dealii{} data structures.
-
-Every cell related data is thus stored in both libs in the very same way. They both use Z-order or Molten-schemes to iterate over cells. (sth like that?)
+Further, \dealii{} does not provide the hierarchic generation of \h-adaptive meshes and their partitioning on multiple processes of distributed memory architectures itself, but relies on the implementation of the open-source library \pforest{} \parencite{burstedde2011, p4est22}. In this regard, \pforest{} will be used as an 'oracle': Operations that manipulate the mesh and its partitioning happen on the distributed instance provided by \pforest{}, and will be recreated only on the locally owned sections of the \dealii{} triangulation
+%and data structures
+on every process with a set of queries to the master mesh.
+%Every cell related data is thus stored in both libs in the very same way. They both use Z-order or Molten-schemes to iterate over cells. (sth like that?)
+The combination of \dealii{} and \pforest{} poses restrictions based on decisions made during their development process, for example the specialization on hierarchic quadtree and octree structures with corresponding quadrilateral and hexahedral cells in two and three dimensions, which will be arranged by means of a Z-order or Morton space-filling curve.
+%Although the combination of \dealii{} and \pforest{} relies on quadrilateral and hexahedral cells in two and three dimensions for which they use a Z-order or Morton scheme
+However, the presented ideas for algorithms and data structures in this dissertation are not restricted to these specifications.
 
 % thesis outline
 
 %Algorithms and data structures have already been presented for parallel \h-adaptive \gls{fem} by \textcite{bangerth2012} and sequential \hp-adaptive \gls{fem} by \textcite{bangerth2009}. However, the combination of both elaborations is not trivial.
 
-In this dissertation, we present all enhancements necessary to supply parallel \hp-adaptive methods for algorithms and data structures that are already capable of parallel \h-adaptive and sequential \hp-adaptive \gls{fem}. In Ch.~\ref{ch:parallel} we present the necessary details for static meshes, i.e.\@ meshes with fixed resolution and distribution of finite elements from beginning to end of a simulation. The following Ch.~\ref{ch:dynamic} deals with all necessities of dynamic \hp-adaptive methods, and presents algorithms to automatically determine regions to adapt. With the methods so presented, we apply them on a simple numerical example on Ch.~\ref{ch:numerics} to show the benefits of \hp-adaptive methods and the scalability on the JURECA supercomputer.
+In this dissertation, we present all enhancements necessary to supply parallel \hp-adaptive methods for algorithms and data structures that are already capable of parallel \h-adaptive and sequential \hp-adaptive \gls{fem}. In Ch.~\ref{ch:parallel} we present the necessary details for static meshes, i.e.\@ meshes with fixed resolution and distribution of finite elements from beginning to end of a simulation. The following Ch.~\ref{ch:dynamic} deals with all necessities of dynamic \hp-adaptive methods, and presents algorithms to automatically determine regions to adapt. With the methods so presented, we apply them on a simple numerical example on Ch.~\ref{ch:numerics} to show the benefits of \hp-adaptive methods and the scalability on the JURECA supercomputer \parencite{krause2016}.
 
 Some of the algorithms presented in this dissertation have already been published in the current release of the \dealii{} library \parencite{arndt2019,dealii920pre} and their entirety will be made available completely with the upcoming release. All numerical examples in this dissertation have been performed using a certain a version of the library published on a public fork \textcite{finaldissertation} of the corresponding \dealii{} repository \textcite{dealii920pre}.
