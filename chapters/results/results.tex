@@ -29,7 +29,7 @@ u_\text{sol}(\vec{x}) &= r^\alpha \sin(\alpha \, \theta) \,\text{,} \\
 \end{align}
 with unit vectors \(\vec{e}_r = \cos(\theta) \vec{e}_x - \sin(\theta) \vec{e}_y\) and \(\vec{e}_\theta = \sin(\theta) \vec{e}_x + \cos(\theta) \vec{e}_y\). We immediately see that this solution has a singularity near the point of origin for the permitted values of $\alpha \in \left(1/2, 1\right)$:
 \begin{align}
-\left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} \approx \alpha r^{\alpha - 1} \,\text{.}
+\left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \alpha r^{\alpha - 1} \,\text{,} & \lim\limits_{r \rightarrow 0} \left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \infty \quad\text{for}\quad \alpha \in \left(1/2, 1\right) \,\text{.}
 \end{align}
 
 In our testcase, we pick the corner to have a right angle with $\alpha = 2/3$ resulting in an L-shaped domain, at which all cells share the same topology to exclude influences from mesh distortion in our benchmark:
@@ -47,7 +47,7 @@ A depiction of the solution on this particular domain is shown in Fig.~\ref{fig:
 
 In this chapter, we will solve the so designed Laplace problem on the L-shaped domain on consecutively refined meshes, and evaluate certain aspects of our implementation, namely the error performance of the decision strategies and their parallel scalability.
 
-Following the usual approach in \gls{fem}, we transfer our problem to its weak formulation using \gls{cg} methods:
+Following the usual approach in \gls{fem}, we transfer our problem to its weak formulation using \gls{cg} methods \parencite{brenner2008}:
 \begin{align}
 \left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
 \end{align}

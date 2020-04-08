@@ -70,7 +70,7 @@ The constant $c_F$ depends on the characteristics of each individual face of the
 
 This estimator has been worked out for the Poisson equation, but has proven its applicability on other problems as well, where this is no longer meant to be an estimator, but rather an error indicator \cite{dealiikelly}.
 
-We will use these error estimates to decide which cells we will adapt. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
+We will use these error estimates with the modification for \hp-adaptive \gls{fem} to decide which cells we will adapt. We are still left to decide which type of adaptation we want to apply, i.e.\@ \h-adaptation or \p-adaptation.
 
 
 
@@ -116,7 +116,7 @@ To clarify roles during \h-refinement and \h-coarsening, we marked parent cells 
 
 We now have an algorithm to predict the error for the next adaptation step on basis of the current one. We are left to find a suitable criterion on how to use it to actually decide which type of adaptation to apply.
 
-The original idea of \cite{melenk2001} was to compare the actual error of a cell $\eta_K$ in an adaptation cycle to its prediction $\eta_K^\text{pred}$ from the previous cycle. On all cells flagged for refinement, they consider \h-refinement for $\eta_K > \eta_K^\text{pred}$ and \p-refinement otherwise. We will extend these consideration to work for coarsening as well: For this, we need to pick the according strategy that keeps the cell diameter $h_k$ small for $\eta_K > \eta_K^\text{pred}$, and the polynomial degree $p_K$ large otherwise. The motivation behind this particular choice is that we keep the grid resolution fine whenever we suspect a singularity, which is usually indicated by a local error larger than its prediction.
+The original idea of \textcite{melenk2001} was to compare the actual error of a cell $\eta_K$ in an adaptation cycle to its prediction $\eta_K^\text{pred}$ from the previous cycle. On all cells flagged for refinement, they consider \h-refinement for $\eta_K > \eta_K^\text{pred}$ and \p-refinement otherwise. We will extend these consideration to work for coarsening as well: For this, we need to pick the according strategy that keeps the cell diameter $h_k$ small for $\eta_K > \eta_K^\text{pred}$, and the polynomial degree $p_K$ large otherwise. The motivation behind this particular choice is that we keep the grid resolution fine whenever we suspect a singularity, which is usually indicated by a local error larger than its prediction.
 
 An alternative approach would be to use the \textit{fixed-number} adaptation strategy from above: As indicators for each cell, we calculate the difference of predicted and estimated errors $(\eta_K^\text{pred} - \eta_K)$ for each subset of cells flagged for refinement and coarsening, respectively. On cells to be refined, we consider the fraction corresponding to the largest values for \p-adaptation, while for cells to be coarsened, the fraction with the lowest values will be picked. This conforms to the same argumentation as in the original variant. A graphical illustration of the assignment of cells for \hp-adaptation using this approach is given in Fig.~\ref{fig:indicators}. We will use this strategy in our applications presented in Ch.~\ref{ch:results}.
 
@@ -285,4 +285,4 @@ A variety of different ideas and implementations for smoothness indication strat
 
 A different approach is to estimate the Sobolev regularity locally and use it as a means for deciding between \h- and \p-adaptation. \textcite{ainsworth1998} presented a way to determine the regularity by solving the problem on smaller patches of the domain, which is rather expensive approach. On the other hand, \textcite{houston2003} proposed a strategy which estimates the local Sobolev regularity directly from a Legendre series expansion (see also \textcite[Sec.~2.4]{houston2005}). The latter method will form the basis of future enhancements on our \hp-adaptation strategies.
 
-Further, we will investigate whether the determination of Fourier coefficients via \gls{fft} methods (e.g.\@ via \fftw{} \textcite{fftw338}) offers a more efficient and generally applicable alternative to the method presented above by \textcite{bangerth2009}.
+Further, we will investigate whether the determination of Fourier coefficients via \gls{fft} methods (e.g.\@ via \fftw{} \parencite{frigo2005,fftw338}) offers a more efficient and generally applicable alternative to the method presented above by \textcite{bangerth2009}.

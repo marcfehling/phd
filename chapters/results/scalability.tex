@@ -3,7 +3,7 @@
 
 The final part of our investigations relates to the demonstration of the scalability of our algorithms and data structures on \gls{hpc} systems, for which we will again use the JURECA supercomputer \parencite{krause2016}.
 
-Again working with successively adapted meshes, we will measure the wall time spent in each particular section of each SOLVE-ESTIMATE-MARK-REFINE iteration, which is supposed to increase linearly with the workload determined by the number of \glspl{dof} or decrease linearly with an increasing amount of workers, i.e.\@ number of \gls{mpi} processes. We distinguish between the following categories in each adaptation cycle:
+Again working with successively adapted meshes, we will measure the wall time spent in each particular section of each SOLVE-ESTIMATE-MARK-REFINE iteration, which is supposed to increase linearly with the workload determined by the number of \glspl{dof} or decrease linearly with an increasing amount of workers, i.e.\@ number of \gls{mpi} processes. We distinguish between the following categories in each adaptation cycle similar to \textcite{bangerth2012}:
 \begin{itemize}
 \item \textit{Setup data structures}. Enumerate all \glspl{dof}. Determine the sparsity pattern describing locations of nonzero matrix entries. Calculate constraints for hanging nodes and boundary values. Allocate memory for all distributed data structures. Communicate between processes which matrix or vector elements they will write to that they do not own locally.
 \item \textit{Assemble linear system}. Calculate the individual contribution of each locally owned cell to the global equation system. Exchange data if matrix or vector elements are stored on a different process.

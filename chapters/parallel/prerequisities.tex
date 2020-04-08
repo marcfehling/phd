@@ -53,6 +53,7 @@ In computational applications, adaptive methods are used to align the resolution
 As an alternative to modifying the grid resolution, we can also adapt the function space using various finite elements associated with each cell. These finite elements may differ in the polynomial degree $p$ of their shape functions, offering the unique possibility for \p-adaptation, or \hp-adaptation when used together with grid adaptation. In practice, we specify a collection of finite elements, one of which is assigned to each cell in the domain. We identify the currently assigned finite element with an \textit{active finite element index} on each cell.
 
 Refinement level differences on quadrilateral or hexahedral meshes, as well as varying finite elements on neighboring active cells lead to \textit{hanging nodes} which are nodes with no counterpart on the opposite side of the interface. A depiction of \h- and \p-adaptive domains along with hanging nodes is presented in Fig.~\ref{fig:hpadaptivity}.
+%The corresponding tree structure has been presented by \textcite[Fig.~1]{burstedde2011}.
 
 \begin{figure}
 \begin{subfigure}{0.49\textwidth}
@@ -92,15 +93,15 @@ This summary recaps data structures and algorithms for \hp-adaptive \gls{fem} wh
 
 \subsection{Parallelization of \glsfmtshort{fem}}
 
-\Gls{hpc} applications require scalable algorithms and data structures for machines with distributed memory, which we realize using the \gls{mpi} \textcite{mpi31} standard. In this context, the workload on all participating processes will be shared by partitioning the whole domain among them.
+\Gls{hpc} applications require scalable algorithms and data structures for machines with distributed memory, which we realize using the \gls{mpi} standard \textcite{mpi31}. In this context, the workload on all participating processes will be shared by partitioning the whole domain among them.
 
-These ambitions pose different challenges on the design of data structures and information exchange between \gls{mpi} processes. Especially dynamic changes of the domain by \hp-adaptation are difficult, since they require the redistribution of the workload by repartitioning the global mesh, as well as the transfer of data not only between processes, but also between the former and the updated mesh. Here, we distinguish between different subsets of cells and \glspl{dof} which will be introduced in the following.
+These ambitions pose different challenges on the design of data structures and information exchange between \gls{mpi} processes. Especially dynamic changes of the domain by \hp-adaptation are difficult, since they require the redistribution of the workload by repartitioning the global mesh, as well as the transfer of data not only between processes, but also between the former and the updated mesh. We will discuss this topic in detail later in Ch.~\ref{ch:dynamic}. Here, we distinguish between different subsets of cells and \glspl{dof} which will be introduced in the following.
 
 Each process will only store data of cells that belong to its owned section of the domain, which we call \textit{subdomain}. Those cells are called \textit{locally owned cells}, and all \glspl{dof} on them are referred to as \textit{locally active \glspl{dof}}. Every \gls{dof} will be uniquely enumerated on the global mesh. With \gls{cg} methods, \glspl{dof} on interfaces between cells of different processes may be owned by either one or the other. Thus, not all \glspl{dof} on locally owned cells have to be \textit{locally owned \glspl{dof}}.
 
 During the assembly of equation systems, we need to refer to surrounding cells that do not belong to the local domain. Typically, the halo spanning one level of cells around the locally owned domain is sufficient. We call these cells \textit{ghost cells}. Data from ghost cells has to be requested from the owning process. The combination of locally owned and ghost cells and their corresponding \glspl{dof} are labeled \textit{locally relevant}.
 
-Further, we require that every process stores a copy of the common coarse mesh. This allows an easy construction of the whole grid during repartitioning just with adaptive methods. We establish the 2:1 mesh balance on all cells of the local mesh, leaving refined cells that are not actually used. These cells that are not locally relevant will be called \textit{artificial cells}. An example of a distributed, adapted mesh is shown in Fig.~\ref{fig:paralleldistribution} with all presented classes of cells.
+Further, we require that every process stores a copy of the common coarse mesh. This allows an easy construction of the whole grid during repartitioning just with adaptive methods. We establish the 2:1 mesh balance on all cells of the local mesh, leaving refined cells on regions that are not locally relevant. These cells that are not locally relevant will be called \textit{artificial cells}. An example of a distributed, adapted mesh is shown in Fig.~\ref{fig:paralleldistribution} with all presented classes of cells.
 
 \begin{figure}
 \begin{subfigure}[t]{.35\textwidth}

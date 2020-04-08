@@ -74,7 +74,7 @@ At this stage, each process knows which \glspl{dof} are owned by them.
   Iterate over all locally owned cells $K \in \cellsp{loc}$
   and enumerate those \gls{dof} indices in ascending order that have a valid value assigned, while considering all constraints from the previous step. Store the number of all valid \gls{dof} indices on this subdomain as $n_p$. In a next step, shift all indices by the number of \glspl{dof} that are owned by all processors of lower rank $q < p$, or in other words, by $\sum_{q=0}^{p-1} n_q$. This corresponds to a prefix sum or exclusive scan, and can be obtained via \texttt{MPI\_Exscan} \textcite{mpi31}.
 \end{enumerate}
-At this stage, all subdomains and processes have the correct indices assigned to all locally owned \glspl{dof}.
+At this stage, all subdomains and processes have the correct indices assigned to all locally owned \glspl{dof}, which are enumerated consecutively.
 \begin{enumerate}[resume]
   \item \textit{Ghost exchange.}
   Communicate \gls{dof} indices from locally owned cells $K \in \cellsp{loc}$ to other processes using point-to-point communication as follows.

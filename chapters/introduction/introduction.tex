@@ -15,10 +15,10 @@
 
 For the analysis of most problems in science and engineering, mathematical modeling is required to capture underlying correlations and apply findings to related variations. With rising complexity of the model, an analytical solution of a problem so described is less likely to exist, and is usually only acquired via approximation with numerical methods. Computers are used today to solve such problems numerically, but depending on the complexity of the problem and the computer hardware used, such analyses can have exceptionally long execution times.
 
-An intelligent distribution of the computing resources, which due to the dynamics of a simulation does not have to be done \textit{a priori} but progressively, would reduce the time and thus also the costs, or in other words, would provide a more accurate result for the same computing time. This is possible both physically by workload distribution to several processors
+An intelligent distribution of the computing resources, which due to the dynamics of a simulation does not have to be done \textit{a priori} but progressively, would reduce the time and thus also the costs, or in other words, would provide a more accurate result in the same computing time. This is possible both physically by workload distribution to several processors
 % exploiting the hardware structure
 and logically by
-an adaptive resolution of the simulation
+an adaptive resolution of the simulation%
 % allocating resources to critical operations
 , in each case based on the current state of the simulation.
 Recent advancements in computer technology allows us to solve problems with billions of unknowns. However, raw computing power does not mean we can use it without further ado. Only the combination with algorithms that use all available resources efficiently offers a massive potential to reduce execution times.
@@ -28,7 +28,7 @@ The goal of this dissertation is the provision of such new, efficient algorithms
 % algorithms on hardware level
 
 Applications can be optimized for the hardware structure up to the operating level, for example using \gls{simd} instructions combined with vectorization, and by avoiding bottlenecks caused by memory and network bandwidth.
-Further, modern multi-processor systems require parallelization to make hardware threads cooperate with each other.%, which highly depends on hardware architecture.
+Further, modern multi-processor systems require parallelization to make hardware threads cooperate with each other. %, which highly depends on hardware architecture.
 %on which we will focus in this dissertation.
 %The choice of parallelization highly depends on hardware architecture, and are a requirement for large-scale supercomputers with distributed memory access.
 Depending on the hardware architecture, many different \glspl{api} have been developed over the last decades which allow developers to take opportunity of unified interfaces.
@@ -58,15 +58,16 @@ This not only assures the full utilization of all available resources, but also 
 %A combinatation of both hardware and .. software driven algorithms can be supplied. However, their combination is not trivial.
 %Adaptive methods assign resolution of the problem on interesting parts of the domain.
 %A common approach is adapting the numerical discretization to the specifics of the investigated problem.
-With \Gls{amr}, or \h-adaptive refinement, the spatial resolution of our discretization will be locally assigned, resulting in entities with different sizes $h$. While \gls{fdm} requires a regular topology for \gls{amr}, it is applicable on \gls{fvm} and \gls{fem} without major restrictions. In addition, \gls{fem} offers the unique capability for \p-adaptation, in which the polynomial degree of the basis functions will be locally set. The combination of both is possible, resulting in \hp-adaptive methods.
+With \gls{amr}, or \h-adaptive refinement, the spatial resolution of our discretization will be locally assigned, resulting in entities with different sizes $h$. While \gls{fdm} requires a regular topology for \gls{amr}, it is applicable on \gls{fvm} and \gls{fem} without major restrictions. In addition, \gls{fem} offers the unique capability for \p-adaptation, in which the polynomial degree of the basis functions will be locally set. The combination of both is possible, resulting in \hp-adaptive methods.
 %, which are the focus of this dissertation.
 
 % universal application of these methods
 
-The presented optimization methods can be applied on all sorts of problems involving partial differential equations from mathematics, nature, and engineering. They have already been extensively used for e.g.\@ structural and solid mechanics, as well as fluid dynamics to name just a few.
+The presented optimization methods can be applied on all sorts of problems involving partial differential equations from mathematics, nature, and engineering. They have already been extensively used for e.g.\@ structural mechanics, heat transfer, wave propagation, as well as fluid dynamics to name just a few.
 A concrete application example describes the simulation of smoke spread in buildings.
+On basis of their results, fire safety engineers are able to optimize smoke extraction systems and evacuation routes to increase the safety of civilians in the event of a fire outbreak.
 In general, fires remain spatially localized even after their ignition phase, so the dynamic allocation of both resolution and computational resources is highly favorable in this scenario.
-Their simulation on large scale buildings or connected facilities like underground tunnel systems as investigated in the ORPHEUS project \parencite{orpheus}, yield an incredible amount of workload.
+Their simulation on large scale buildings or connected facilities like underground tunnel systems as investigated in the ORPHEUS project \parencite{arnold2017}, yield an incredible amount of workload.
 %a use of adaptive methods . and the combination with parallelization on large-scale buildings, or even large connected facilities like underground stations as investigated in the \texttt{ORPHEUS} project, yield a lot of complexity and thus a lot of workload.
 
 %Further, the combination of an efficient use of computational ressource via parallelization as well as an intelligent assignment of these ressource on crucial areas of the problem via adaptation is incredibly important.
@@ -83,13 +84,13 @@ In this dissertation, we will focus on \hp-adaptive \gls{fem} with their excepti
 
 %\textcite{shahbazi2007}
 
-In the past, several algorithms for parallel \hp-adaptive \gls{fem} have been developed, but they always stayed in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} demonstrated methods for shared memory machines. A general approach which also works with \gls{cg} methods poses additional implementation challenges. %and has not been published yet.
+In the past, several algorithms for parallel \hp-adaptive \gls{fem} have been developed, but they always stayed in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} demonstrated methods for shared memory machines. A general approach which also works with \gls{cg} methods poses additional implementation challenges as pointed out in the course of this dissertation. %and has not been published yet.
 
 %\textcite{paszynski2006}
 % demkovisz par
 
 Furthermore, \hp-adaptive methods have always stayed in an experimental stage and have never been prepared to be easily applied by a broader academic audience, especially in combination with parallelization.
-Though there are several open-source libraries available to the public that provide the bare functionality for \hp-adaptive \gls{fem} on distributed memory architectures using the \gls{mpi} protocol, such as the libraries \phaml{} \parencite{mitchell2002,phaml1200}, \phg{} \parencite{zhanglin-bo2019,phg094}, and \mofem{} \parencite{kaczmarczyk2020,mofem090}. However, even here the application of these features is not immediately accessible to the end user and it is difficult to make an easy use out of these features. We are not aware of any commercial tool capable of this feature.
+Though there are several open-source libraries available to the public that provide the bare functionality for \hp-adaptive \gls{fem} on distributed memory architectures using the \gls{mpi} protocol, such as the libraries \phaml{} \parencite{mitchell2002,phaml1200}, \phg{} \parencite{zhanglin-bo2019,phg094}, and \mofem{} \parencite{kaczmarczyk2020,mofem090}. However, even here the application of these features is not immediately accessible to the end user and it is difficult to make an easy use out of these features. We are not aware of any commercial tools capable of this feature.
 
 % par3dhp - not publicly available
 % hermes - only openmp parallelization
@@ -101,7 +102,7 @@ Though there are several open-source libraries available to the public that prov
 Further, although applications of parallel \hp-adaptive \glspl{fem} have been presented thoroughly, there is no systematic description on how to realize them yet as a software implementation.
 Algorithms and data structures have already been presented in detail for parallel \h-adaptive \gls{fem} by \textcite{bangerth2012} and sequential \hp-adaptive \gls{fem} by \textcite{bangerth2009}.
 %However, the combination of both elaborations is not trivial and has not yet been carried out.
-The goal of this dissertation is to provide the connection between both algorithms, which highlights difficulties to combine both parallelization with \hp-adaptive methods. This dissertation is not meant to be an in-depth guide for the creation of \gls{fem} software. We would rather like to emphasize on the basic ideas for parallel hp-adaptive \gls{fem} and point out programming challenges. We will provide an example implementation in the \dealii{} library \parencite{bangerth2007, dealii920pre}, so that the reader is able to either embed our findings into his own \gls{fem} code or use the \dealii{} implementation right away.
+The goal of this dissertation is to provide the connection between both algorithms, which highlights difficulties to combine both parallelization with \hp-adaptive methods. This dissertation is not meant to be an in-depth guide for the creation of \gls{fem} software. We would rather like to emphasize on the basic ideas for parallel \hp-adaptive \gls{fem} and point out programming challenges. We will provide an example implementation in the \dealii{} library \parencite{bangerth2007, dealii920pre}, so that the reader is able to either embed our findings into their own \gls{fem} code or use the \dealii{} implementation right away.
 
 \dealii{} is an open-source software library for the creation of general purpose \gls{fem} codes.
 %It offers lots of additional features for \gls{fem} that go beyond usual
@@ -118,7 +119,7 @@ which combines efforts of many research software engineers to make their experti
 In this context of sharing knowledge, \dealii{} profits from parallel linear algebra provided by the open-source libraries \trilinos{} \parencite{heroux2005,trilinos12181} and \petsc{} \parencite{balay2019,petsc3124}, and utilizes their implementation via designated interfaces.
 %In the \dealii{} library, we rely on third party libraries. Parallel linear algebra by \trilinos{} \parencite{heroux2005,trilinos12181} and \petsc{} \parencite{balay2019,petsc3124}.
 
-Further, \dealii{} does not provide the hierarchic generation of \h-adaptive meshes and their partitioning on multiple processes of distributed memory architectures itself, but relies on the implementation of the open-source library \pforest{} \parencite{burstedde2011, p4est22}. In this regard, \pforest{} will be used as an 'oracle': Operations that manipulate the mesh and its partitioning happen on the distributed instance provided by \pforest{}, and will be recreated only on the locally owned sections of the \dealii{} triangulation
+Further, \dealii{} does not provide the hierarchic generation of \h-adaptive meshes and their partitioning on multiple processes of distributed memory architectures itself, but relies on the implementation of the open-source library \pforest{} \parencite{burstedde2011, p4est22}. In this regard, \pforest{} will be used as an 'oracle': Operations that manipulate the mesh and its partitioning happen on a distributed instance provided by \pforest{}, and will be recreated only on the locally owned sections of the \dealii{} triangulation
 %and data structures
 on every process with a set of queries to the master mesh.
 %Every cell related data is thus stored in both libs in the very same way. They both use Z-order or Molten-schemes to iterate over cells. (sth like that?)
@@ -132,4 +133,4 @@ However, the presented ideas for algorithms and data structures in this disserta
 
 In this dissertation, we present all enhancements necessary to supply parallel \hp-adaptive methods for algorithms and data structures that are already capable of parallel \h-adaptive and sequential \hp-adaptive \gls{fem}. In Ch.~\ref{ch:parallel} we present the necessary details for static meshes, i.e.\@ meshes with fixed resolution and distribution of finite elements from beginning to end of a simulation. The following Ch.~\ref{ch:dynamic} deals with all necessities of dynamic \hp-adaptive methods, and presents algorithms to automatically determine regions to adapt. With the methods so presented, we apply them on a simple numerical example on Ch.~\ref{ch:numerics} to show the benefits of \hp-adaptive methods and the scalability on the JURECA supercomputer \parencite{krause2016}.
 
-Some of the algorithms presented in this dissertation have already been published in the current release of the \dealii{} library \parencite{arndt2019,dealii920pre} and their entirety will be made available completely with the upcoming release. All numerical examples in this dissertation have been performed using a certain a version of the library published on a public fork \textcite{finaldissertation} of the corresponding \dealii{} repository \textcite{dealii920pre}.
+Some of the algorithms presented in this dissertation have already been published in the current release of the \dealii{} library \parencite{arndt2019} and their entirety will be made available completely with the upcoming release. All numerical examples in this dissertation have been performed using a certain version of the library published on a public fork \textcite{finaldissertation} of the corresponding \dealii{} repository \textcite{dealii920pre}.

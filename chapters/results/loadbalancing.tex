@@ -17,7 +17,7 @@ For parallel computations on distributed memory systems, the global domain is pa
   \includegraphics[width=\textwidth]{figures/results/corner-2d-error-hp-legendre-05_subdomain12_customweighting.png}
   \caption{Weighting with an individually potentiated number of \glspl{dof}, i.e.\@ $\propto n_\text{dofs}^{1.9}$.}
 \end{subfigure}
-\caption{Decomposition of the mesh from Fig.~\ref{fig:fedegrees} on 12 \gls{mpi} processes with various cell weighting. Each color represents a different subdomain.}
+\caption{Decomposition of the mesh after six iterations with the Legendre coefficient decay strategy on 12 \gls{mpi} processes with various cell weighting. Each color represents a different subdomain.}
 \label{fig:decomposition}
 \end{figure}
 
@@ -27,11 +27,11 @@ Although all three \hp-adaptive strategies have demonstrated a similar performan
 
 % system specifications
 
-Investigations are carried out on the JURECA supercomputer \parencite{krause2016}. Each computing node is equipped with two Intel Xeon E5-2680 v3 processors with twelve cores running at 2.5GHz and either 128GB, 256GB or 512GB of memory. With simultaneous multithreading, a total of 48 threads are available per node. Communication between nodes happens via a Mellanox EDR InfiniBand high-speed network.
+Investigations are carried out on the JURECA supercomputer \parencite{krause2016}. Each computing node is equipped with two Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2680 v3 processors with twelve cores running at 2.5GHz and either 128GB, 256GB or 512GB of memory. With simultaneous multithreading, a total of 48 threads are available per node. Communication between nodes happens via a Mellanox EDR InfiniBand high-speed network.
 
 In this section, our investigations are performed on two distinct nodes, which provide a total of 96 threads and involve communication between two physically independent memory segments. We expect that this setup yields representative results that can be extrapolated on even larger problem sizes.
 
-Further, we use a 'flat' \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for all parallel analyses in this dissertation.
+Further, we use a 'flat' \gls{mpi} model: Every thread will be assigned to an individual \gls{mpi} process and no additional thread parallelization is invoked. Although \dealii{} provides such a feature via Intel\textsuperscript{\textregistered} \gls{tbb}, we refrain from using it to measure the pure \gls{mpi} performance for all parallel analyses in this dissertation.
 
 % problem specifications
 
@@ -52,7 +52,7 @@ in Fig.~\ref{fig:weights}.
 \begin{figure}
 \centering
 \input{figures/results/weights}
-\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and its relevant parts for load balancing. The problem has a number of 46 million \glspl{dof} and is solved on 2 nodes with a total of 96 \gls{mpi} processes. Weights proportional to $n_\text{dofs}^c$ will be assigned to each cell with varying exponents $c$.}
+\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and those parts relevant for load balancing. The problem has a number of about 46 million \glspl{dof} and is solved on 2 nodes or 96 \gls{mpi} processes. Weights proportional to $n_\text{dofs}^c$ will be assigned to each cell with varying exponents $c$.}
 \label{fig:weights}
 \end{figure}
 
