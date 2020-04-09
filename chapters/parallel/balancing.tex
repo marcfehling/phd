@@ -1,7 +1,7 @@
 \section{Load balancing}
 \label{sec:balancing}
 
-The efficient use of all computational resources requires a uniform distribution of all workload among them. There are many factors that determine the workload in a \gls{fem} application, above all the preparation of data structures, the assembly of both the matrix and right hand side of the linear equation system, and the choice of the type of its solver.
+The efficient use of all computational resources requires a uniform distribution of all workload among them. There are many factors that determine the workload in a \gls{fem} application, above all the preparation of data structures, the assembly of both the matrix and right hand side of the linear equation system, and the choice of the type of solver. Each of these categories contributes a different amount to the total workload, with the solver accounting for the largest share in general. We should thus balance the number of rows or non-zero entries per process in the solution matrix. However, information about the matrix is available late in a solution cycle, so we need to look for a different measure at an earlier stage.
 
 In most \h-adaptive applications, cells are similar and correspond to the same workload. Thus, we can simply balance the number of cells on all processes. However with \hp-adaptive application, this is no longer the case due to the diversity of finite elements. %Here, the workload varies with the number of \glspl{dof} on each cell. (and the quadrature)
 In this case, since the domain is partitioned on the basis of cells, we need to assign a corresponding weight to every cell that determines its individual workload and balance the cumulated weights among all processes.
@@ -25,13 +25,13 @@ For the purpose of load balancing, \textcite[Sec.~3.3]{burstedde2011} provided a
 
 %We rely on the implementation of \textcite{burstedde2018} in \pforest{} \textcite{p4est22}. The basic idea of this algorithm is to form a cumulated of all cell weights with an \texttt{MPI\_Exscan} call, and then each process will find its balanced range of cells with binary searches.
 
-In the context of \hp-adaptive \gls{fem} applications, we identify the assembly of the linear equation system and its solution as the most expensive tasks, and correlate their individual contribution to the workload on each cell with the number of \glspl{dof} from the assigned finite element.
+In the context of \hp-adaptive \gls{fem} applications, we identify the assembly of the linear equation system and its solution as the most expensive tasks, and correlate their individual contribution to the workload on each cell with its number of \glspl{dof} provided by the associated finite element.
 %As a first indicator for the workload, we make the number of \glspl{dof} responsible.
-The workload of efficient solvers scales with the number of \glspl{dof} $\mathcal{O}\left(n_\text{dofs}\right)$, while we suppose that the workload of the assembly will be of order $\mathcal{O}\left(n_\text{dofs}^2\right)$ since we fill quadratic semi-matrices.
+The total workload of iterative solvers combined with multigrid preconditioning ideally scales with the global number of \glspl{dof}, i.e., $\mathcal{O}\left(N_\text{dofs}\right)$. We therefore expect that the corresponding workload of each cell attributed to the solution process also scales with the number of cell-related \glspl{dof}, i.e., $\mathcal{O}\left(n_\text{dofs}\right)$. Furthermore, we suppose that the workload of each cell for the matrix assembly will be of order $\mathcal{O}\left(n_\text{dofs}^2\right)$ since all \glspl{dof} in a cell couple with each other.
 
 We expect that the actual workload of an \hp-adaptive \gls{fem} application will actually scale with an order somewhere in between the two, i.e.\@ $\mathcal{O}\left(n_\text{dofs}^c\right)$ with a constant exponent $c \in [1,2]$. We use this strategy for investigations in this dissertation in which we also determine a suitable exponent $c$.
 
-Alternatively, weighting each cell with a factor of $(a \, n_\text{dofs}^2 + b \, n_\text{dofs})$ also appears conceivable, for which the partitioning results depend on the ratio of both constants $a$ and $b$.
+Independent of the approach just described, weighting each cell with a linear combination $(a \, n_\text{dofs}^2 + b \, n_\text{dofs})$ also appears conceivable, for which the partitioning results depend on the ratio of both constants $a$ and $b$, rather than an exponent $c$.
 
 %We will assign a weight $n_\text{dofs}^i$ to every cell, % and balance the cumulated sum of cells to be equal on all processes. We can do that with a prefix sum.
 
