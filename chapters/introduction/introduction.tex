@@ -63,8 +63,8 @@ With \gls{amr}, or \h-adaptive refinement, the spatial resolution of our discret
 
 % universal application of these methods
 
-The presented algorithms can be applied on various problems involving partial differential equations from mathematics, nature, and engineering. They have already been extensively used for e.g.\@ structural mechanics, heat transfer, wave propagation, and fluid dynamics to name just a few.
-In engineering practice, these methods form the basis for simulations on objects, for instance to investigate their stress and wear behavior and to generate their flow profile.
+The presented algorithms can be applied on various problems involving partial differential equations from mathematics, nature, and engineering. They have already been extensively used for e.g.\@ structural mechanics, heat transfer, wave propagation, electrostatics, and fluid dynamics to name just a few.
+In engineering practice, these methods form the basis for simulations on objects, for instance to investigate their stress and wear behavior and to generate their flow profile. Corresponding model experiments are complex and expensive, so computer simulations offer an alternative.
 A concrete application example describes the simulation of smoke spread in buildings.
 On basis of their results, fire safety engineers are able to optimize smoke extraction systems and evacuation routes to increase the safety of civilians in the event of a fire outbreak.
 In general, fires remain spatially localized even after their ignition phase, so the dynamic allocation of both resolution and computational resources is highly favorable in this scenario.
@@ -85,7 +85,7 @@ In this dissertation, we will focus on \hp-adaptive \gls{fem} with their excepti
 
 %\textcite{shahbazi2007}
 
-In the past, several algorithms for parallel \hp-adaptive \gls{fem} have been developed, but they always stayed in the context of \gls{dg} methods. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} demonstrated methods for shared memory machines. A general approach which also works with \gls{cg} methods poses additional implementation challenges that are pointed out in the course of this dissertation. %and has not been published yet.
+In the past, several algorithms for parallel \hp-adaptive \gls{fem} have been developed, but they always stayed in the context of \gls{dg} methods which allow solutions to be discontinuous across cell interfaces. For example for Navier-Stokes problems, \textcites{paszynski2006}{chalmers2019} presented methods for distributed memory architectures, while \textcites{paszynski2011}{jomo2017} demonstrated methods for shared memory machines. A general approach which also works with \gls{cg} methods poses additional implementation challenges that are pointed out in the course of this dissertation. %and has not been published yet.
 
 %\textcite{paszynski2006}
 % demkovisz par
