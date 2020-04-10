@@ -61,9 +61,9 @@ In detail, the complete algorithm consists of the following six steps, starting 
   \item \textit{Local enumeration.}
   Iterate over all locally owned cells $K \in \cellsp{loc}$ and assign valid \gls{dof} indices in ascending order, starting from zero.
   \item \textit{Tie-break.}
-  Go over all locally owned cells $K \in \cellsp{loc}$. If $K$ neighbors a ghost cell which has the same finite element assigned and belongs to a subdomain of lower rank $q < p$, then invalidate all \glspl{dof} on their shared interface by setting their index to the invalid value $i$.
+  Go over all locally owned cells $K \in \cellsp{loc}$. If $K$ neighbors a ghost cell which has the same reference finite element assigned and belongs to a subdomain of lower rank $q < p$, then invalidate all \glspl{dof} on their shared interface by setting their index to the invalid value $i$.
   \item \textit{Unification.}
-  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, constrain the \gls{dof} of the dominated finite element to the one of the dominating element. If no dominating \gls{dof} can be determined, constrain the \gls{dof} with the higher index to the lower one. On interfaces to ghost cells, constrain \glspl{dof} to the invalid value $i$ if the dominating element is assigned to the ghost cell.
+  Go over all locally owned cells $K \in \cellsp{loc}$. For all shared \glspl{dof} on interfaces to neighboring cells, constrain the \gls{dof} of the dominated finite element to the one of the dominating element. If no dominating element can be determined, constrain the \gls{dof} with the higher index to the lower one. On interfaces to ghost cells, constrain \glspl{dof} to the invalid value $i$ if the dominating element is assigned to the ghost cell.
 %  Note that at this stage, we will never overwrite a valid index on ghost interfaces.
   Populate a list with pairs of identifiers for these constrained \glspl{dof}.
 %  This has to happen after the tie-break.
@@ -96,7 +96,7 @@ At this stage, all locally owned cells $K \in \cellsp{loc}$ have their correct \
   \item \textit{Ghost exchange.}
   Some ghost cells may still have invalid \gls{dof} indices assigned since the owning process did not know all correct indices on this particular cell when the last communication happened. Another ghost exchange closes this gap by repeating step 5. However this time, only data from those cells has to be communicated which had invalid \gls{dof} indices prior to step 5d.
 \end{enumerate}
-One variant of this algorithm would be to modify steps 2 and 3 inasmuch as we apply the tie-break criterion on all \glspl{dof} on ghost interfaces and exclude them from \gls{dof} unification entirely. However, this would not assign shared \glspl{dof} to the dominating finite element on ghost interfaces, which would be inconsistent to the locally owned parts of the domain.
+One variant of this algorithm would be to modify steps 2 and 3 inasmuch as we apply the tie-break criterion on all \glspl{dof} on ghost interfaces and exclude them from \gls{dof} unification entirely. However, this would not assign shared \glspl{dof} to the dominating finite element on ghost interfaces, which would be inconsistent compared to the locally owned parts of the domain.
 
 At the end of this algorithm, all global \gls{dof} indices have been set correctly, and every process knows the indices of all locally relevant \glspl{dof}: All \glspl{dof} on interfaces belong to the dominating finite element on the process with the smallest rank. No new communication steps in addition to the two original ones from the \h-adaptive variant are introduced.
 
