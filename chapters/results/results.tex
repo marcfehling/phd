@@ -21,7 +21,7 @@ Following Eq.~\ref{eq:errorbound_hp}, we are aware that \p-adaptation is favorab
 
 \textcite{mitchell2014} presented several benchmarks for \hp-adaptation that make use of this observation. We decide to showcase our implementation on a two-dimensional domain with a reentrant corner located at the point of origin:
 \begin{align}
-\Omega &= \left\{ (r,\varphi) \in \mathbb{R}_{\geq 0} \times [0, 2 \pi) : (0 \leq r) \wedge( 0 \leq \varphi \leq \pi/\alpha) \right\} \,\text{,}
+\Omega &= \left\{ (r,\varphi) \in \mathbb{R}_{\geq 0} \times [0, \pi/\alpha] : 0 \leq \varphi \leq \pi/\alpha \right\} \,\text{,}
 \end{align}
 with $\alpha \in \left(1/2, 1\right)$. With the additional requirement that the solution must be zero along the legs of the reentrant corner, this particular scenario has a general solution which can be formulated in polar coordinates $r = \sqrt{x^2 + y^2} > 0$ and $\theta = \arctantwo(y,x)$:
 \begin{align}
