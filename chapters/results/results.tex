@@ -15,6 +15,8 @@ With all algorithms and data structures elaborated in Chs.~\ref{ch:parallel} and
 - \nabla^2 u(\vec{x}) &= 0 \quad\text{on}\quad \Omega \,\text{,} & u(\vec{x}) &= u_\text{sol}(\vec{x}) \quad\text{on}\quad \partial\Omega \,\text{.}
 \end{align}
 
+The choice to study the Laplace problem was not made by chance: We encounter the Laplace equation, or rather the Poisson equation with a non-vanishing right hand side, in many different modeling processes. In the field of electrostatics, the electric potential satisfies the Poisson equation. It is also used to model diffusion processes in time-dependent problems. Embedded in time discretization schemes, the Poisson problem has to be solved in each time step for, e.g., heat transfer problems. Further for the simulation of incompressible flows, the coupling of pressure and velocity is governed by the Poisson equation.
+
 Following Eq.~\ref{eq:errorbound_hp}, we are aware that \p-adaptation is favorable in regions where the solution is regular, while \h-adaptation yields better results in regions with discontinuities or singularities. For elliptic problems like the Laplace one, we expect singularities on concave domains \parencite[Sec.~5.5]{brenner2008}.
 
 \textcite{mitchell2014} presented several benchmarks for \hp-adaptation that make use of this observation. We decide to showcase our implementation on a two-dimensional domain with a reentrant corner located at the point of origin:
@@ -51,7 +53,7 @@ Following the usual approach in \gls{fem}, we transfer our problem to its weak f
 \begin{align}
 \left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
 \end{align}
-The shape functions of Lagrangian elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
+The shape functions of Lagrangian elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on the boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
 
 The \dealii{} library offers interfaces to parallel linear algebra of the third party libraries \petsc{} \textcite{petsc3124} and \trilinos{} \textcite{trilinos12181} for distributed memory architectures. In our investigations, we choose the latter using their \epetra{}
 %\textcite{epetra}
