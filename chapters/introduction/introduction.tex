@@ -39,6 +39,8 @@ Recently, streaming multiprocessor architectures on \glspl{gpu} have become of m
 
 % methods for spatial discretization
 
+Most problems from mathematics, nature, and engineering can be classified to be part of continuum mechanics and can be modeled as boundary-value problems using partial differential equations. These problems are usually formulated on a subset of the three-dimensional continuous space and can often not be solved analytically, so that we need find a solution with numerical approximations.
+
 Numerical methods require the discretization of the continuous space which will be divided into smaller entities that couple with neighboring ones. A large variety of these methods exist, of which we briefly describe the most commonly used ones.
 With \glspl{fdm}, differential operators are evaluated as difference quotients on a finite number of grid points. %Those are easy to implement, but inflexible
 The idea of \glspl{fvm} is the preservation of conserved quantities on small volumes by applying the Gauss-Ostrogradski theorem, which results in balancing volumetric averages with fluxes on interfaces of neighboring volumes.
