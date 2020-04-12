@@ -43,10 +43,11 @@ Numerical methods require the discretization of the continuous space which will 
 With \glspl{fdm}, differential operators are evaluated as difference quotients on a finite number of grid points. %Those are easy to implement, but inflexible
 The idea of \glspl{fvm} is the preservation of conserved quantities on small volumes by applying the Gauss-Ostrogradski theorem, which results in balancing volumetric averages with fluxes on interfaces of neighboring volumes.
 %With the \gls{fvm}, conserved quantities are preserved on small volumes applying the Gauss-Ostrogradsky theorem, resulting in balancing volumetric averages and fluxes on interfaces.
-In \glspl{fem}, we specify a function space of piecewise polynomials in which we find the function 
+In \glspl{fem}, we specify a function space of piecewise polynomials in which we find the function that satisfies the partial differential equation of the investigated problem as a best approximation.
 %is supposed to be part of, and find the representation
-that minimizes the residual of the investigated problem.
+%that minimizes the residual of the investigated problem.
 %\gls{fem} contains \gls{fvm} intrinsically if you consider piecewise constant functions.
+The residual is projected orthogonal to the space of piecewise polynomials, which is equivalent to minimizing the energy for elliptic equations \parencite{brenner2008}.
 
 % algorithms for adaptation
 
