@@ -3,7 +3,7 @@
 
 In this section, we oppose the adaptation behavior of all utilized strategies applied on our numerical example from Sec.~\ref{sec:errorvsperformance}, i.e.\@ \h-, \p-, and \hp-adaptation with corresponding decision strategies of error prediction and smoothness estimation by the decay of Fourier and Legendre coefficients.
 
-We depict the distribution of finite elements after \todo{six?} consecutive adaptation steps, in which 30\% of cells with the highest error will be refined, and 3\% will be coarsened. For \hp-adaptation, half of all those cells will be flagged for \h- and \p-adaptation as a naive approach. In a second attempt, 90\% of cells marked for adaptation will be flagged for \p-adaptation, while the remaining 10\% will be \h-adapted. We call the second approach an educated guess for our numerical example.
+We depict the distribution of finite elements after six consecutive adaptation steps, in which 30\% of cells with the highest error will be refined, and 3\% will be coarsened. For \hp-adaptation, half of all those cells will be flagged for \h- and \p-adaptation as a naive approach. In a second attempt, 90\% of cells marked for adaptation will be flagged for \p-adaptation, while the remaining 10\% will be \h-adapted. We call the second approach an educated guess for our numerical example.
 
 The meshes of pure \h- and \p-adaptation are shown in Fig.~\ref{fig:meshnonhp}. For each \hp-adaptation strategy, grids generated with either the naive or educated guess approach are depicted in Figs.~\ref{fig:meshfourier},~\ref{fig:meshlegendre},~\ref{fig:meshprediction}.
 
@@ -24,7 +24,7 @@ The meshes of pure \h- and \p-adaptation are shown in Fig.~\ref{fig:meshnonhp}. 
   Insert \p-adaptive mesh.
   \caption{\p-adaptive.}
 \end{subfigure}
-\caption{Non-\hp{} adaptation.}
+\caption{Polynomial degrees of finite elements for \h- and \p-adapted meshes.}
 \label{fig:meshnonhp}
 \end{figure}
 
@@ -39,7 +39,7 @@ The meshes of pure \h- and \p-adaptation are shown in Fig.~\ref{fig:meshnonhp}. 
   Insert \hp-adaptive Fourier mesh.
   \caption{Educated guess approach.}
 \end{subfigure}
-\caption{\hp-adaptation with smoothness estimation by the decay of Fourier coefficients.}
+\caption{Polynomial degrees of finite elements for \hp-adapted meshes with smoothness estimation strategy by the decay of Fourier coefficients.}
 \label{fig:meshfourier}
 \end{figure}
 
@@ -54,7 +54,7 @@ The meshes of pure \h- and \p-adaptation are shown in Fig.~\ref{fig:meshnonhp}. 
   Insert \hp-adaptive Legendre mesh.
   \caption{Educated guess approach.}
 \end{subfigure}
-\caption{\hp-adaptation with smoothness estimation by the decay of Legendre coefficients.}
+\caption{Polynomial degrees of finite elements for \hp-adapted meshes with smoothness estimation strategy by the decay of Legendre coefficients.}
 \label{fig:meshlegendre}
 \end{figure}
 
@@ -69,6 +69,6 @@ The meshes of pure \h- and \p-adaptation are shown in Fig.~\ref{fig:meshnonhp}. 
   Insert \hp-adaptive prediction mesh.
   \caption{Educated guess approach.}
 \end{subfigure}
-\caption{\hp-adaptation with error prediction.}
+\caption{Polynomial degrees of finite elements for \hp-adapted meshes with error prediction strategy.}
 \label{fig:meshprediction}
 \end{figure}
