@@ -5,40 +5,35 @@
 % ----- pgfplots -----
 \usepackage{femtikz} % pgfplots, tikz, graphicx
 \usetikzlibrary{babel}
-%\usetikzlibrary{external}
-%\tikzexternalize[prefix=tikz/]
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{colorbrewer}
+\pgfplotsset{compat=1.9} % colorbar style ylabel
+% \selectcolormodel{cmyk}
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz/]
 \input{misc/tikz}
-\input{misc/fzjcolor}
 
 % ----- formatting -----
 \usepackage{titling}
-\usepackage{fancyhdr}
 \usepackage{enumitem} % resume
 \usepackage{subcaption}
-%\usepackage{booktabs}
+\usepackage[binary-units=true]{siunitx}
+\usepackage[
+  colorlinks,linkcolor=blue,urlcolor=blue,citecolor=blue % suggestion of wolfgang
+  % colorlinks,linkcolor=black,urlcolor=black,citecolor=black % print version
+]{hyperref}
 \OnehalfSpacing % memoir
 \nouppercaseheads % memoir
-%\setsecnumdepth{subsection} % memoir
-%\maxtocdepth{subsection} % memoir
 \input{misc/format}
-
-% ----- miscellaneous -----
-\usepackage{doi} %necessary?
-
-% ----- work in progress -----
-\usepackage{todonotes}
-\usepackage{blindtext}
-\usepackage{showframe}
 
 % ----- math -----
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{mathtools} % \coloneqq
 \usepackage{isomath} % \vectorsym, \matrixsym, \tensorsym
-%\usepackage{bbold}
 \input{misc/math}
 
 % ----- glossary -----
-\usepackage[automake]{glossaries-extra}
+\usepackage[automake,style=super]{glossaries-extra}
 \makeglossaries
 \input{misc/glossary}
 
@@ -54,8 +49,7 @@
 % --- document information ---
 \author{Marc Fehling}
 \title{Algorithms for massively parallel generic \hp-adaptive finite element methods}
-%on distributed memory systems}
-\date{15. April 2020}
+\date{April 2020}
 
 
 
@@ -64,49 +58,43 @@
     \begin{center}
       \vspace*{\fill}
       \includegraphics[width=.75\textwidth]{logos/BUW_Logo-schwarz.eps}\bigskip
-      \vspace*{\fill}\vspace*{\fill}\par
+      \vspace*{\fill}\par
       {\Huge \thetitle\bigskip\par}
-      {\Huge \theauthor\bigskip\par}
-      {\LARGE \thedate\bigskip\bigskip\par}
+      \vspace*{\fill}\par
+      {\Large School of Architecture and Civil Engineering\bigskip\par}
+      {\Large Dissertation for the acquisition of a doctorate\\(Dr.-Ing.)\bigskip\par}
+      {\Large submitted by\bigskip\par}
+      {\LARGE \theauthor\par}
+      {\Large from Lübbecke\bigskip\par}
+      {\Large Wuppertal, \thedate\bigskip\bigskip\par}
     \end{center}
-    {\large Perfect Publishing\hspace*{\fill}Forward by Fabulous Freddy\smallskip\\
-    The World\hspace*{\fill}Author of \emph{Kayaking with dragons}}
   \end{titlingpage}
   
   
   
   \frontmatter
   
-  \abstractintoc
-  \input{abstract/abstract.tex}
+  % \begin{KeepFromToc}
+  %   \input{chapters/acknowledgements}
+  % \end{KeepFromToc}
+  % \clearpage
+  
+  \input{abstract/abstract}
   \clearpage
+
   \begin{otherlanguage}{ngerman}
-    \input{abstract/zusammenfassung.tex}
+    \input{abstract/zusammenfassung}
   \end{otherlanguage}
   \clearpage
-  
-  % Approval page
   
   \begin{KeepFromToc} % memoir
     \tableofcontents
   \end{KeepFromToc}
-  \clearpage
-  
-  % Dedication
-  
-  % Acknowledgements
-  
-  % \listoftables
-  % \clearpage
+  \cleardoublepage
   
   \listoffigures
-  \clearpage
   
   \printglossary[type=\acronymtype, title={List of Abbreviations}]
-  
-  % Other lists
-  
-  % Preface
   
   
   
@@ -119,8 +107,6 @@
   \input{chapters/summary/summary}
   
   \appendix
-  \glsresetall
-  \input{appendix/calculus}
   \input{appendix/enumeration}
   \input{appendix/strategies}
   
@@ -131,6 +117,5 @@
   \printbibliography[title=Bibliography, keyword=primary]
   \newrefcontext[sorting=none]
   \printbibliography[env=bibliographyNUM, title=References, keyword=secondary, resetnumbers]
-  
-  \listoftodos
+  % \cleardoublepage
 \end{document}

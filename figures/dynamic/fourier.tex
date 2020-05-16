@@ -1,24 +1,26 @@
 \begin{tikzpicture}
 \begin{axis}[
+  cycle list/Dark2,
   scale=1.15,
   xlabel=$x$,
   ylabel=$\operatorname{Re}\left(P_k(x)\right)$,
-  legend style={at={(0.5,1.2)}, anchor=north, /tikz/every even column/.append style={column sep=0.5cm}},
+  grid=major,
+  legend style={at={(0.5,1.02)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}},
   legend columns=3,
   legend cell align=left]
-\addplot[color=fzjblue, samples=2, domain=0:1] {1};
+\addplot+[samples=2, domain=0:1] {1};
 \addlegendentry{$P_0 = 1$};
 
-\addplot[color=fzjblue, samples=60, domain=0:1] {cos(deg(2*6.28*x))};
+\addplot+[samples=60, domain=0:1] {cos(deg(2*6.28*x))};
 \addlegendentry{$P_2 = \exp\left(i \, 4\pi \, x\right)$};
 
-\addplot[color=fzjblue, samples=120, domain=0:1] {cos(deg(4*6.28*x))};
+\addplot+[samples=120, domain=0:1] {cos(deg(4*6.28*x))};
 \addlegendentry{$P_4 = \exp\left(i \, 8\pi \, x\right)$};
 
-\addplot[color=fzjblue, samples=30, domain=0:1] {cos(deg(6.28*x))};
+\addplot+[samples=30, domain=0:1] {cos(deg(6.28*x))};
 \addlegendentry{$P_1 = \exp\left(i \, 2\pi \, x\right)$};
 
-\addplot[color=fzjblue, samples=90, domain=0:1] {cos(deg(3*6.28*x))};
+\addplot+[samples=90, domain=0:1] {cos(deg(3*6.28*x))};
 \addlegendentry{$P_3 = \exp\left(i \, 6\pi \, x\right)$};
 \end{axis}
 \end{tikzpicture}

@@ -1,5 +1,6 @@
 \begin{tikzpicture}
 \begin{semilogyaxis}[
+  scale=1.15,
   x coord trafo/.code={\pgfmathparse{pow(#1,1/3)}\pgfmathresult},
 %  x coord inv trafo/.code={\pgfmathparse{pow(#1,3)}\pgfmathresult}, % dimension too large
 %  scaled x ticks=base 10:-3,
@@ -8,9 +9,13 @@
 %  xticklabels={,,{3,375},{8,000},{15,625},{27,000},{42,875},{64,000},{91,125}},
 %  xtick={20,40,60,80,100,120},
 %  xticklabels={,,{3,375},{8,000},{15,625},{27,000},{42,875},{64,000},{91,125}},
-  xlabel=Number of \glspl{dof},
-  ylabel=H1 error,
-  legend pos=outer north east]
+  scaled x ticks=base 10:-3,
+  xticklabels={,,{8},{64},{216},{512},{1,000},{1,728},{2,744}},
+  xlabel={Number of \glspl{dof}},
+  ylabel={H1 error},
+  grid=major,
+  cycle list/Set1]
+%  legend pos=outer north east]
 %\addplot table [y=H1 error, x=ndofs, col sep=comma] {data/error/h.csv};
 %\addlegendentry{\h};
 
@@ -19,44 +24,44 @@
 %] {data/error/h.csv};
 %\addlegendentry{\h};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[mark=x, color=black]table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/p.csv};
-\addlegendentry{\p};
+%\addlegendentry{\p};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[mark=square*, index of colormap=1 of Set1]  table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/hp-legendre.csv};
-\addlegendentry{\hp{}-Legendre};
+%\addlegendentry{\hp{}-Legendre};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[mark=*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/hp-fourier.csv};
-\addlegendentry{\hp{}-Fourier};
+%\addlegendentry{\hp{}-Fourier};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[mark=triangle*, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={1}{6}
 ] {data/error/hp-prediction.csv};
-\addlegendentry{\hp{}-prediction};
+%\addlegendentry{\hp{}-prediction};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[dashed, mark=square*, index of colormap=1 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/hp-legendre-naive.csv};
-\addlegendentry{\hp{}-Legendre naive};
+%\addlegendentry{\hp{}-Legendre naive};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[dashed, mark=*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/hp-fourier-naive.csv};
-\addlegendentry{\hp{}-Fourier naive};
+%\addlegendentry{\hp{}-Fourier naive};
 
-\addplot table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[dashed, mark=triangle*, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={1}{6}
 ] {data/error/hp-prediction-naive.csv};
-\addlegendentry{\hp{}-prediction naive};
+%\addlegendentry{\hp{}-prediction naive};
 
 %\addplot[very thick, samples=100, domain=10000:50000] {10^(-2)*exp(10^(-3.9)*(-x+10000))}; % {10^(-4)*(-x+10000)};
 \addplot[very thick, samples=100, domain=8000:100000]%domain=12545:68954]
 {10^(-0.6)*exp(-0.18*pow(x,0.33))}; % {10^(-4)*(-x+10000)};
-\addlegendentry{$\propto \exp\left(- b \, n_{\text{dof}}^{1/3}\right)$};
+%\addlegendentry{$\propto \exp\left(- b \, n_{\text{dof}}^{1/3}\right)$};
 \end{semilogyaxis}
 \end{tikzpicture}

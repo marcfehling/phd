@@ -16,9 +16,9 @@ In other words, these basis functions span the function space $P$ while each of 
 
 We transform the original problem into a variation problem by converting it to a weak formulation. This process belongs to the class of Galerkin methods, of which we distinguish between \gls{cg} and \gls{dg} methods. For the former, we require that our finite element approximation is continuous across cell interfaces resulting in shared \glspl{dof} on all transitions. For discontinuous methods, jumps of the approximation are possible on cell interfaces, and thus each cell has its own set of \glspl{dof} from which none are shared. Here, relations between cells are quantified via penalty methods that correlate \glspl{dof} on interfaces of neighboring cells.
 
-With the discretized weak formulation of the investigated problem, we are left to assemble and solve the corresponding system of linear equations for the unknown coefficients or \glspl{dof}. In practice, we calculate the appearing integrals using quadrature rules and basis functions which have been mapped from a reference finite element on cell $\widehat{K}$. It is thus sufficient to define reference finite elements and assign them to cells.
+With the discretized weak formulation of the investigated problem, we are left to assemble and solve the corresponding system of linear equations for the unknown coefficients or \glspl{dof}. In practice, we calculate the appearing integrals using quadrature rules and basis functions which have been mapped from a finite element on a reference cell $\widehat{K}$. It is thus sufficient to define reference finite elements and assign them to cells.
 
-When dealing with finite elements in practice, it is sufficient to work with support points and shape functions once the type of element is specified. One of the most common types of finite elements are Lagrangian elements $Q_p$, that are based on Lagrangian interpolation resulting in polynomials of order $p$. They can be extended from one to higher dimensions via tensor products. The arrangement of support points on quadrilaterals in Lagrangian elements up to fourth order polynomials are depicted in Fig.~\ref{fig:lagrange}.
+When dealing with finite elements in practice, it is sufficient to work with support points and shape functions once the type of element is specified. One of the most common types of finite elements are Lagrange elements $Q_p$, that are based on Lagrange interpolation with polynomials of order $p$ and can be extended from one to higher dimensions via tensor products. The arrangement of support points on quadrilaterals in Lagrange elements up to fourth order polynomials are depicted in Fig.~\ref{fig:lagrange}.
 
 \begin{figure}
 \begin{subfigure}{.24\textwidth}
@@ -41,11 +41,11 @@ When dealing with finite elements in practice, it is sufficient to work with sup
   \input{figures/parallel/q4}
   \caption{$Q_4$ element.}
 \end{subfigure}
-\caption[Lagrangian elements $Q_p$.]{First four Lagrangian elements $Q_p$ on quadrilateral unit cells with $(1+p)^\text{dim}$ support points each. Here, we distinguish between support points on vertices ($\bullet$), lines ($\square$) and quadrilaterals ($\circ$).}
+\caption[Lagrange elements $Q_p$ on quadrilateral unit cells.]{First four Lagrange elements $Q_p$ on quadrilateral unit cells with $(1+p)^\text{dim}$ support points each. Here, we distinguish between support points on vertices ($\bullet$), lines ($\square$) and quadrilaterals ($\circ$).}
 \label{fig:lagrange}
 \end{figure}
 
-This is just a brief introduction to \gls{fem} in order to provide the fundamentals for this chapter and to specify the nomenclature used. More details on this topic can be found in common literature \parencite[e.g.,][]{quarteroni1994, ern2004, elman2014}. Especially \textcite{brenner2008} provide a more rigorous and mathematically sound definition on finite elements, on which this summary was based.
+This is just a brief introduction to \gls{fem} in order to provide the fundamentals for this chapter and to specify the nomenclature used. More details on this topic can be found in common literature \parencite[e.g.,][]{quarteroni1994, ern2004, elman2014}. Especially \textcite{brenner2008} provided a more rigorous and mathematically sound definition of finite elements, on which this summary was based.
 
 
 \subsection{Adaptive methods for \glsfmtshort{fem}}
@@ -54,8 +54,9 @@ In computational applications, adaptive methods are used to align the resolution
 
 As an alternative to modifying the grid resolution, we can also adapt the function space using various finite elements associated with each cell. These finite elements may differ in the polynomial degree $p$ of their shape functions, offering the unique possibility for \p-adaptation, or \hp-adaptation when used together with grid adaptation. In practice, we specify a collection of reference finite elements, one of which is assigned to each cell in the domain. We identify the currently assigned finite element with an \textit{active finite element index} on each cell.
 
-Refinement level differences on quadrilateral or hexahedral meshes, as well as varying finite elements on neighboring active cells lead to \textit{hanging nodes} which are nodes with no counterpart on the opposite side of the interface. A depiction of \h- and \p-adaptive domains along with hanging nodes is presented in Fig.~\ref{fig:hpadaptivity}.
+Refinement level differences on quadrilateral or hexahedral meshes, as well as varying finite elements on neighboring active cells lead to \textit{hanging nodes} which are nodes with no counterpart on the opposite side of the interface. A depiction of \h- and \p-adapted domains along with hanging nodes is presented in Fig.~\ref{fig:hpadaptivity}.
 %The corresponding tree structure has been presented by \textcite[Fig.~1]{burstedde2011}.
+In combination with \gls{cg} methods, the finite element approximation needs to be continuous on these hanging nodes, which requires constraining them to the surrounding ones on the shared interface.
 
 \begin{figure}
 \begin{subfigure}[t]{0.48\textwidth}
@@ -71,11 +72,9 @@ Refinement level differences on quadrilateral or hexahedral meshes, as well as v
   \caption{\p-adapted mesh with neighboring $Q_2$ and $Q_4$ elements.}
   \label{fig:papaptivity}
 \end{subfigure}
-\caption[Difference between \h- and \p-adaptation.]{Example of differently adapted meshes consisting of two quadrilateral cells, from which the right one has been refined. Differences in the refinement level of neighboring cells give rise to hanging nodes. Note that both scenarios yield the same number of support points.}
+\caption[Differences between \h- and \p-adaptation.]{Example of differently adapted meshes consisting of initially two quadrilateral cells, from which the right one has been refined. Differences in the refinement level of neighboring cells give rise to hanging nodes. Note that both scenarios yield the same number of support points.}
 \label{fig:hpadaptivity}
 \end{figure}
-
-In combination with \gls{cg} methods, the finite element approximation needs to be continuous on these hanging nodes, which requires constraining them to the surrounding ones on the shared interface.
 
 For \h-adaptive methods, we need to constrain hanging nodes from cells of a finer refinement level to the neighboring coarser cell by interpolation. A typical situation is depicted in Fig.~\ref{fig:hapaptivity}. For convenience, we limit the level difference of neighboring cells to one level.
 %in order to simplify interpolation between cell interfaces.
@@ -121,7 +120,7 @@ This approach poses different challenges on the design of data structures and in
 \label{fig:paralleldistribution}
 \end{figure}
 
-Each process will only store data of cells that belong to its owned section of the domain, which we call \textit{subdomain}. We call these cells \textit{locally owned cells}, and all \glspl{dof} on them are referred to as \textit{locally active \glspl{dof}}. Every \gls{dof} will be uniquely enumerated on the global mesh. With \gls{cg} methods, \glspl{dof} on interfaces between cells of different processes may be owned by either one or the other process. Thus, not all active \glspl{dof} on locally owned cells have to be \textit{locally owned \glspl{dof}}.
+Each process will only store data of cells that belongs to its owned section of the domain, which we call \textit{subdomain}. We call these cells \textit{locally owned cells}, and all \glspl{dof} on them are referred to as \textit{locally active \glspl{dof}}. Every \gls{dof} will be uniquely enumerated on the global mesh. With \gls{cg} methods, \glspl{dof} on interfaces between cells of different processes may be owned by either one or the other process. Thus, not all active \glspl{dof} on locally owned cells have to be \textit{locally owned \glspl{dof}}.
 
 During the assembly of equation systems, we need to refer to surrounding cells that do not belong to the local domain. A requirement for the parallelization of \gls{fem} is the provision of data on them via communication. Typically, the halo spanning one level of cells around the locally owned domain covers the necessary cells which we call \textit{ghost cells}. Data from ghost cells has to be requested from the owning process. The combination of locally owned and ghost cells and their corresponding \glspl{dof} is labeled \textit{locally relevant}.
 

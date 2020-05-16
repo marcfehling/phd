@@ -7,15 +7,17 @@
     vertical sep=0pt
   },
   width=9.5cm,
+  grid=major,
   xlabel=Weighting exponent,
   ylabel=Wall time {[seconds]},
   legend columns=3,
   legend cell align=left,
   legend style={
-    at={(0.5,1.02)},
+    at={(0.41,1.02)},
     anchor=south,
     /tikz/every even column/.append style={column sep=0.5cm}
-  }]
+  },
+  cycle list/Set1]
 
 
 \nextgroupplot[
@@ -23,13 +25,13 @@
   axis x line=top,
   x axis line style={-},
   axis y discontinuity=parallel]
-\addplot table [y=full cycle, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addplot[mark=square*, index of colormap=1 of Set1] table [y=full cycle, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
 \addlegendentry{full cycle};
 
-\addplot table [y=solve, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addplot[mark=*, index of colormap=2 of Set1] table [y=solve, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
 \addlegendentry{linear solver};
 
-\addlegendimage{thick};
+\addlegendimage{mark=triangle*, index of colormap=3 of Set1};
 \addlegendentry{assemble linear system};
 
 
@@ -41,6 +43,6 @@
   ylabel={},
   height=3.1cm
 ]
-\addplot table [y=assembly, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+\addplot[mark=triangle*, index of colormap=3 of Set1] table [y=assembly, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
 \end{groupplot}
 \end{tikzpicture}

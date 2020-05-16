@@ -1,4 +1,4 @@
-\section{Error versus performance}
+\section{Error performance}
 \label{sec:errorvsperformance}
 
 %Global H1 error as measure
@@ -17,42 +17,39 @@ The main motivation to use \hp-adaptive methods are their superior error converg
 
 The consecutively adapted meshes so created are by far not optimal for the problem, nor is finding such an optimal mesh subject of our investigations. We are rather interested in comparing the performance and results of the decision algorithms presented in Sec.~\ref{sec:decision}, and whether they are capable of localizing regions with singularities, i.e., the one at the point of origin for our numerical example. We will compare all types of adaptation at our disposal, i.e., \h-, \p-, and \hp-adaptation. For the latter, we examine all three presented strategies in contrast, namely error prediction and smoothness estimation by either Legendre or Fourier coefficient decay.
 
-After solving the linear equation system in each step and calculating the error on basis of the analytic solution according to \textcite{kelly1983,davydov2017}, we use the \textit{fixed-number} strategy to indicate adaptation: The 30\% fraction of all cells with the highest error will be flagged for refinement, and 3\% of those with the lowest error will be marked for coarsening. This allows us to compare the results of each adaptation type under the same conditions, since always the same amount of cells is going to be changed. The idea behind additional coarsening is motivated by the fact that we tend to refine too many cells with error estimators providing an upper bound for the error, or error indicators based on heuristics. We would like to correct this from a previous iteration by coarsening a small amount of cells. The combination of fractions of 30\% for refinement and 3\% for coarsening has become a reasonable choice for two-dimensional applications within the \dealii{} library.
+After solving the linear equation system in each step and calculating the error on basis of the analytic solution according to \textcite{kelly1983,davydov2017}, we use the \textit{fixed-number} strategy to indicate adaptation: The \SI{30}{\percent} fraction of all cells with the highest error will be flagged for refinement, and \SI{3}{\percent} of those with the lowest error will be marked for coarsening. This allows us to compare the results of each adaptation type under the same conditions, since always the same amount of cells is going to be changed. The idea behind additional coarsening is motivated by the fact that we tend to refine too many cells with error estimators providing an upper bound for the error, or error indicators based on heuristics. We would like to correct this from a previous iteration by coarsening a small amount of cells. The combination of fractions of \SI{30}{\percent} for refinement and \SI{3}{\percent} for coarsening has become a reasonable choice for two-dimensional applications within the \dealii{} library.
 
 %We will compared different refinement strategies. We will use \textit{fixed-fraction} adaptation so that every cell is refined. This allows us to compare the choices of all strategies since always the same amount of cells is taken into account. \todo{see slack text}
 
 Further for \hp-adaptive strategies, we need to choose a decision strategy providing corresponding indicators that propose which type of adaptation we want to impose on each cell.
 %
-Again, we use the \textit{fixed-number} algorithm on all decision indicators, as illustrated in Fig.~\ref{fig:indicators}. This allows us to compare the choices made by each strategy since always the same amount of cells is going to be changed in terms of both \h- and \p-adaptation, respectively.
+Again, we use the \textit{fixed-number} algorithm on all decision indicators as illustrated in Fig.~\ref{fig:indicators}. This allows us to compare the choices made by each strategy since always the same amount of cells is going to be changed in terms of both \h- and \p-adaptation, respectively.
 %
 As a first naive approach, we will impose the \h-variant on one half of all cells previously marked for adaptation, and the \p-variant on the other half.
 %As a first naive approach, we choose between \h- and \p-adaptation fifty fifty among all cells that have been previously marked for adaptation.
 %, based on the specified decision criterion.
-As a second attempt, since we know that we have only one single localized and well-defined singularity in the domain, we are confident to make an educated guess and assign 90\% of flagged cells for \p- and the remaining 10\% for \h-adaptation. From here on, we refer to the first approach if we call a decision strategy naive, and speak of the second if no such attribute was given.
+As a second attempt, since we know that we have only one single localized and well-defined singularity in the domain, we are confident to make an educated guess and assign \SI{90}{\percent} of flagged cells for \p- and the remaining \SI{10}{\percent} for \h-adaptation. From here on, we refer to the first approach if we call a decision strategy naive, and speak of the second if no such attribute was given.
 
 To setup the numerical example, we start with a mesh consisting of three cells as the coarsest possible representation of our L-shaped domain, which will be globally refined five times to form the initial grid for all investigations in this section.
 
 The error prediction strategy forms an exception since it requires a prepended initialization step. In this case, we will begin with four initial refinement steps, solve the equation system, and perform another global refinement so that we have the corresponding predicted errors available. Further for this strategy, control parameters are set to $\gamma_n = 1$, $\gamma_h = 1$, and $\gamma_p = \sqrt{0.4}$, which corresponds to the values used by \textcites{melenk2001}{mitchell2014}.
 
-We use a collection of Lagrangian finite elements $Q_p$ with polynomial degrees $p \in [2,7]$ and thus skip linear elements due to our observation that the smoothness estimation algorithms perform poorly with those. All cells will be initially assigned with the lowest order element. In the case of sole \h-adaptation all elements will be assigned to $Q_2$ elements. For pure \p-adaptation, we favor \p-adaptation over \h-adaptation as long as the finite element can be \p-adapted, i.e.\@ the current finite element is neither at the top nor the bottom of the hierarchy. We perform a total of twelve consecutive adaptation iterations, so twice as many as there are different finite elements.
+We use a collection of Lagrangian finite elements $Q_p$ with polynomial degrees $p \in [2,7]$ and thus skip linear elements due to our observation that the smoothness estimation algorithms perform poorly with those. All cells will be initially assigned with the lowest order element. In the case of sole \h-adaptation all elements will be assigned to $Q_2$ elements. For pure \p-adaptation, we favor \p-adaptation over \h-adaptation as long as the finite element can be \p-adapted, i.e., the current finite element is neither at the top nor the bottom of the hierarchy. We perform a total of twelve consecutive adaptation iterations, so twice as many as there are different finite elements in our collection.
 
-All calculations in this section have been carried out on a desktop machine, using an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-4790 processor running at 3.6 GHz with 32 GB of memory \todo{si units?}. Although this is a quad-core processor offering a total of eight threads utilizing hypertreading, we will only use a single thread for our calculations, which is sufficient to determine both error and workload. We will deal with parallelization in later sections.
+All calculations in this section have been carried out on a desktop machine, using an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-4790 processor running at \SI{3.6}{\giga\hertz} with \SI{32}{\giga\byte} of memory. Although this is a quad-core processor offering a total of eight threads utilizing hypertreading, we will only use a single thread for our calculations, which is sufficient to determine both error and workload. We will deal with parallelization in later sections.
 
 
 % results: error vs ndofs
 
 Representatively, we will show the grid and distribution of finite elements after six adaptation cycles of the Legendre coefficient decay strategy with the educated guess approach in Fig.~\ref{fig:fedegrees}. All other meshes after equally many adaptation iterations from the other strategies are showcased in App.~\ref{app::strategies}.
+We see that the Legendre strategy is able to locate the singularity in the center by preferring \h-adaptive refinement in this section, while using \p-adaptation in the other regions. This is also the case for all other strategies, naive or not, as shown in App.~\ref{app::strategies}.
 
-\todo{Add legend}
 \begin{figure}
 \centering
-\includegraphics[width=0.49\textwidth]{figures/results/corner-2d-error-hp-legendre-05_fedegrees.png}
-\includegraphics[width=0.49\textwidth]{figures/results/corner-2d-error-hp-legendre-05_fedegrees_zoom.png}
-\caption[Arrangement of finite elements after six iterations with the Legendre coefficient decay strategy.]{Arrangement of finite elements after six iterations with the Legendre coefficient decay strategy. The colours represent different polynomial degrees $p$ of the assigned Lagrangian elements $Q_p$.}
+\input{figures/results/corner-2d-errors-hp-legendre-05_zoom}
+\caption[Arrangement of finite elements with the Legendre coefficient decay strategy.]{Arrangement of finite elements after six adaptation iterations with \hp-adaptation and the smoothness estimation strategy by the decay of Legendre coefficients. The colors represent different polynomial degrees $p$ of the assigned Lagrange elements $Q_p$.}
 \label{fig:fedegrees}
 \end{figure}
-
-We see that the Legendre strategy is able to locate the singularity in the center by preferring \h-adaptive refinement in this section, while using \p-adaptation in the other regions. This is also the case for all other strategies, naive or not, as shown in App.~\ref{app::strategies}.
 
 We will plot the $H_1$-error against the workload, which can be measured in two ways: Either with the number of \glspl{dof}, or the elapsed real time from start to end of our application, which we call wall time. We begin with identifying the workload with the former and show corresponding results in Fig.~\ref{fig:errordofs}.
 
@@ -60,22 +57,20 @@ We will plot the $H_1$-error against the workload, which can be measured in two 
 
 \begin{figure}
 \centering
-%\input{figures/results/errorworkloadlegend} \\
-%\vspace{1em}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/errorworkload}%
+  \input{figures/results/errorworkload}
   \caption{Double logarithmic representation.} % The thick line corresponds to the reference Eq.~(\ref{eq:errorbound_ana}).}
   \label{fig:errordofsloglog}
 \end{subfigure} \\
 \vspace{1em}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/errorexpworkload}%
+  \input{figures/results/errorexpworkload}
   \caption{Customly scaled coordinate system with the y-axis scaled exponentially and the x-axis scaled with the cubic root. The thick line corresponds to the reference Eq.~(\ref{eq:errorbound_exp}) with $b = 0.18$.}
   \label{fig:errordofscustom}
 \end{subfigure}
-\caption{Error performances of several adaptation strategies compared to their workload measured by the number of \glspl{dof}.}
+\caption[Error performances of several adaptation strategies compared to their workload measured by the number of \glsfmtlongpl{dof}.]{Error performances of several adaptation strategies compared to their workload measured by the number of \glspl{dof}.}
 \label{fig:errordofs}
 \end{figure}
 
@@ -109,25 +104,15 @@ We observed that this occurs if the finite element with the highest polynomial d
 From a practical point of view, the error performance will now be compared to the actual wall time to measure whether we have an economic benefit in using \hp-adaptive methods. For each consecutive adaptation cycle, we again plot the calculated error against the workload, which is this time represented by the total run time accumulated over the current and all previous iterations. Each run will be repeated five times and the minimum over the total runtime over all runs will be picked to compensate for temporarily high loads on memory bandwidth. The results are shown in Fig.~\ref{fig:errorwalltime}.
 
 \begin{figure}
-%\begin{subfigure}{1\textwidth}
 \centering
-\input{figures/results/errorwalltime}%
-%  \caption{Error vs workload.}
-%  \label{fig:errorexpworkload}
-%\end{subfigure}
-%\begin{subfigure}{1\textwidth}
-%  \centering
-%  \input{figures/results/errorexpwalltime}
-%  \caption{Error vs walltime.}
-%  \label{fig:errorexpwalltime}
-%\end{subfigure}
-\caption{Double logarithmic representation of error performances of several adaptation strategies compared to their workload measured by the wall time.}
+\input{figures/results/errorwalltime}
+\caption[Error performances of several adaptation strategies compared to their workload measured by the wall time.]{Double logarithmic representation of error performances of several adaptation strategies compared to their workload measured by the wall time.}
 \label{fig:errorwalltime}
 \end{figure}
 
 %We notice that the choice of the \hp-adaptive strategy has an impact on the error performance compared to the number of \glspl{dof}. However in comparing error with the runtime, we see that all methods perform similarly. We will postpone the discussion on this topic for the later Sec.~() in which we give an in-depth analysis on the sacalability of certain parts of our code, in which we think to identify the reason for this behavior.
 
-Again after the last adaptation cycle, \p- and \hp-adaptive methods are about an order of magnitude faster than the \h-adaptive variant and thus the most efficient. Interestingly, the wall times of the naive \hp-strategies fan out. It appears that a high diversity of finite elements compared with major grid adaptation increases the wall time significantly, and we suspect that the combination of solver and \gls{amg} preconditioner is responsible for this behavior. We will discuss our choice of the preconditioner later in the scalability analysis.
+Again after the last adaptation cycle, \p- and \hp-adaptive methods are about an order of magnitude faster than the \h-adaptive variant and thus the most efficient. Interestingly, the wall times of the naive \hp-strategies fan out. It appears that a high diversity of finite elements compared with major grid adaptation increases the wall time significantly, and we suspect that our choice of an \gls{amg} preconditioner is responsible for this behavior. We will discuss this topic later in the scalability analysis.
 
 The Fourier strategy takes the longest wall time for initialization, during which the Fourier transformation matrices are calculated. This is a costly operation, which requires substantially more quadrature points during calculation than the Legendre equivalent, and is responsible for the observable offset.
 

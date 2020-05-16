@@ -1,27 +1,29 @@
 \begin{tikzpicture}
 \begin{axis}[
+  cycle list/Dark2,
   scale=1.15,
   xlabel=$x$,
   ylabel=$P_k(x)$,
-  legend style={at={(0.5,1.2)}, anchor=north, /tikz/every even column/.append style={column sep=0.5cm}},
+  grid=major,
+  legend style={at={(0.5,1.02)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}},
   legend columns=3,
   legend cell align=left]
-\addplot[color=fzjblue, samples=2, domain=-1:1] {1};
+\addplot+[samples=2, domain=-1:1] {1};
 \addlegendentry{$P_0 = 1$};
 
-\addplot[color=fzjblue, samples=20, domain=-1:1] {0.5*(3*x^2-1)};
+\addplot+[samples=20, domain=-1:1] {0.5*(3*x^2-1)};
 \addlegendentry{$P_2 = \frac{1}{2} \left( 3x^2 - 1 \right)$};
 
-\addplot[color=fzjblue, samples=60, domain=-1:1] {0.125*(35*x^4 - 30*x^2 + 3)};
+\addplot+[samples=60, domain=-1:1] {0.125*(35*x^4 - 30*x^2 + 3)};
 \addlegendentry{$P_4 = \frac{1}{8} \left( 35x^4 - 30x^2 + 3 \right)$};
 
-\addplot[color=fzjblue, samples=2, domain=-1:1] {x};
+\addplot+[samples=2, domain=-1:1] {x};
 \addlegendentry{$P_1 = x$};
 
-\addplot[color=fzjblue, samples=40, domain=-1:1] {0.5*(5*x^3 - 3*x)};
+\addplot+[samples=40, domain=-1:1] {0.5*(5*x^3 - 3*x)};
 \addlegendentry{$P_3 = \frac{1}{2} \left( 5x^3 - 3x \right)$};
 
-\addplot[color=fzjblue, samples=80, domain=-1:1] {0.125*(63*x^5 - 70*x^3 + 15*x)};
+\addplot+[samples=80, domain=-1:1] {0.125*(63*x^5 - 70*x^3 + 15*x)};
 \addlegendentry{$P_5 = \frac{1}{8} \left( 63x^5 - 70x^3 + 15x \right)$};
 \end{axis}
 \end{tikzpicture}

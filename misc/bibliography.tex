@@ -1,12 +1,13 @@
 % Two bibliographies with different styles and sortings for publications and weblinks, respectively.
 %   based on: https://tex.stackexchange.com/questions/299064/
+%             https://tex.stackexchange.com/questions/452170/
 
 \DeclareSourcemap{
   % append keywords to identify different bibliography entries.
   \maps[datatype=bibtex, overwrite]{
     \map{
       \perdatasource{bibliography.bib}
-      \step[fieldset=KEYWORDS, fieldvalue=primary, append]
+      \step[fieldset=KEYWORDS, fieldvalue=primary] % do not append!
       % print the following fields only if there is no doi
       \step[fieldsource=doi,final]
       \step[fieldset=url,null]
@@ -16,7 +17,7 @@
     }
     \map{
       \perdatasource{references.bib}
-      \step[fieldset=KEYWORDS, fieldvalue=secondary, append]
+      \step[fieldset=KEYWORDS, fieldvalue=secondary] % do not append!
       % print the following fields only if there is no doi
       \step[fieldsource=doi,final]
       \step[fieldset=url,null]
@@ -45,6 +46,8 @@
 \item}
 
 \assignrefcontextkeyws[sorting=none]{secondary}
+
+
 
 % modify cite and textcite macros for 'authoryear'
 %   based on: https://github.com/plk/biblatex/blob/dev/tex/latex/biblatex/cbx/authoryear.cbx

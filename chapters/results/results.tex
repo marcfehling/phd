@@ -1,4 +1,4 @@
-\chapter{Application on Laplace's problem}
+\chapter{Application on the Laplace problem}
 \label{ch:results}
 \glsresetall
 
@@ -17,15 +17,15 @@ With all algorithms and data structures elaborated in Chs.~\ref{ch:parallel} and
 
 The choice to study the Laplace problem was not made by chance: We encounter the Laplace equation, or rather the Poisson equation with a non-vanishing right hand side, in many different modeling processes. In the field of electrostatics, the electric potential satisfies the Poisson equation. It is also used to model diffusion processes in time-dependent problems. Embedded in time discretization schemes, the Poisson problem has to be solved in each time step for, e.g., heat transfer problems. Further for the simulation of incompressible flows, the coupling of pressure and velocity is governed by the Poisson equation.
 
-Following Eq.~\ref{eq:errorbound_hp}, we are aware that \p-adaptation is favorable in regions where the solution is regular, while \h-adaptation yields better results in regions with discontinuities or singularities. For elliptic problems like the Laplace one, we expect singularities on concave domains \parencite[Sec.~5.5]{brenner2008}.
+Following Eq.~(\ref{eq:errorbound_hp}), we are aware that \p-adaptation is favorable in regions where the solution is regular, while \h-adaptation yields better results in regions with discontinuities or singularities. For elliptic problems like the Laplace one, we expect singularities on concave domains \parencite[Sec.~5.5]{brenner2008}.
 
 \textcite{mitchell2014} presented several benchmarks for \hp-adaptation that make use of this observation. We decide to showcase our implementation on a two-dimensional domain with a reentrant corner located at the point of origin:
 \begin{align}
-\Omega &= \left\{ (r,\varphi) \in \mathbb{R}_{\geq 0} \times [0, 2 \pi) : 0 \leq \varphi \leq \pi/\alpha \right\} \,\text{,}
+\Omega &= \left\{ (r,\theta) \in \mathbb{R}_{\geq 0} \times [0, 2 \pi) : 0 \leq \theta \leq \pi/\alpha \right\} \,\text{,}
 \end{align}
 with $\alpha \in \left(1/2, 1\right)$. With the additional requirement that the solution must be zero along the legs of the reentrant corner, this particular scenario has a general solution which can be formulated in polar coordinates $r = \sqrt{x^2 + y^2} > 0$ and $\theta = \arctantwo(y,x)$:
 \begin{align}
-u_\text{sol}(\vec{x}) &= r^\alpha \sin(\alpha \, \theta) \,\text{,} \\
+\label{eq:ficherasolution} u_\text{sol}(\vec{x}) &= r^\alpha \sin(\alpha \, \theta) \,\text{,} \\
 \nonumber \nabla u_\text{sol}(\vec{x}) &= \partial_r u_\text{sol}(\vec{x}) \vec{e}_r + \frac{1}{r} \partial_\theta u_\text{sol}(\vec{x}) \vec{e}_\theta \\
 &= \alpha r^{\alpha - 1} \left[ \sin(\alpha \, \theta) \vec{e}_r + \cos(\alpha \, \theta) \vec{e}_\theta \right] \,\text{,}
 \end{align}
@@ -34,16 +34,16 @@ with unit vectors \(\vec{e}_r = \cos(\theta) \vec{e}_x - \sin(\theta) \vec{e}_y\
 \left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \alpha r^{\alpha - 1} \,\text{,} & \lim\limits_{r \rightarrow 0} \left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \infty \quad\text{for}\quad \alpha \in \left(1/2, 1\right) \,\text{.}
 \end{align}
 
-In our testcase, we pick the corner to have a right angle with $\alpha = 2/3$ resulting in an L-shaped domain, at which all cells share the same topology to exclude influences from mesh distortion in our benchmark:
+In our testcase, we pick a corner with a right angle with $\alpha = 2/3$ resulting in an L-shaped domain, at which all cells share the same topology to exclude influences from mesh distortion in our benchmark:
 \begin{align}
-\Omega_\text{L} &= \left[-1,1\right]^2 \setminus \left\{ \left(0,1\right) \times \left(-1, 0\right) \right\} \,\text{.}
+\label{eq:Ldomain} \Omega_\text{L} &= \left[-1,1\right]^2 \setminus \left\{ \left(0,1\right) \times \left(-1, 0\right) \right\} \,\text{.}
 \end{align}
-A depiction of the solution on this particular domain is shown in Fig.~\ref{fig:solution}. The three dimensional variant of this problem is often referred to as the Fichera corner problem.
+A depiction of the solution on this particular domain is shown in Fig.~\ref{fig:solution}. The three-dimensional variant of this problem is often referred to as the Fichera corner problem.
 
 \begin{figure}
 \centering
-\input{figures/results/solution}%
-\caption{Solution of the manufactured Laplace problem on a L-shaped domain.}
+\input{figures/results/solution}
+\caption[Solution of the manufactured Laplace problem on the L-shaped domain.]{Solution from Eq.~(\ref{eq:ficherasolution}) of the manufactured Laplace problem on the L-shaped domain described by Eq.~(\ref{eq:Ldomain}).}
 \label{fig:solution}
 \end{figure}
 
@@ -53,7 +53,7 @@ Following the usual approach in \gls{fem}, we transfer our problem to its weak f
 \begin{align}
 \left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
 \end{align}
-The shape functions of Lagrangian elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on the boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
+The shape functions of Lagrange elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on the boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
 
 The \dealii{} library offers interfaces to parallel linear algebra of the third party libraries \petsc{} \textcite{petsc3124} and \trilinos{} \textcite{trilinos12181} for distributed memory architectures. In our investigations, we choose the latter using their \epetra{}
 %\textcite{epetra}

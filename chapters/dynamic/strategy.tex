@@ -3,7 +3,7 @@
 
 For \hp{}-adaptive methods, we need to find ways to prescribe which cells are subject to which kind of adaptation. This grants awareness on how the mesh will change if adaptation is executed.
 
-To indicate that adaptation is about to happen, we introduce general flags for refinement and coarsening into our implementation, respectively. To indicate that \p-adaptation is going to happen, we specify so called \textit{future finite element indices} that determine the reference finite element from the collection that will be associated to that particular cell after adaptation has been performed. They act as a pendent to the previously introduced \textit{active finite element indices} in Sec.~\ref{sec:prerequisites}. In total, we have three different indicators for adaptation: Flags for refinement and coarsening, as well as future finite element indices.
+To indicate that adaptation is about to happen, we introduce general flags for refinement and coarsening into our implementation, respectively. Furthermore, to indicate that \p-adaptation is going to happen, we specify so called \textit{future finite element indices} that determine the reference finite element from the collection that will be associated to that particular cell after adaptation has been performed. They act as a counterpart to the previously introduced \textit{active finite element indices} in Sec.~\ref{sec:prerequisites}. In total, we thus have three different indicators for adaptation: Flags for refinement and coarsening, as well as future finite element indices.
 
 To determine the extent to which cells change during the adaptation process, the affected cell properties have to be hierarchically ordered. While for \h-adaptive methods, a grid hierarchy naturally evolves from the underlying tree or forest data structure, this is not necessarily the case for \p-adaptation. Here, a hierarchy needs to be provided for the collection of reference finite elements, so that we can assign superior and subordinate elements in case of \p-refinement or \p-coarsening, respectively. For example, we arrange Lagrangian finite elements by their polynomial degree in ascending order with the largest degree on the highest level.
 
@@ -20,7 +20,7 @@ Executing \h-adaptation on a \p-adapted mesh reveals another challenge. We need 
   \input{figures/dynamic/hpcoarsening}
   \caption{\h-coarsening.}
 \end{subfigure}
-\caption[Inheritance of cell characteristics through \h-adaptation in the context of \hp-adaptive meshes.]{Inheritance of cell characteristics through \h-adaptation in the context of \hp-adaptive meshes. With \h-refinement, all children will be associated with the parent finite element, while during \h-coarsening, the finite element space chosen on the parent cell encapsulates all those of its children ($Q_1 \subset Q_2 \subset Q_3$).}
+\caption[Inheritance of cell characteristics through \h-adaptation.]{Inheritance of cell characteristics through \h-adaptation in the context of \hp-adaptive meshes. With \h-refinement, all children will be associated with the parent finite element, while during \h-coarsening, the finite element space chosen on the parent cell encapsulates all those of its children ($Q_1 \subset Q_2 \subset Q_3$).}
 \label{fig:adaptation}
 \end{figure}
 

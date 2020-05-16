@@ -6,7 +6,7 @@ The efficient use of all computational resources requires a uniform distribution
 In most \h-adaptive applications, cells are similar and correspond to the same workload. Thus, we can simply balance the number of cells on all processes. However with \hp-adaptive application, this is no longer the case due to the diversity of finite elements. %Here, the workload varies with the number of \glspl{dof} on each cell. (and the quadrature)
 In this case, since the domain is partitioned on the basis of cells, we need to assign a corresponding weight to every cell that determines its individual workload and balance the cumulated weights among all processes.
 
-The workload of each cell depends on its assigned finite element and quadrature formula, and correlates to the number of \glspl{dof} and quadrature points, among other quantifiable values that depend on the individual problem. For example, Lagrangian elements of different order as depicted in Fig.~\ref{fig:lagrange} each have a distinct number of \glspl{dof}.
+The workload of each cell depends on its assigned reference finite element and quadrature formula, and correlates to the number of \glspl{dof} and quadrature points, among other quantifiable values that depend on the individual problem. For example, Lagrangian elements of different order as depicted in Fig.~\ref{fig:lagrange} each have a distinct number of \glspl{dof}.
 
 %For example, consider Lagrangian elements of different polynomial degrees with different number of \glspl{dof} depicted in Fig.~\ref{fig:lagrange} require a different workload, mainly consumed by matrix assembly and the solution process.
 
@@ -17,7 +17,7 @@ The workload of each cell depends on its assigned finite element and quadrature 
 
 %and balance the cumulated sum of cells to be equal on all processes. We can do that with a prefix sum.
 
-For the purpose of load balancing, \textcite[Sec.~3.3]{burstedde2011} provided an algorithm for weighted partitioning and enhanced \pforest{} \textcite{p4est22} with a corresponding implementation, from which we take advantage in \dealii{}. Omitting details about the communication between processes, we will briefly outline its basic idea: On a distributed mesh, calculate the prefix sum of cell weights in the global scope, determine the partition boundaries with a binary search, and transfer cells to their new owning processes if necessary.
+For the purpose of load balancing, \textcite[Sec.~3.3]{burstedde2011} provided an algorithm for weighted partitioning and enhanced \pforest{} \textcite{p4est22} with a corresponding implementation, of which we take advantage in \dealii{}. Omitting details about the communication between processes, we will briefly outline its basic idea: On a distributed mesh, calculate the prefix sum of cell weights in the global scope, determine the partition boundaries with a binary search, and transfer cells to their new owning processes if necessary.
 
 %The partitioning algorithm of \pforest{}
 
@@ -29,7 +29,7 @@ In the context of \hp-adaptive \gls{fem} applications, we identify the assembly 
 %As a first indicator for the workload, we make the number of \glspl{dof} responsible.
 The total workload of iterative solvers combined with multigrid preconditioning ideally scales with the global number of \glspl{dof}, i.e., $\mathcal{O}\left(N_\text{dofs}\right)$. We therefore expect that the corresponding workload of each cell attributed to the solution process also scales with the number of cell-related \glspl{dof}, i.e., $\mathcal{O}\left(n_\text{dofs}\right)$. Furthermore, we suppose that the workload of each cell for the matrix assembly will be of order $\mathcal{O}\left(n_\text{dofs}^2\right)$ since all \glspl{dof} in a cell couple with each other.
 
-We expect that the actual workload of an \hp-adaptive \gls{fem} application will actually scale with an order somewhere in between the two, i.e.\@ $\mathcal{O}\left(n_\text{dofs}^c\right)$ with a constant exponent $c \in [1,2]$. We use this strategy for investigations in this dissertation in which we also determine a suitable exponent $c$.
+We expect that the actual workload of an \hp-adaptive \gls{fem} application will actually scale with an order somewhere in between the two, i.e., $\mathcal{O}\left(n_\text{dofs}^c\right)$ with a constant exponent $c \in [1,2]$. We use this strategy for investigations in Ch.~\ref{ch:results} in which we also determine a suitable exponent $c$.
 
 Independent of the approach just described, weighting each cell with a linear combination $(a \, n_\text{dofs}^2 + b \, n_\text{dofs})$ also appears conceivable, for which the partitioning results depend on the ratio of both constants $a$ and $b$, rather than an exponent $c$.
 

@@ -10,7 +10,7 @@ Again working with successively adapted meshes, we will measure the wall time sp
 \item \textit{Linear solver}. Setup both the \gls{amg} preconditioner and the conjugate gradient solver and solve the equation system in parallel.
 \item \textit{Estimate error}. Calculate the error indicators on locally owned cells on basis of the current solution. Mark cells for either refinement or coarsening by computing global thresholds.
 \item \textit{Estimate smoothness}. Calculate the smoothness indicators on basis of the current solution on locally owned cells marked for either refinement or coarsening. Decide whether \h- or \p-adaptation is going to be applied by computing global thresholds.
-\item \textit{Coarsen and refine}. Perform coarsening and refinement and maintain the 2:1 cell balance on the \pforest{} master mesh, followed by its repartitioning. Transfer data between the outdated and updated mesh. Apply all changes made to the master mesh on the \dealii{} triangulation.
+\item \textit{Coarsen and refine}. Perform coarsening and refinement and maintain the 2:1 cell balance on the \pforest{} master mesh, followed by its repartitioning. Transfer data between the outdated and updated mesh. Apply all changes made to the master mesh on the \dealii{} grid.
 \end{itemize}
 
 We will pick the parameters and features that have proven to be suitable in our numerical example. Thus, we again choose smoothness estimation by the decay of Legendre coefficients as our \hp-decision strategy. For load balancing, cell weighting is imposed proportional to the number of \glspl{dof} on each cell potentiated by the exponent $c = 1.9$.
@@ -20,37 +20,37 @@ We will pick the parameters and features that have proven to be suitable in our 
 
 To investigate scaling, we will first consider problems with increasing size solved on a fixed number of \glspl{mpi} processes, which we will realize using consecutive adaptations. We choose two different numbers of computation nodes, namely 16 and 64 nodes with 768 and 3,072 \glspl{mpi} processes in total each.
 
-We initialize the problem with ten initial global refinements and adapt the mesh for a total of 11 iterations with the smaller amount of computing nodes, and 12 iterations for the larger one. In the chosen configuration, all available memory is used on the assigned nodes, so no more adaptation cycles are possible without running out of memory. Again to exclude the influence of the current load on the supercomputer, all runs are performed multiple times and the minimum wall time of each category is taken. This time we repeat each run seven times. The results of scaling on consecutively adapted meshes are shown in Fig.~\ref{fig:weak} up to problem sizes of 2,073,075,769 \glspl{dof}.
+We initialize the problem with ten initial global refinements and adapt the mesh for a total of eleven iterations with the smaller amount of computing nodes, and twelve iterations for the larger one. In the chosen configuration, all available memory is used on the assigned nodes, so no more adaptation cycles are possible without running out of memory. Again to exclude the influence of the current load on the supercomputer, all runs are performed multiple times and the minimum wall time of each category is taken. This time we repeat each run seven times. The results of scaling on consecutively adapted meshes are shown in Fig.~\ref{fig:weak} up to problem sizes of 2,073,075,769 \glspl{dof}.
 
 \begin{figure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/weak-nodes16}%
+  \input{figures/results/weak-nodes16}
   \caption{Scaling on 16 nodes or 768 \gls{mpi} processes.}
   \label{fig:weak-nodes16}
 \end{subfigure} \\
 \vspace{1em}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/weak-nodes64}%
+  \input{figures/results/weak-nodes64}
   \caption{Scaling on 64 nodes or 3,072 \gls{mpi} processes.}
   \label{fig:weak-nodes64}
 \end{subfigure}
 \vspace{-1em}
-\caption{Scaling for consecutively refined meshes on different numbers of \glspl{mpi} processes. Each \gls{mpi} process has more than $10^5$ \glspl{dof} assigned only to the right side of the indicated vertical line. Each finite element is represented at least once in the mesh only to the right side of the designated vertical line.}
+\caption[Scaling for consecutively refined meshes on different numbers of \glsfmtlong{mpi} processes.]{Scaling for consecutively refined meshes on different numbers of \glspl{mpi} processes. Each \gls{mpi} process has more than $10^5$ \glspl{dof} assigned only to the right side of the indicated vertical line. Each finite element is represented at least once in the mesh only to the right side of the designated vertical line.}
 \label{fig:weak}
 \end{figure}
 
 \textcite{bangerth2012} proclaimed that linear scaling is observable in all categories if the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$. We can confirm this observation in our numerical example with parallel \hp-adaptation as well.
 
-During the first few adaptation cycles in our application, the wall time attributed to the solution category shows a major increase which is much more than just linear. After six adaptation cycles, i.e., right of the indicated vertical line in Fig.~\ref{fig:weak}, each reference finite element from the collection will be assigned to at least one cell due to the way we configured the scenario, and the aforementioned curve flattens and increases only linearly as expected.
+During the first few adaptation cycles in our application, the wall time attributed to the solution category shows a major increase which is more than just linear. After six adaptation cycles, i.e., right of the indicated vertical line in Fig.~\ref{fig:weak}, each reference finite element from the collection will be assigned to at least one cell due to the way we configured the scenario, and the aforementioned curve flattens and increases only linearly as expected.
 
 We observe a similar behavior in the number of iterations that the linear solver requires in Fig.~\ref{fig:solveriterations}. Here, the number of iterations first increases exponentially and stagnates after said number of adaptation cycles.
 
 \begin{figure}
 \centering
 \input{figures/results/iterations}
-\caption[Number of solver iterations at different cycles of consecutive adaptations.]{Number of solver iterations at different cycles of consecutive adaptations. }
+\caption[Number of solver iterations at different cycles of consecutive adaptations.]{Number of solver iterations at different cycles of consecutive adaptations.}
 \label{fig:solveriterations}
 \end{figure}
 
@@ -61,12 +61,12 @@ We observe a similar behavior in the number of iterations that the linear solver
 %that adding finite elements of a higher order than before results in a higher complexity in the matrix, that is responsible for a longer solution.
 We suspect that the rather heterogeneous association of the finite elements by the decision algorithms
 %has a negative influence on the conditioning of the system matrix and
-has a similar effect on the distribution of non-zero entries in the system matrix, for which \gls{amg} preconditioners are not designed for. It appears that we could make use of a more suitable preconditioner. Although it was the best option at our disposal at the time of this project, we may think about an alternative to this for future applications.
+has a similar effect on the distribution of nonzero entries in the system matrix, for which \gls{amg} preconditioners are not designed for. It appears that we could make use of a more suitable preconditioner. Although it was the best option at our disposal at the time of this dissertation, we may think about an alternative to this for future applications.
 
-\textcite{mitchell2010} presented \hp-multigrid methods for sequential applications. They combined multilevel methods on a geometric hierarchy with those on a hierarchy of finite elements with different polynomial degrees $p$. The \hp-adaptive domain will be first relaxed by successively decreasing the polynomial degree of all associated finite elements until only linear ones remain. Next, the usual geometric multigrid method is applied, while results are interpolated back to finite elements of the original polynomial degrees as a last step. The embedding of \p-relaxation and \p-interpolation in either \gls{amg} or \gls{gmg} preconditioning is promising and will be the subject of future work. Different combinations of multilevel methods in a polynomial, geometric, and algebraic sense are possible, as \textcite{fehn2019} demonstrated for matrix-free \gls{dg} methods.
+\textcite{mitchell2010} presented \hp-multigrid methods for sequential applications. They combined multilevel methods on a geometric hierarchy with those on a hierarchy of finite elements with different polynomial degrees $p$. The \hp-adaptive domain will be first relaxed by successively decreasing the polynomial degree of all associated finite elements until only linear ones remain. Next, the usual geometric multigrid method is applied, while results are interpolated back to finite elements of the original polynomial degrees as a last step. The embedding of \p-relaxation and \p-interpolation in either \gls{amg} or \gls{gmg} preconditioning is promising and will be the subject of future work. Different combinations of multilevel methods in a polynomial, geometric, and algebraic sense are possible, as \textcite{fehn2019} demonstrated on static non-adaptive meshes. % for matrix-free \gls{dg} methods.
 %Instead of relying on \gls{amg} methods, \gls{gmg} preconditioners are expected to work more robust and should be the method of choice.
 %\Gls{gmg} methods for \hp-adaptive refinement in serial applications have already been developed by \textcite{mitchell2010}. \textcite{clevenger2019} worked out \gls{gmg} preconditioners for parallel \h-adaptive \gls{fem} for either \gls{cg} or \gls{dg} methods and made their algorithm available in the \dealii{} library. The development of a corresponding preconditioner for parallel \hp-adaptive \gls{fem} will be subject of future work, as well as its application and comparison with the \gls{amg} equivalents.
-Thus, an even more favorable error to wall time performance of \hp- compared to \h-adaptive methods are conceivable than presented in Fig.~\ref{fig:errorwalltime} and described in Sec.~\ref{sec:errorvsperformance}.
+Therefore, an even more favorable error to wall time performance of \hp- compared to \h-adaptive methods are conceivable than presented in Fig.~\ref{fig:errorwalltime} and described in Sec.~\ref{sec:errorvsperformance}.
 
 Furthermore, we find a similar behavior of the wall time in the assembly category.
 %A higher polynomial degree of the finite element results in a larger amount of \glspl{dof} that couple with each other, as already pointed out in Sec.~\ref{sec:balancing}.
@@ -85,10 +85,10 @@ In our application, we unintentionally re-calculated these values again in each 
 
 % strong scaling
 
-For strong scaling, problems are set to a fixed size and being solved with a increasing amount of \gls{mpi} processes. This time, we just solve one individual adaptation cycle on a tailored mesh, that has been prepared from a previous run via serialization.
+For strong scaling, problems are set to a fixed size and are solved with an increasing amount of \gls{mpi} processes. This time, we just solve one individual adaptation cycle on a tailored mesh, that has been prepared from a previous run via serialization.
 %, we prepare a tailored mesh for these considerations, and solve that particular cycle with a varying number of processors.
 
-To prepare these meshes, we consider two different scenarios which will be constructed as follows: A smaller scenario is initialized with ten global refinements, and a larger one with twelve refinements. Both will be adapted successively in six adaptation cycles, which results in each finite element being represented at least once in the whole domain. This leads to number of \glspl{dof} of 50,736,415 and 969,257,276 in total for the respective scenario.
+To prepare these meshes, we consider two different scenarios which will be constructed as follows: A smaller scenario is initialized with ten global refinements, and a larger one with twelve refinements. Both will be adapted successively in six adaptation cycles, which results in each reference finite element being represented at least once in the whole domain. This leads to number of \glspl{dof} of 50,736,415 and 969,257,276 in total for the respective scenarios.
 
 With serialization, both problems will be solved at their advanced stage with varying amounts of \gls{mpi} processes, and the wall times of each section in the program will be recorded. We again repeat each run for a total of seven times and take the minimum wall time in each category, except for the largest run in order to solve the bigger problem on 1,024 nodes or 49,152 \gls{mpi} processes, which we only repeated five times. % before we completely exhausted our entire computing time quota.
 
@@ -98,17 +98,17 @@ Again, we identify linear scaling whenever the number of \glspl{dof} per \gls{mp
 \begin{figure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/strong-nrefs10}%
+  \input{figures/results/strong-nrefs10}
   \caption{Strong scaling for a fixed problem size of roughly 51 million \glspl{dof}.}
   \label{fig:strong-nrefs10}
 \end{subfigure} \\
 \vspace{1em}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/strong-nrefs12}%
+  \input{figures/results/strong-nrefs12}
   \caption{Strong scaling for a fixed problem size of roughly 970 million \glspl{dof}.}
   \label{fig:strong-nrefs12}
 \end{subfigure}
-\caption{Strong scaling for one advanced adaptation cycle at different problem sizes. Each \gls{mpi} process has more than $10^5$ \glspl{dof} assigned only to the left side of the indicated vertical line.}
+\caption[Strong scaling for one advanced adaptation cycle at different problem sizes.]{Strong scaling for one advanced adaptation cycle at different problem sizes. Each \gls{mpi} process has more than $10^5$ \glspl{dof} assigned only to the left side of the indicated vertical line.}
 \label{fig:strong}
 \end{figure}
