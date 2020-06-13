@@ -1,0 +1,102 @@
+% Latex-Beamer Template Research Centre Juelich
+% version 17.12
+% please report any problems to i.kabadshow@fz-juelich.de
+% this version does support pdflatex, xelatex and lualatex
+%
+
+\RequirePackage{ifluatex,ifxetex,ifpdf}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage[sfdefault,lf]{carlito}
+
+\ifluatex
+  \RequirePackage{microtype}
+  \RequirePackage{fontspec}
+\else\ifxetex
+  \RequirePackage{fontspec}
+\else
+  \RequirePackage{microtype}
+\fi\fi 
+
+
+
+\newcommand{\fzjset}[1]{\pgfkeys{/beamerfzj/.cd,#1}}
+
+\pgfkeys{/beamerfzj/.cd,
+  .search also={
+    /beamerfzj/inner,
+    /beamerfzj/outer,
+    /beamerfzj/color,
+    /beamerfzj/font,
+  }
+}
+
+\mode<handout>{%
+	\usepackage{pgf}
+	\usepackage{pgfpages}
+	\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+	
+	\pgfpageslogicalpageoptions{1}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{2}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{3}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{4}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{5}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{6}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{7}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{8}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{9}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{10}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{11}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{12}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{13}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{14}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{15}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+	\pgfpageslogicalpageoptions{16}{border code=\pgfsetlinewidth{0.4pt}\pgfstroke}
+}
+
+\mode<presentation>
+
+% Juelich specific definitions
+
+\deftranslation[]{SlideName}{Slide}
+\deftranslation[to=German]{SlideName}{Folie}
+
+\deftranslation[]{HelmholtzBanner}{Member of the Helmholtz Association}
+\deftranslation[to=German]{HelmholtzBanner}{Mitglied der Helmholtz-Gemeinschaft}
+
+\usefonttheme{Juelich}
+\usecolortheme{Juelich}
+\useinnertheme{Juelich}
+\useoutertheme{Juelich}
+
+% default settings for title, part and section pages
+\fzjset{title=allcaps}
+\fzjset{subtitle=regular}
+\fzjset{part=regular}
+
+\mode<all>
+
+% define progressbar
+\makeatletter
+\def\progressbar@progressbar{} % the progress bar
+\newcount\progressbar@tmpcounta% auxiliary counter
+\newcount\progressbar@tmpcountb% auxiliary counter
+\newdimen\progressbar@pbht %progressbar height
+\newdimen\progressbar@pbwd %progressbar width
+\newdimen\progressbar@tmpdim % auxiliary dimension
+
+\progressbar@pbwd=\paperwidth
+\progressbar@pbht=0.2ex
+
+\def\progressbar@progressbar{%
+  \progressbar@tmpcounta=\insertframenumber
+  \progressbar@tmpcountb=\inserttotalframenumber
+  \progressbar@tmpdim=\progressbar@pbwd
+  \multiply\progressbar@tmpdim by \progressbar@tmpcounta
+  \divide\progressbar@tmpdim by \progressbar@tmpcountb
+  \begin{tikzpicture}
+  \draw[draw=none,fill=fzjblue] %
+    (0pt, 0pt) rectangle ++ (\progressbar@tmpdim, \progressbar@pbht);
+  \end{tikzpicture}%
+}
+\makeatother

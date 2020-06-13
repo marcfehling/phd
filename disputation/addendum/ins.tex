@@ -1,0 +1,30 @@
+\begin{frame}
+\frametitle{INS assumptions}
+
+\begin{itemize}
+  \item Incompressibility assumption: Mach number $< 0.3$
+  \item Buoyancy force with Boussinesq approximation: $f \approx \rho_0 g - \rho_0 g \beta (T-T_0)$
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Karniadakis scheme}
+
+\begin{itemize}
+  \item Explicit convection step
+  
+    $(u^* - u^n)/k = - \nabla \cdot (u^nu^n) + f^{n+1}$
+  \item Pressure Poisson equation and velocity reconstruction
+  
+    $\nabla^2 p^{n+1} = - 1/k \, \nabla \cdot u^*$
+    
+    $u^{**} = u^* - k \, \nabla p^{n+1}$
+  \item Implicit diffusion step
+  
+    $ (u^{n+1} - u^{**})/k = \nabla \cdot (2\nu\epsilon) $
+\end{itemize}
+\end{frame}

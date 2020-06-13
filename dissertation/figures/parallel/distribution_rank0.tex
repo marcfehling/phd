@@ -1,0 +1,32 @@
+\begin{tikzpicture}[scale=0.96]
+\def\Length{1}
+\def\Radius{0.06}
+
+% mark types of cells
+\fill[color=red] (0,0) rectangle (2*\Length,2*\Length);
+\fill[color=yellow] (0,2*\Length) rectangle (4*\Length,4*\Length);
+\fill[color=yellow] (2*\Length,0) rectangle (3*\Length,2*\Length);
+\fill[color=green] (3*\Length,0) rectangle (4*\Length,2*\Length);
+
+% plot mesh
+\def\XPos{0}
+\def\YPos{0}
+\LagrangeCell{\XPos}{\YPos}{\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{\XPos}{\YPos+\Length}{\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{\XPos+\Length}{\YPos}{\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{\XPos+\Length}{\YPos+\Length}{\Length}{\Radius}{1}{{,,,}};
+
+\def\XPos{2*\Length}
+\def\YPos{0}
+\LagrangeCell{\XPos}{\YPos}{\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{\XPos}{\YPos+\Length}{\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{\XPos+\Length}{\YPos}{\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{\XPos+\Length}{\YPos+\Length}{\Length}{\Radius}{1}{{,,,}};
+
+\LagrangeCell{0}{2*\Length}{2*\Length}{\Radius}{1}{{,,,}};
+\LagrangeCell{2*\Length}{2*\Length}{2*\Length}{\Radius}{1}{{,,,}};
+
+% frame relevant cells
+\def\Offset{0.1}
+\draw[dashed, thick] (-\Offset,-\Offset) -- (-\Offset,4*\Length+\Offset) -- (4*\Length+\Offset,4*\Length+\Offset) -- (4*\Length+\Offset,2*\Length-\Offset) -- (3*\Length+\Offset,2*\Length-\Offset) -- (3*\Length+\Offset,-\Offset) -- cycle;
+\end{tikzpicture}

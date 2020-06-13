@@ -1,0 +1,80 @@
+\begin{frame}
+\frametitle{Enumeration of degrees of freedom}
+
+\begin{itemize}
+\item Numbering of DoFs necessary to build linear equation
+\item Parallelization and p-adaptive methods require different algorithms
+  \begin{itemize}
+  \item See parallel \parencite{bangerth2012} and hp \cite{bangerth2009} papers for details
+  \end{itemize}
+\end{itemize}
+
+\vspace{-.7em}
+\begin{block}{\vspace{-.7em}}
+\centering
+Combination of both algorithms \textbf{not trivial}
+\end{block}
+
+\vfill{}
+
+\begin{itemize}
+\item Why not number DoFs locally and handle relations with constraints?
+  \begin{itemize}
+  \item Number of DoFs would vary with number of processors
+  \item Larger matrices \& vectors, thus higher memory demand
+  \end{itemize}
+\end{itemize}
+
+\vfill{}
+
+\begin{itemize}
+  \item Need for algorithm independent of number of processors
+  \begin{itemize}
+    \item Results independent of number of processors
+    \begin{itemize}
+      \item Proof that solvers work
+    \end{itemize}
+    \item Simplifies debugging
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Enumeration algorithm}
+
+\begin{itemize}
+\item Developed 6-phase algorithm
+  \begin{itemize}
+  \item Requires two ghost exchanges
+  \end{itemize}
+\end{itemize}
+
+\vfill{}
+
+\begin{enumerate}
+  \item Local enumeration of DoFs
+  \item Invalidate DoFs on ghost interfaces to processors with lower rank
+  \item Unification of DoFs on local domain \textbf{and} ghost interfaces
+  \begin{itemize}
+    \item Ownership of DoFs clarified
+  \end{itemize}
+  \item Global re-enumeration of DoFs
+  \begin{itemize}
+    \item Local DoF indices set
+  \end{itemize}
+  \item Exchange of locally owned DoFs
+  \item Merge DoFs on ghost interfaces
+  \begin{itemize}
+    \item Global DoF indices set
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+
+
+\input{addendum/dofenumeration_sequence}

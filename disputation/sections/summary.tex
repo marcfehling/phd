@@ -1,0 +1,45 @@
+\section{Summary \& Outlook}
+
+
+
+
+
+\begin{frame}
+\frametitle{Table of contents}
+
+\tableofcontents[currentsection]
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Summary \& Outlook}
+
+\begin{itemize}
+\item New algorithm for massively parallel hp-adaptive methods, generally applicable for any FEM software
+\item Reference implementation in \dealii{} involves:
+  \begin{itemize}
+  \item Enumeration of degrees of freedom, independent of number of subdomains
+  \item Consignment of contiguous memory chunks for data transfer
+  \item Weighted repartitioning for load balancing
+  \item Selection of adaptation strategies for $hp$-FEM
+  \end{itemize}
+\end{itemize}
+
+\vfill{}
+
+\begin{itemize}
+\item Future steps:
+  \begin{itemize}
+%  \item Heuristic analysis on reasonable cell weights
+%  \item Simplify interface for hp-methods in \dealii{}
+%  \item Chains of constraints on ghost cells
+  \item p-Multigrid methods
+  \item MatrixFree methods
+  \item Provide tutorial in \dealii{} as a manual for a broader audience
+  \item More applications
+  \end{itemize}
+\end{itemize}
+\end{frame}

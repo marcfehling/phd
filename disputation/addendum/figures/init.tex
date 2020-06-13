@@ -1,0 +1,20 @@
+\begin{tikzpicture}[scale=3.3]
+  \fill[fzjlightblue] (0, 0) rectangle (2*\Length, \Length);
+  \fill[fzjorange] (0, \Length) rectangle (2*\Length, 2*\Length);
+  \node at (\Length, 0.7*\Length) {\Huge \textcolor{fzjblue}{\textbf{CPU 0}}};
+  \node at (\Length, 1.7*\Length) {\Huge \textcolor[rgb]{0.44,0.26,0.08}{\textbf{CPU 1}}};
+
+  \node at (0.5*\Length, 0.3*\Length) {\Huge \(Q_2\)}; 
+  \node at (1.5*\Length, 0.3*\Length) {\Huge \(Q_4\)};
+  \node at (0.5*\Length, 1.3*\Length) {\Huge \(Q_4\)}; 
+  \node at (1.5*\Length, 1.3*\Length) {\Huge \(Q_2\)};
+
+  \LagrangeCell{0}{0}{\Length}{\Radius}{1}
+    {{"","","",""}};
+  \LagrangeCell{\Length}{0}{\Length}{\Radius}{1}
+    {{"","","",""}};
+  \LagrangeCell{0}{\Length}{\Length}{\Radius}{1}
+    {{"","","",""}};
+  \LagrangeCell{\Length}{\Length}{\Length}{\Radius}{1}
+    {{"","","",""}};
+\end{tikzpicture}

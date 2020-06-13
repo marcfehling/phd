@@ -1,0 +1,54 @@
+% Latex-Beamer Template Research Centre Juelich
+% version 17.12
+% please report any problems to i.kabadshow@fz-juelich.de
+% this version does support pdflatex, xelatex and lualatex
+%
+
+\mode<presentation>
+%------------------------------------------------
+% subtitle: allow different styles
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@subtitle@default\endcsname\relax
+\defbeamertemplate*{subtitle}{short}
+{%
+  \setbeamerfont*{subtitle}{parent=subtitle short}
+}
+
+\defbeamertemplate{subtitle}{long}
+{%
+  \setbeamerfont*{subtitle}{parent=subtitle long}
+}
+
+\defbeamertemplatealias{subtitle}{default}{short}
+
+% Enumerate items, Juelich
+\setbeamertemplate{enumerate items}[square]
+
+
+
+\expandafter\let\csname beamer@@tmpop@itemize item@square\endcsname\relax
+\defbeamertemplate*{itemize item}{square}{\small\hbox{\vrule width 1ex height 1ex}}
+
+\expandafter\let\csname beamer@@tmpop@itemize subitem@square\endcsname\relax
+\defbeamertemplate*{itemize subitem}{square}{\footnotesize\hbox{\vrule width 1ex height 1ex}}
+
+\expandafter\let\csname beamer@@tmpop@itemize subsubitem@dash\endcsname\relax
+\defbeamertemplate*{itemize subsubitem}{dash}{\footnotesize---}
+
+\setbeamercolor{block title}{use=structure,fg=white,bg=structure.fg}
+
+% fix block spacing
+%\addtobeamertemplate{block begin}{\vskip-\medskipamount}{}
+\addtobeamertemplate{block end}{}{\vskip-\smallskipamount}
+%
+\renewcommand{\emph}[1]{\structure{#1}}
+
+\let\oldabovecaptionskip\abovecaptionskip
+\let\oldbelowcaptionskip\belowcaptionskip
+\BeforeBeginEnvironment{columns}{%
+    \setlength{\abovecaptionskip}{\dimexpr\oldabovecaptionskip+12.2pt\relax}%
+    \setlength{\belowcaptionskip}{\dimexpr\oldbelowcaptionskip-11.86pt\relax}%
+    \begin{minipage}{\linewidth}}
+\AfterEndEnvironment{columns}{\end{minipage}}
+
+\mode<all>

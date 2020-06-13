@@ -1,0 +1,19 @@
+\begin{tikzpicture}[scale=2]
+\def\Length{0.5}
+\def\Radius{0.03}
+
+\LagrangeCell{-2*\Length}{0}{2*\Length}{\Radius}{2}
+{{,,,,,,,,}};
+
+% remove face node which becomes a hanging node on a vertex
+\draw[fill=white,draw=white] (0,\Length-\Radius) rectangle (-\Radius,\Length+\Radius);
+
+\LagrangeCell{0}{0}{\Length}{\Radius}{2}
+{{,,,,,,,,}};
+\LagrangeCell{\Length}{0}{\Length}{\Radius}{2}
+{{,,,,,,,,}};
+\LagrangeCell{0}{\Length}{\Length}{\Radius}{2}
+{{,,,,,,,,}};
+\LagrangeCell{\Length}{\Length}{\Length}{\Radius}{2}
+{{,,,,,,,,}};
+\end{tikzpicture}

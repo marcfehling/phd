@@ -1,0 +1,492 @@
+% Latex-Beamer Template Research Centre Juelich
+% version 17.12
+% please report any problems to i.kabadshow@fz-juelich.de
+% this version does support pdflatex, xelatex and lualatex
+%
+
+\setbeamersize{text margin left=0.5cm,text margin right=0.5cm}
+
+% compute white border
+\newlength{\myborder}
+\setlength{\myborder}{\dimexpr(\paperwidth-0.1\paperheight)\relax}
+
+% compute height of letter H in title
+\newlength{\mylen}
+\settoheight{\mylen}{\usebeamerfont{title}H} % according to the CD the headline is not aligned at the baseline, but the top left corner
+\newlength{\myheadlinea}
+\setlength{\myheadlinea}{\dimexpr(0.10\paperheight-\headheight-6pt+\mylen)\relax}
+\newlength{\myheadlineb}
+\setlength{\myheadlineb}{\dimexpr(0.55\paperheight-\headheight-6pt+\mylen)\relax} % alignmet at the left top corner of the headline
+
+\newlength{\hlvstart}
+\setlength{\hlvstart}{\dimexpr(1cm-15pt)\relax}
+
+% alignment
+\newcommand{\tlap}[1]{\vbox to 0pt{\vss\hbox{#1}}}
+\newcommand{\blap}[1]{\vbox to 0pt{\hbox{#1}\vss}}
+
+\mode<presentation>
+
+%------------------------------------------------
+% navigation symbols
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@navigation symbols@default\endcsname\relax
+\defbeamertemplate{navigation symbols}{visible}
+{%
+  \hbox{%
+  \insertslidenavigationsymbol%
+  \insertframenavigationsymbol%
+  \insertsubsectionnavigationsymbol%
+  \insertsectionnavigationsymbol%
+  \insertdocnavigationsymbol%
+  \insertbackfindforwardnavigationsymbol}%
+}
+
+\defbeamertemplate*{navigation symbols}{invisible}{}
+
+\defbeamertemplatealias{navigation symbols}{default}{invisible}
+
+% handout and trans mode settings
+\only<handout| trans>{
+  % diable navigation symbols
+  \setbeamertemplate{navigation symbols}{}
+}
+
+%------------------------------------------------
+% Helmholtz Banner 
+%------------------------------------------------
+\defbeamertemplate*{helmholtz banner}{}{\translate{HelmholtzBanner}}
+
+%------------------------------------------------
+% frame number
+%------------------------------------------------
+\defbeamertemplate*{frame number}{visible}[1][\translate{SlideName}]
+{%
+  \usebeamercolor[fg]{footline}%
+  #1~\insertframenumber%
+}
+
+\defbeamertemplate{frame number}{full}[1][\translate{SlideName}]
+{%
+  \usebeamercolor[fg]{footline}%
+  #1~\insertframenumber\,\vrule width0.3pt\,\inserttotalframenumber%
+}
+
+\defbeamertemplate{frame number}{invisible}[1][]{}
+
+\defbeamertemplatealias{frame number}{default}{visible}
+
+
+%------------------------------------------------
+% date in footer 
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@date@default\endcsname\relax
+\defbeamertemplate*{date}{visible}
+{%
+  \usebeamercolor[fg]{footline}%
+  \insertdate%
+}
+
+\defbeamertemplate{date}{invisible}{}
+
+\defbeamertemplatealias{date}{default}{visible}
+
+%------------------------------------------------
+% headline
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@headline@default\endcsname\relax
+\defbeamertemplate*{headline}{visible}[1][\usebeamertemplate*{navigation symbols}]
+{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0ex,dp=0ex]{header}%
+  \hfill\blap{#1}%
+  \end{beamercolorbox}%
+}
+\defbeamertemplate{headline}{invible}{}
+
+\defbeamertemplatealias{headline}{default}{visible}
+
+%------------------------------------------------
+% footer elements: empty settings
+%------------------------------------------------
+\defbeamertemplate{footer element1}{empty}{}
+\defbeamertemplate{footer element2}{empty}{}
+\defbeamertemplate{footer element3}{empty}{}
+\defbeamertemplate{footer element4}{empty}{}
+
+%------------------------------------------------
+% footline
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@footline@default\endcsname\relax
+\defbeamertemplate*{footline}{four elements}
+{%
+  \leavevmode%
+  \ifbeamertemplateempty{footer element1}{
+  }{%
+    \usebeamertemplate*{footer element1}%
+  }%
+  \hfill%
+  \ifbeamertemplateempty{footer element2}{}{%
+    \usebeamertemplate*{footer element2}%
+  }%
+  \hfill%
+  \ifbeamertemplateempty{footer element3}{}{%
+    \usebeamertemplate*{footer element3}%
+  }%
+  \hfill%
+  \ifbeamertemplateempty{footer element4}{}{%
+    \usebeamertemplate*{footer element4}%
+  }%
+\par%
+  \ifbeamertemplateempty{progressbar}{}{%
+    \usebeamertemplate*{progressbar}
+  }%
+}%
+
+\defbeamertemplatealias{footline}{four elements}{default}
+
+%------------------------------------------------
+% footer elements: logos 
+%------------------------------------------------
+\defbeamertemplate{footer element1}{logo}[1]
+{%
+  \begin{beamercolorbox}[sep=0.0cm,left,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+  \includegraphics[width=3.0cm]{#1}%
+  \end{beamercolorbox}%
+}
+
+\defbeamertemplate{footer element2}{logo}[1]
+{%
+  \begin{beamercolorbox}[sep=0.0cm,center,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+  \includegraphics[width=3.0cm]{#1}%
+  \end{beamercolorbox}%
+}
+
+\defbeamertemplate{footer element3}{logo}[1]
+{%
+  \begin{beamercolorbox}[sep=0.0cm,center,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+  \includegraphics[width=3.0cm]{#1}%
+  \end{beamercolorbox}%
+}
+
+%------------------------------------------------
+% footer elements: default settings
+%------------------------------------------------
+\defbeamertemplate*{footer element1}{default}[1][\usebeamertemplate{helmholtz banner}]
+{%
+  \tlap{%
+  \vspace{\dimexpr(.5cm-3pt)}%
+  \begin{beamercolorbox}[sep=0.0cm,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+     \hspace*{0.5cm}#1 % if no extra option is given, use \usebeamertemplate{helmholtz banner}
+  \end{beamercolorbox}%
+  }%
+}
+
+\defbeamertemplate*{footer element2}{default}[1][\usebeamertemplate{date}]
+{%
+  \tlap{%
+  \vspace{\dimexpr(.5cm-3pt)}%
+  \begin{beamercolorbox}[sep=0.0cm,center,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+  #1 % if no extra option is given, use \usebeamertemplate*{date}
+  \end{beamercolorbox}%
+  }%
+}
+
+\defbeamertemplate*{footer element3}{default}[1][\usebeamertemplate*{frame number}]
+{%
+  \tlap{%
+  \vspace{\dimexpr(.5cm-3pt)}%
+  \begin{beamercolorbox}[sep=0.0cm,center,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+   #1 % if no extra option is given, use \usebeamertemplate*{frame number}
+  \end{beamercolorbox}%
+  }%
+}
+
+\defbeamertemplate*{footer element4}{default}
+{%
+  \begin{beamercolorbox}[sep=0.0cm,right,wd=.25\paperwidth,ht=1.25em,dp=0.0cm]{footline}
+  \includegraphics[scale=0.50]{fzj}%
+  \end{beamercolorbox}%
+}
+
+%------------------------------------------------
+% progressbar at the very bottom
+%------------------------------------------------
+\defbeamertemplate{progressbar}{visible}
+{%
+\tlap{\progressbar@progressbar}
+}
+
+\defbeamertemplate*{progressbar}{invisible}{}
+
+\defbeamertemplatealias{footline}{default}{visible}
+
+% handout and trans mode settings
+\only<handout| trans>{%
+  % disable progressbar
+  \setbeamertemplate{progressbar}[invisible]
+}
+
+%------------------------------------------------
+% background canvas
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@background canvas@default\endcsname\relax
+
+% blue background canvas for titles slide, option 1
+\defbeamertemplate{background canvas}{text}
+{%
+  \vbox{%
+  \vskip0.05\paperheight%
+    \hbox{\color{fzjblue}\vrule width \paperwidth height 0.74\paperheight}%
+  }%
+}
+
+% blue background canvas for titles slide + image, option 2
+\defbeamertemplate{background canvas}{image}
+{%
+\vbox{%
+  \vskip0.05\paperheight%
+    \hskip0.05\paperheight\tikz\node[draw=none,
+      minimum width=\myborder,
+      minimum height=0.45\paperheight,
+      path picture={
+        \node at (path picture bounding box.center){
+         \inserttitlegraphic%
+      };
+      }]{};
+     \hbox{\color{fzjblue}\vrule width\paperwidth height0.29\paperheight}%           
+}%
+}
+\defbeamertemplate*{background canvas}{empty}{}
+
+\pgfkeys{/beamerfzj/outer/.cd,
+  background canvas/.initial=empty
+}
+
+%------------------------------------------------
+% title page definitions 
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@title page@default\endcsname\relax
+
+% title page image version
+\defbeamertemplate*{title page}{image}
+{%
+  \vskip\myheadlineb%
+  \usebeamercolor[fg]{title}\usebeamerfont*{title}\strut{}\inserttitle\par%
+  \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsubtitle\par\medskip%
+  \usebeamercolor[fg]{title}\usebeamerfont*{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute%
+}
+
+% title page text version
+\defbeamertemplate{title page}{text}
+{%  
+    \vskip\myheadlinea%
+    \usebeamercolor[fg]{title}\usebeamerfont{title}\strut{}\inserttitle\par\medskip%
+    \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsubtitle\par\bigskip\bigskip%
+    \usebeamercolor[fg]{title}\usebeamerfont*{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute
+}
+
+\defbeamertemplate{title page}{empty}{}
+
+\pgfkeys{/beamerfzj/outer/.cd,
+  title page/.initial=image
+}
+
+%------------------------------------------------
+% lecture page definitions 
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@lecture page@default\endcsname\relax
+
+% part page image version
+\defbeamertemplate*{lecture page}{image}
+{%
+  \vskip\myheadlineb%
+  \usebeamercolor[fg]{title}\usebeamerfont{title}\strut{}\insertlecture\par%
+%  \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsubtitle\par\medskip%
+  \usebeamercolor[fg]{title}\usebeamerfont*{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute%
+}
+
+% part page text version
+\defbeamertemplate{lecture page}{text}
+{%  
+    \vskip\myheadlinea%
+    \usebeamercolor[fg]{title}\usebeamerfont{title}\strut{}\insertlecture\par\medskip%
+%    \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsubtitle\par\bigskip\bigskip%
+    \usebeamercolor[fg]{title}\usebeamerfont*{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute
+}
+
+\defbeamertemplate{lecture page}{empty}{}
+
+\pgfkeys{/beamerfzj/outer/.cd,
+  lecture page/.initial=image
+}
+
+%------------------------------------------------
+% part page definitions 
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@part page@default\endcsname\relax
+
+% part page image version
+\defbeamertemplate*{part page}{image}
+{%
+  \vskip\myheadlineb%
+  \usebeamercolor[fg]{title}\usebeamerfont{part}\strut{}\partname~\insertromanpartnumber:~\insertpart\par%
+%  \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsubtitle\par\medskip%
+%  \usebeamercolor[fg]{title}\usebeamerfont{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute%
+}
+
+% part page text version
+\defbeamertemplate{part page}{text}
+{%  
+    \vskip\myheadlinea%
+    \usebeamercolor[fg]{title}\usebeamerfont{part}\strut{}\partname~\insertromanpartnumber:~\insertpart\par\medskip%
+%    \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsubtitle\par\bigskip\bigskip%
+%    \usebeamercolor[fg]{title}\usebeamerfont*{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute
+}
+
+\defbeamertemplate{part page}{empty}{}
+
+\pgfkeys{/beamerfzj/outer/.cd,
+  part page/.initial=image
+}
+
+%------------------------------------------------
+% section page definitions 
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@section page@default\endcsname\relax
+
+% part page image version
+\defbeamertemplate*{section page}{image}
+{%
+  \vskip\myheadlineb%
+  \usebeamercolor[fg]{title}\usebeamerfont{part}\strut{}\insertpart\par%
+  \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsection\par\medskip%
+%  \usebeamercolor[fg]{title}\usebeamerfont{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute%
+}
+
+% part page text version
+\defbeamertemplate{section page}{text}
+{%  
+    \vskip\myheadlinea%
+    \usebeamercolor[fg]{title}\usebeamerfont{part}\strut{}\insertpart\par\medskip%
+    \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\strut{}\insertsection\par\bigskip\bigskip%
+%    \usebeamercolor[fg]{title}\usebeamerfont*{date}\insertdate\enspace\vrule width0.3pt\enspace\insertauthor\enspace\vrule width0.3pt\enspace\insertinstitute
+}
+
+%------------------------------------------------
+% section page definitions 
+%------------------------------------------------
+\defbeamertemplate{section page}{empty}{}
+
+\pgfkeys{/beamerfzj/outer/.cd,
+  section page/.initial=image,
+}
+
+%------------------------------------------------
+% frametitle definitions 
+%------------------------------------------------
+\expandafter\let\csname beamer@@tmpop@frametitle@default\endcsname\relax
+
+\defbeamertemplate*{frametitle}{default}{%
+  \nointerlineskip%
+  \vskip\hlvstart%
+  \begin{beamercolorbox}[sep=0.0cm,wd=\paperwidth]{frametitle}
+    \hspace*{0.5cm}%
+    \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle\strut\par%
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \vskip-2pt% compensate distance to keep equal space between frametitle and text or framesubtitle and text
+      \else%
+      {%
+        \hspace*{0.5cm}%
+        \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+      \fi
+    }%
+	    %\hspace*{1cm}\insertframetitle%
+	    %\insertframesubtitle
+    \end{beamercolorbox}%
+}
+
+%------------------------------------------------
+% title slide definition via maketitle
+%------------------------------------------------
+\def\maketitle{%
+{%
+  \ifbeamer@inframe%
+    \titlepage%
+    % resetting the background does not work for inframe, since empty title theme template cannot be set after \frame{...} here
+  \else%
+    \setbeamertemplate{frame number}[invisible]%
+    \setbeamertemplate{date}[invisible]%
+    \setbeamertemplate{background canvas}[\pgfkeysvalueof{/beamerfzj/outer/title page}]
+    \setbeamertemplate{title page}[\pgfkeysvalueof{/beamerfzj/outer/title page}]
+    \frame[t,noframenumbering]{\titlepage}%    
+\fi%
+}%
+    % reset background to normal slides, does not change selected theme
+    \setbeamertemplate{background canvas}[empty]
+}
+
+%------------------------------------------------
+% title slide definition via makelecture
+%------------------------------------------------
+\def\lecturepage{\usebeamertemplate*{lecture page}}
+
+\def\makelecture{%
+{%
+  \ifbeamer@inframe%
+    \lecturepage%
+    % resetting the background does not work for inframe, since empty title theme template cannot be set after \frame{...} here
+  \else%
+    \setbeamertemplate{frame number}[invisible]%
+    \setbeamertemplate{date}[invisible]%
+    \setbeamertemplate{background canvas}[\pgfkeysvalueof{/beamerfzj/outer/lecture page}]
+    \setbeamertemplate{lecture page}[\pgfkeysvalueof{/beamerfzj/outer/lecture page}]
+    \frame[t,noframenumbering]{\lecturepage}%    
+\fi%
+}%
+    % reset background to normal slides, does not change selected theme
+    \setbeamertemplate{background canvas}[empty]
+}
+
+%------------------------------------------------
+% part slide definition via makepart
+%------------------------------------------------
+\def\makepart{%
+{%
+  \ifbeamer@inframe%
+    \partpage%
+    % resetting the background does not work for inframe, since empty title theme template cannot be set after \frame{...} here
+  \else%
+    \setbeamertemplate{frame number}[invisible]%
+    \setbeamertemplate{date}[invisible]%
+    \setbeamertemplate{background canvas}[\pgfkeysvalueof{/beamerfzj/outer/part page}]
+    \setbeamertemplate{part page}[\pgfkeysvalueof{/beamerfzj/outer/part page}]
+    \frame[t,noframenumbering]{\partpage}%    
+\fi%
+}%
+    % reset background to normal slides, does not change selected theme
+    \setbeamertemplate{background canvas}[empty]
+}
+
+%------------------------------------------------
+% section slide definition via makepart
+%------------------------------------------------
+\def\makesection{%
+{%
+  \ifbeamer@inframe%
+    \sectionpage%
+    % resetting the background does not work for inframe, since empty title theme template cannot be set after \frame{...} here
+  \else%
+    \setbeamertemplate{frame number}[invisible]%
+    \setbeamertemplate{date}[invisible]%
+    \setbeamertemplate{background canvas}[\pgfkeysvalueof{/beamerfzj/outer/section page}]
+    \setbeamertemplate{section page}[\pgfkeysvalueof{/beamerfzj/outer/section page}]
+    \frame[noframenumbering]{\sectionpage}%    
+\fi%
+}%
+    % reset background to normal slides, does not change selected theme
+    \setbeamertemplate{background canvas}[empty]
+}
+
+\mode
+<all>

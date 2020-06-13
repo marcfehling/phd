@@ -1,7 +1,9 @@
 ## template 'TeX.gitignore' from https://github.com/github/gitignore/
 ##   commit 0d7600fc30271e84deb4b52b3562ee57a350567b
 
+disputation.pdf
 dissertation.pdf
+tikz/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

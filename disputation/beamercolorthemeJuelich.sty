@@ -1,0 +1,77 @@
+% Latex-Beamer Template Research Centre Juelich
+% version 17.12
+% please report any problems to i.kabadshow@fz-juelich.de
+% this version does support pdflatex, xelatex and lualatex
+%
+\mode<presentation>
+
+% new colors
+
+
+\definecolor{fzjblue}{RGB}{2,61,107} % first color
+\colorlet{color1}{fzjblue}
+
+\definecolor{fzjlightblue}{RGB}{173,189,227} % second color
+\colorlet{color2}{fzjlightblue}
+
+\definecolor{fzjgray}{RGB}{235,235,235} % third color
+\colorlet{color3}{fzjgray}
+
+\definecolor{fzjred}{RGB}{235, 95, 115}  % FZJ raspberry red
+\colorlet{color4}{fzjred}
+
+\definecolor{fzjgreen}{RGB}{185, 210, 95}  % FZJ grass green
+\colorlet{color4}{fzjgreen}
+
+\definecolor{fzjyellow}{RGB}{250, 235, 90}  % FZJ citrus yellow
+\colorlet{color4}{fzjyellow}
+
+\definecolor{fzjviolet}{RGB}{175, 130, 185}  % FZJ Hyacinth violet
+\colorlet{color4}{fzjviolet}
+
+\definecolor{fzjorange}{RGB}{250, 180, 90}  % FZJ apricot orange
+\colorlet{color4}{fzjorange}
+
+\definecolor{fzjwhite}{RGB}{255,255,255}
+
+\setbeamercolor{note page}{bg=white, fg=black}
+\setbeamercolor{note title}{bg=fzjlightblue!50!white, fg=black}
+\setbeamercolor{note date}{fg=fzjblue}
+
+% beamer color definitions
+\setbeamercolor{structure}{fg=fzjblue,bg=}
+\setbeamercolor{palette primary}{use=structure,fg=fzjblue,bg=}
+
+\setbeamercolor{title}{fg=white,bg=}
+\setbeamercolor{subtitle}{fg=fzjlightblue,bg=}
+
+\setbeamercolor{header}{fg=fzjblue,bg=}
+\setbeamercolor{navigation symbols}{fg=fzjgray,bg=}
+
+\setbeamercolor{frametitle}{fg=fzjblue,bg=}
+\setbeamercolor{framesubtitle}{fg=fzjblue,bg=}
+
+\setbeamercolor{footline}{fg=fzjblue, bg=}
+
+\setbeamercolor{inverse}{fg=fzjwhite,bg=fzjblue}
+
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{date in head/foot}{fg=structure}
+
+\setbeamercolor{alerted text}{fg=fzjred}
+\setbeamercolor{example text}{fg=fzjlightblue}
+\setbeamercolor{emphasized text}{fg=fzjblue}
+
+\setbeamercolor{part name}{fg=white}
+\setbeamercolor{part title}{fg=white}
+
+% Block stuff
+\setbeamercolor{block title}{use=structure,fg=white,bg=structure.fg}
+\setbeamercolor{block title alerted}{use=alerted text,fg=white,bg=alerted text.fg}
+\setbeamercolor{block title example}{use=example text,fg=white,bg=example text.fg}
+
+\setbeamercolor{block body}{parent=normal text,use=block title,bg=block title.bg!10!bg}
+\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=fzjgray}
+\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=fzjgray}
+
+\mode<all>

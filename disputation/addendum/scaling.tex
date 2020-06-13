@@ -1,0 +1,53 @@
+\begin{frame}
+\frametitle{Scaling on successive refinement}
+
+\begin{figure}
+\hspace*{-0.5em}
+\begin{tikzpicture}
+\begin{loglogaxis}[
+scale=0.9,
+xlabel={Number of degrees of freedom},
+ylabel={Wall time [seconds]},
+grid=major,
+legend cell align=left,
+legend pos=outer north east,
+legend style={font=\tiny}
+]
+
+% data
+\addplot table [y=solve, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{linear solver};
+
+\addplot table [y=setup, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{setup data structures};
+
+\addplot table [y=assembly, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{assemble linear system};
+
+\addplot table [y=compute errors, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{estimate error};
+
+\addplot table [y=calculate indicators, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{estimate smoothness};
+
+\addplot table [y=refine, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{coarsen and refine};
+
+% optimal line
+\addplot[very thick, samples=2, domain=12591105:1302365268] {10^(-7.2)*x};
+\addlegendentry{optimal convergence};
+
+% auxiliary lines
+\begin{scope}
+\draw[green, very thick] ({axis cs:76800000,0}|-{rel axis cs:0,1}) -- ({axis cs:76800000,0}|-{rel axis cs:0,0});
+\draw[blue, very thick] ({axis cs:50647318,0}|-{rel axis cs:0,1}) -- ({axis cs:50647318,0}|-{rel axis cs:0,0});
+\end{scope}
+\addlegendimage{color=green};
+\addlegendentry{$10^5$ DoFs per process};
+\addlegendimage{color=blue};
+\addlegendentry{each reference finite element in mesh};
+\end{loglogaxis}
+\end{tikzpicture}
+\caption{Scaling on successively refined grids}
+\end{figure}
+\end{frame}

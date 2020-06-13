@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+\begin{axis}[
+  scale=1.15,
+  xlabel={Adaptation cycle},
+  ylabel={Number of solver iterations},
+  grid=major,
+  legend columns=3,
+  legend cell align=left,
+  legend style={at={(0.39,1.02)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}}]
+
+\addplot table [y=iterations, x=cycle, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{16 nodes};
+
+\addplot table [y=iterations, x=cycle, col sep=comma] {data/weak/weak-nodes64.csv};
+\addlegendentry{64 nodes};
+
+\begin{scope}
+  \draw[blue, very thick] ({axis cs:5,0}|-{rel axis cs:0,1}) -- ({axis cs:5,0}|-{rel axis cs:0,0});
+\end{scope}
+\addlegendimage{color=blue};
+\addlegendentry{each reference finite element in mesh};
+\end{axis}
+\end{tikzpicture}

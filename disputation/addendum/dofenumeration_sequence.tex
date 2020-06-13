@@ -1,0 +1,108 @@
+\let\oldthesubfigure\thesubfigure
+\renewcommand{\thesubfigure}{Phase \arabic{subfigure}}
+
+\def\Length{1}
+\def\Radius{0.03}
+
+\begin{frame}
+\frametitle{Example of application of enumeration algorithm}
+\begin{overprint}
+
+\onslide<1>
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/init}
+    }
+    \caption{Local enumeration}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\onslide<2>
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/phase1_cpu0}
+      \hfill{}
+      \input{addendum/figures/phase1_cpu1}
+    }
+    \caption{Local enumeration}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\onslide<3>
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/phase2_cpu0}
+      \hfill{}
+      \input{addendum/figures/phase2_cpu1}
+    }
+    \caption{Invalidation}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\onslide<4>
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/phase3_cpu0}
+      \hfill{}
+      \input{addendum/figures/phase3_cpu1}
+    }
+    \caption{Unification}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\onslide<5>
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/phase4_cpu0}
+      \hfill{}
+      \input{addendum/figures/phase4_cpu1}
+    }
+    \caption{Re-enumeration}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\onslide<6>
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/phase5_cpu0}
+      \hfill{}
+      \input{addendum/figures/phase5_cpu1}
+    }
+    \caption{Ghost exchange}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\onslide<7>
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \resizebox{\textwidth}{!}{
+      \input{addendum/figures/phase6_cpu0}
+      \hfill{}
+      \input{addendum/figures/phase6_cpu1}
+    }
+    \caption{Merge}
+  \end{subfigure}
+  \caption{Example of application of our enumeration algorithm for degrees of freedom}
+\end{figure}
+
+\end{overprint}
+\end{frame}
+
+\renewcommand{\thesubfigure}{\oldthesubfigure}

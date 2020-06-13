@@ -1,0 +1,51 @@
+\begin{frame}
+\frametitle{Weighting exponent}
+
+\vspace{-1em}
+\begin{figure}
+\resizebox{!}{.75\textheight}{
+  \begin{tikzpicture}
+  \begin{groupplot}[
+  group style={
+    group size=1 by 2,
+    vertical sep=0pt
+  },
+  width=9.5cm,
+  grid=major,
+  xlabel=Weighting exponent,
+  ylabel=Wall time {[seconds]},
+  legend cell align=left,
+  legend pos=outer north east,
+  cycle list/Set1]
+  
+  
+  \nextgroupplot[
+  xlabel = {},
+  axis x line=top,
+  x axis line style={-},
+  axis y discontinuity=parallel]
+  \addplot[mark=square*, index of colormap=1 of Set1] table [y=full cycle, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+  \addlegendentry{full cycle};
+  
+  \addplot[mark=*, index of colormap=2 of Set1] table [y=solve, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+  \addlegendentry{linear solver};
+  
+  \addlegendimage{mark=triangle*, index of colormap=3 of Set1};
+  \addlegendentry{assemble linear system};
+  
+  
+  \nextgroupplot[
+  ymax = 21,
+  ytick={10,20},
+  axis x line=bottom,
+  x axis line style={-},
+  ylabel={},
+  height=3.1cm
+  ]
+  \addplot[mark=triangle*, index of colormap=3 of Set1] table [y=assembly, x=weighting exponent, col sep=comma] {data/weight/weight.csv};
+  \end{groupplot}
+  \end{tikzpicture}
+}
+\caption{Wall times for load balancing with varying weighting exponents}
+\end{figure}
+\end{frame}

@@ -1,0 +1,167 @@
+\begin{frame}
+\frametitle{Data transfer across subdomains}
+
+\begin{itemize}
+\item On distributed triangulations, each subdomain needs access to relevant fraction of global quantities
+\item Changes on cell ownership requires transfer of these quantities
+  \begin{itemize}
+  \item Active finite element indices
+  \item Solution
+  \item ...
+  \end{itemize}
+\item With p-adaptive methods, per cell data sizes may differ
+\end{itemize}
+
+\vspace{-.7em}
+\begin{block}{\vspace{-.7em}}
+  \centering
+  Communication between involved processors required
+\end{block}
+
+\vfill{}
+
+\begin{itemize}
+\item Algorithm should be generic, i.e.\@ independent of scenario
+  \begin{enumerate}
+  \item Creation of \textbf{memory buffers}
+  \item Transfer data of \textbf{fixed} and \textbf{variable} size
+  \end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Structure of memory buffers}
+
+\begin{itemize}
+\item Register functions that prepare data to be transferred via callback
+\end{itemize}
+
+\vfill{}
+
+\begin{itemize}
+\item \textbf{On each locally owned cell}:
+  \begin{enumerate}
+  \item Pack data for each registered callback individually
+  \item Store memory sizes of each callback's data pack
+  \item Store memory size of cell's complete data pack
+  \end{enumerate}
+\item \textbf{After each cell} is processed:
+  \begin{enumerate}
+  \setcounter{enumi}{3}
+  \item Move each cell's packed data into contiguous buffer
+  \end{enumerate}
+\end{itemize}
+
+\vfill{}
+
+\begin{figure}
+\begin{tikzpicture}[scale=0.7]
+% draw cells
+\draw[fill=fzjlightblue] (0,-0.5) rectangle ( 7,2);
+\draw[fill=fzjorange]    (7,-0.5) rectangle (14,2);
+\node[align=center] at ( 3.5, 1.6) {cell\textunderscore{}1};
+\node[align=center] at (10.5, 1.6) {cell\textunderscore{}2};
+\node[align=center] at (14.5, 1.6) {...};
+
+% draw callbacks
+% cell_1
+\draw[fill=fzjred]   (0,-0.25) rectangle (3,1.25);
+\draw[fill=fzjgreen] (3,-0.25) rectangle (6,1.25);
+\node[align=center] at (1.5,0.85) {callback\textunderscore{}1};
+\node[align=center] at (4.5,0.85) {callback\textunderscore{}2};
+\node[align=center] at (6.5,0.85) {...};
+% cell_2
+\draw[fill=fzjred]   ( 7,-0.25) rectangle (10,1.25);
+\draw[fill=fzjgreen] (10,-0.25) rectangle (13,1.25);
+\node[align=center] at ( 8.5,0.85) {callback\textunderscore{}1};
+\node[align=center] at (11.5,0.85) {callback\textunderscore{}2};
+\node[align=center] at (13.5,0.85) {...};
+% beyond
+\node[align=center] at (14.5,0.85) {...};
+
+% draw contiguous memory
+\draw[fill=white] (-1,0) rectangle (15,0.5);
+\foreach \x in {0,...,14}
+\draw (\x,0) -- (\x,0.5);
+% cell_1
+\node[align=center] at ( 2.5,0.25) {...};
+\node[align=center] at ( 5.5,0.25) {...};
+\node[align=center] at ( 6.5,0.25) {...};
+% cell_2
+\node[align=center] at ( 9.5,0.25) {...};
+\node[align=center] at (12.5,0.25) {...};
+\node[align=center] at (13.5,0.25) {...};
+% beyond
+\node[align=center] at (-0.5,0.25) {...};
+\node[align=center] at (14.5,0.25) {...};
+\end{tikzpicture}
+\caption{Division of contiguous memory chunk}
+\end{figure}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Data consignment}
+
+\begin{itemize}
+  \item Treat fixed and variable size data separately
+  \begin{itemize}
+    \item Each transfer algorithm optimized for their specific task
+    \item Potentially slower variable size transfer will only be used when necessary
+  \end{itemize}
+\end{itemize}
+
+\vfill{}
+
+\begin{enumerate}
+\item \textbf{Fixed size data}:
+  \begin{itemize}
+  \item Refrain from using compression
+  \item Additionally pack \texttt{CellStatus} information
+  \item Gathering callback sizes on first packed cell will suffice
+    \begin{itemize}
+    \item Communicate callback sizes to all processors
+    \end{itemize}
+  \end{itemize}
+  \item \textbf{Variable size data}:
+  \begin{itemize}
+  \item Compression allowed (using \texttt{ZLIB})
+  \item Size of each callback's data differs from cell to cell
+    \begin{itemize}
+    \item Register additional callback for fixed size data transfer
+    \end{itemize}
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Data transfer}
+
+\begin{itemize}
+\item We have contiguous memory chunks for data transfer during\\ repartitioning, refinement/coarsening, serialization
+  \begin{itemize}
+  \item Program may be resumed with a different number of processors
+  \end{itemize}
+\end{itemize}
+
+\vfill
+
+\begin{itemize}
+\item Data consignment \textbf{independent} of transfer algorithms used for\\ repartitioning, refinement/coarsening, serialization
+  \begin{itemize}
+  \item Use non-blocking \texttt{MPI} communication for all operations
+  \item \dealii{} utilizes interface to \pforest{} \cite{burstedde}
+  \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,100 @@
+\documentclass[11pt]{beamer}
+\usetheme{Juelich}
+
+\usepackage{appendixnumberbeamer}
+\usepackage{epstopdf}
+\setbeamertemplate{footer element1}[logo]{logos/BUW_Logo-schwarz}
+\setbeamertemplate{frame number}[full]
+
+\usepackage{subcaption} % subfigure
+\usepackage{tcolorbox}
+
+\usepackage{booktabs} % midrule
+\usepackage{colortbl} % rowcolor
+\usepackage{multirow}
+
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{femtikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usepgfplotslibrary{colorbrewer}
+\usepgfplotslibrary{groupplots}
+
+\pgfplotsset{select coords between index/.style 2 args={
+    x filter/.code={
+      \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+      \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+}}
+
+\usepackage{isomath}
+\input{misc/format}
+
+\usepackage[backend=biber, style=authoryear]{biblatex}
+\addbibresource{misc/bibliography.bib}
+
+
+
+\author{Marc Fehling~~\vrule width0.3pt~~m.fehling@fz-juelich.de}
+\title{Algorithms for massively parallel generic hp-adaptive FEM}
+\subtitle{\vspace{-1em}}
+\titlegraphic{
+  \includegraphics[height=0.37\paperheight]{figures/corner_447px.png}
+  \hspace{.1em}
+  \includegraphics[height=0.37\paperheight]{figures/corner-fedegrees-legendre-05_447px.png}
+  \hspace{.1em}
+  \includegraphics[height=0.37\paperheight]{figures/corner-subdomains-legendre-05_447px.png}
+}
+\date{June 05, 2020}
+%\institute{Institute for Advanced Simulation (IAS)}
+
+
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+\frametitle{Table of contents}
+\tableofcontents
+\end{frame}
+
+\input{sections/introduction}
+\input{sections/adaptive}
+\input{sections/parallel}
+\input{sections/summary}
+
+\appendix
+\title{Massively parallel hp-adaptive FEM}
+\subtitle{Bibliography}
+\maketitle
+\begin{frame}[allowframebreaks]
+\frametitle{Bibliography}
+\nocite{ainsworth1998,arndt2019,burstedde2018,eibner2007,houston2005,mitchell2014}
+\setlength{\labelwidth}{\labelnumberwidth}
+\printbibliography[title=Bibliography]
+\end{frame}
+
+\subtitle{Expected questions}
+\maketitle
+\input{addendum/ins}
+\input{addendum/dimensionless}
+\input{addendum/elliptic}
+\input{addendum/artificial}
+\input{addendum/p4est}
+
+\subtitle{Details on algorithms}
+\maketitle
+\input{addendum/fem}
+\input{addendum/coarsening}
+\input{addendum/dofenumeration}
+\input{addendum/datatransfer}
+\input{addendum/hpdecision}
+
+\subtitle{More results}
+\maketitle
+\input{addendum/error}
+\input{addendum/loadbalancing}
+\input{addendum/scaling}
+
+\end{document}

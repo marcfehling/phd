@@ -1,0 +1,41 @@
+\begin{tikzpicture}
+\begin{loglogaxis}[
+  scale=1.15,
+  xlabel={Number of \gls{mpi} processes},
+  ylabel={Wall time [seconds]},
+  grid=major,
+  legend columns=2,
+  legend cell align=left,
+  legend style={at={(0.43,1.06)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}}]
+
+% data
+\addplot table [y=solve, x=ncpus, col sep=comma] {data/strong/strong-nrefs10.csv};
+\addlegendentry{linear solver};
+
+\addplot table [y=setup, x=ncpus, col sep=comma] {data/strong/strong-nrefs10.csv};
+\addlegendentry{setup data structures};
+
+\addplot table [y=assembly, x=ncpus, col sep=comma] {data/strong/strong-nrefs10.csv};
+\addlegendentry{assemble linear system};
+
+\addplot table [y=compute errors, x=ncpus, col sep=comma] {data/strong/strong-nrefs10.csv};
+\addlegendentry{estimate error};
+
+\addplot table [y=calculate indicators, x=ncpus, col sep=comma] {data/strong/strong-nrefs10.csv};
+\addlegendentry{estimate smoothness};
+
+\addplot table [y=refine, x=ncpus, col sep=comma] {data/strong/strong-nrefs10.csv};
+\addlegendentry{coarsen and refine};
+
+% optimal line
+\addplot[very thick, samples=2, domain=48:6144] {10^(3.8)*x^(-1)};
+\addlegendentry{optimal convergence};
+
+% auxiliary lines
+\begin{scope}
+  \draw[green, very thick] ({axis cs:507.36415,0}|-{rel axis cs:0,1}) -- ({axis cs:507.36415,0}|-{rel axis cs:0,0});
+\end{scope}
+\addlegendimage{color=green};
+\addlegendentry{$10^5$ \glspl{dof} per process};
+\end{loglogaxis}
+\end{tikzpicture}
