@@ -9,12 +9,12 @@ For parallel computations on distributed memory systems, the global domain is pa
 \centering
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/corner-2d-errors-hp-legendre-05_constantweight}
+  \input{figures/results/corner-subdomains-legendre-05_constantweight}
   \caption{Constant weighting.}
 \end{subfigure}
 \begin{subfigure}{1\textwidth}
   \centering
-  \input{figures/results/corner-2d-errors-hp-legendre-05_customweight}
+  \input{figures/results/corner-subdomains-legendre-05_customweight}
   \caption{Weighting with an individually potentiated number of \glspl{dof}, i.e., $\propto n_\text{dofs}^{1.9}$.}
 \end{subfigure}
 \caption[Decomposition of the mesh with various cell weighting.]{Decomposition of the mesh after six iterations with the Legendre coefficient decay strategy on twelve \gls{mpi} processes with various cell weighting. Each color represents a different subdomain.}

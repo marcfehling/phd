@@ -1,0 +1,99 @@
+\documentclass{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+
+
+\begin{document}
+\begin{tikzpicture}[scale=1]
+\begin{axis}[
+xmin=-1,xmax=1,
+ymin=-1,ymax=1,
+unit vector ratio={1 1},
+tick align=outside,
+xticklabels=\empty,
+yticklabels=\empty,
+xscale=0.9,
+yslant=0.4,
+name=ax1
+]
+
+\addplot graphics [
+xmin=-1,xmax=1,
+ymin=-1,ymax=1
+] {illustrations/corner-subdomains-legendre-05.pdf};
+
+\coordinate (c1) at (axis cs:-1,1);
+\end{axis}
+
+
+\begin{axis}[
+xmin=-1,xmax=1,
+ymin=-1,ymax=1,
+unit vector ratio={1 1},
+tick align=outside,
+xticklabels=\empty,
+yticklabels=\empty,
+xscale=0.9,
+yslant=0.4,
+at={($(ax1.south west)+(3cm,0)$)},
+name=ax2
+]
+
+\addplot graphics [
+xmin=-1,xmax=1,
+ymin=-1,ymax=1
+] {illustrations/corner-fedegrees-legendre-05.pdf};
+
+\coordinate (c2) at (axis cs:-1,1);
+
+% define coordinates at bottom left and top left of rectangle
+\coordinate (d1) at (axis cs:-0.12,0.12);
+\coordinate (d2) at (axis cs:0.12,0.12);
+\coordinate (d3) at (axis cs:-0.12,-0.12);
+% draw a rectangle
+\draw[thick] (d3) rectangle (d2);
+
+\end{axis}
+
+
+\draw [thick, dashed] (c1) -- (c2);
+\draw [thick, dashed] (ax1.north east) -- (ax2.north east);
+\draw [thick, dashed] (ax1.south west) -- (ax2.south west);
+
+
+\begin{axis}[
+scale=0.65,
+%xmin=-0.15,xmax=0.15,
+%ymin=-0.15,ymax=0.15,
+xmin=-0.12,xmax=0.12,
+ymin=-0.12,ymax=0.12,
+unit vector ratio={1 1},
+tick align=outside,
+xticklabels=\empty,
+yticklabels=\empty,
+xscale=0.9,
+yslant=0.4,
+at={($(ax2.south west)+(3cm,0)$)},
+name=ax3
+]
+
+\addplot graphics [
+xmin=-1,xmax=1,
+ymin=-1,ymax=1
+] {illustrations/corner-fedegrees-legendre-05.pdf};
+
+\coordinate (e1) at (axis cs:-0.12,0.12);
+\coordinate (e2) at (axis cs:0.12,0.12);
+\coordinate (e3) at (axis cs:-0.12,-0.12);
+\end{axis}
+
+
+\draw [thick, dashed] (d1) -- (e1);
+\draw [thick, dashed] (d2) -- (e2);
+\draw [thick, dashed] (d3) -- (e3);
+\end{tikzpicture}
+\end{document}

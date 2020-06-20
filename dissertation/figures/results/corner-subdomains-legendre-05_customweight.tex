@@ -7,16 +7,17 @@
   tick align=outside,
   xlabel=$x$,
   ylabel=$y$,
-  colormap/OrRd,
+  colormap/Paired-12,
   colorbar sampled,
-  colorbar style={ylabel={finite element polynomial degree}, samples=7},
-  point meta min=1.5,
-  point meta max=7.5
+  colorbar style={ylabel={subdomain}, samples=13},
+  colormap access=piecewise const,
+  point meta min=-0.5,
+  point meta max=11.5
 ]
 
 \addplot graphics [
   xmin=-1,xmax=1,
   ymin=-1,ymax=1,
-] {figures/appendix/strategies/corner-2d-errors-hp-legendre-05.pdf};
+] {illustrations/corner-subdomains-legendre-05.pdf};
 \end{axis}
 \end{tikzpicture}
