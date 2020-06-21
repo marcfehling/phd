@@ -18,6 +18,8 @@
 \usepackage{enumitem} % resume
 \usepackage{subcaption}
 \usepackage[binary-units=true]{siunitx}
+\usepackage{perpage}
+\MakePerPage{footnote}
 \usepackage[
   colorlinks,linkcolor=blue,urlcolor=blue,citecolor=blue % suggestion of wolfgang
   % colorlinks,linkcolor=black,urlcolor=black,citecolor=black % print version
@@ -74,17 +76,18 @@
   
   \frontmatter
   
-  \begin{KeepFromToc}
-    \input{frontmatter/acknowledgements}
-  \end{KeepFromToc}
-  \clearpage
-  
+  \thispagestyle{plain}
   \input{frontmatter/abstract}
   \clearpage
-
+  
+  \thispagestyle{plain}
   \begin{otherlanguage}{ngerman}
     \input{frontmatter/zusammenfassung}
   \end{otherlanguage}
+  \clearpage
+  
+  \thispagestyle{plain}
+  \input{frontmatter/acknowledgements}
   \clearpage
   
   \begin{KeepFromToc} % memoir
