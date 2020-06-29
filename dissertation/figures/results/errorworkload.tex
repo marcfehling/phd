@@ -7,31 +7,32 @@
   legend columns=3,
   legend cell align=left,
   legend style={at={(0.43,1.06)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}},
-  cycle list/Set1
-  ]
+  cycle list/Set1,
+  every axis plot/.append style={thick}
+]
+
+\addplot[mark=triangle*, index of colormap=0 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-prediction.csv};
+\addlegendentry{\hp{} prediction};
 
 \addplot[mark=square*, index of colormap=1 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-legendre.csv};
 \addlegendentry{\hp{} Legendre};
 
-\addplot[mark=*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-fourier.csv};
+\addplot[mark=pentagon*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-fourier.csv};
 \addlegendentry{\hp{} Fourier};
 
-\addplot[mark=triangle*, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/hp-prediction.csv};
-\addlegendentry{\hp{} prediction};
-
-\addplot[dashed, mark=square*, index of colormap=1 of Set1] table [dashed, mark=square*, y=H1 error, x=ndofs, col sep=comma] {data/error/hp-legendre-naive.csv};
-\addlegendentry{\hp{} Legendre naive};
-
-\addplot[dashed, mark=*, index of colormap=2 of Set1] table [dashed, mark=circle*, y=H1 error, x=ndofs, col sep=comma] {data/error/hp-fourier-naive.csv};
-\addlegendentry{\hp{} Fourier naive};
-
-\addplot[dashed, mark=triangle*, index of colormap=3 of Set1] table [dashed, mark=triangle*, y=H1 error, x=ndofs, col sep=comma] {data/error/hp-prediction-naive.csv};
+\addplot[dashed, mark=triangle*, mark options={solid,rotate=180}, index of colormap=0 of Set1] table [dashed, mark=triangle*, y=H1 error, x=ndofs, col sep=comma] {data/error/hp-prediction-naive.csv};
 \addlegendentry{\hp{} prediction naive};
 
-\addplot[mark=diamond*, index of colormap=4 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/h.csv};
+\addplot[dashed, mark=square*, mark options={solid,rotate=45}, index of colormap=1 of Set1] table [dashed, mark=square*, y=H1 error, x=ndofs, col sep=comma] {data/error/hp-legendre-naive.csv};
+\addlegendentry{\hp{} Legendre naive};
+
+\addplot[dashed, mark=pentagon*, mark options={solid,rotate=36}, index of colormap=2 of Set1] table [dashed, mark=circle*, y=H1 error, x=ndofs, col sep=comma] {data/error/hp-fourier-naive.csv};
+\addlegendentry{\hp{} Fourier naive};
+
+\addplot[mark=+, index of colormap=4 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/h.csv};
 \addlegendentry{\h};
 
-\addplot[mark=x, color=black] table [y=H1 error, x=ndofs, col sep=comma] {data/error/p.csv};
+\addplot[mark=x, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma] {data/error/p.csv};
 \addlegendentry{\p};
 
 \addlegendimage{thick};

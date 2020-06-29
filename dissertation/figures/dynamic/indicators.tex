@@ -10,9 +10,9 @@
 \node[align=center, text width = 1.6cm] at ( -2,0.55) {error indicators};
 
 \node[align=center] at ( 3,.9) {coarsen};
-\fill[color=red] (0,0) rectangle (6,0.5);
+\fill[color=Set1-A!80] (0,0) rectangle (6,0.5);
 \node[align=center] at ( 12,.9) {refine};
-\fill[color=green] (9,0) rectangle (15,0.5);
+\fill[color=Set1-C!80] (9,0) rectangle (15,0.5);
 
 \draw (0,0) rectangle (15,0.5);
 \foreach \x in {1,...,14}
@@ -29,9 +29,9 @@
 
 % hp coarsen
 \node[valign,align=center] at ( 1.5,-1.1) {\p-coarsen};
-\fill[color=orange] (0,-2) rectangle (3,-1.5);
+\fill[color=Set1-E!80] (0,-2) rectangle (3,-1.5);
 \node[valign,align=center] at ( 4.5,-1.1) {\h-coarsen};
-\fill[color=purple] (3,-2) rectangle (6,-1.5);
+\fill[color=Set1-D!80] (3,-2) rectangle (6,-1.5);
 
 \draw (0,-2) rectangle (6,-1.5);
 \foreach \x in {1,...,5}
@@ -43,9 +43,9 @@
 
 % hp refine
 \node[align=center] at (10.5,-1.1) {\h-refine};
-\fill[color=cyan] (9,-2) rectangle (12,-1.5);
+\fill[color=Set1-F!80] (9,-2) rectangle (12,-1.5);
 \node[align=center] at (13.5,-1.1) {\p-refine};
-\fill[color=yellow] (12,-2) rectangle (15,-1.5);
+\fill[color=Set1-B!80] (12,-2) rectangle (15,-1.5);
 
 \draw (9,-2) rectangle (15,-1.5);
 \foreach \x in {10,...,14}

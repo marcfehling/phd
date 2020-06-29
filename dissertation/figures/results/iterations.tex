@@ -6,18 +6,21 @@
   grid=major,
   legend columns=3,
   legend cell align=left,
-  legend style={at={(0.39,1.02)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}}]
+  legend style={at={(0.39,1.02)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}},
+  cycle list/Set1,
+  every axis plot/.append style={thick}
+]
 
-\addplot table [y=iterations, x=cycle, col sep=comma] {data/weak/weak-nodes16.csv};
+\addplot[mark=*, index of colormap=0 of Set1] table [y=iterations, x=cycle, col sep=comma] {data/weak/weak-nodes16.csv};
 \addlegendentry{16 nodes};
 
-\addplot table [y=iterations, x=cycle, col sep=comma] {data/weak/weak-nodes64.csv};
+\addplot[mark=square*, index of colormap=2 of Set1] table [y=iterations, x=cycle, col sep=comma] {data/weak/weak-nodes64.csv};
 \addlegendentry{64 nodes};
 
 \begin{scope}
-  \draw[blue, very thick] ({axis cs:5,0}|-{rel axis cs:0,1}) -- ({axis cs:5,0}|-{rel axis cs:0,0});
+  \draw[color=Set1-B, very thick] ({axis cs:5,0}|-{rel axis cs:0,1}) -- ({axis cs:5,0}|-{rel axis cs:0,0});
 \end{scope}
-\addlegendimage{color=blue};
+\addlegendimage{color=Set1-B, very thick};
 \addlegendentry{each reference finite element in mesh};
 \end{axis}
 \end{tikzpicture}

@@ -1,0 +1,47 @@
+\begin{tikzpicture}
+\begin{loglogaxis}[
+  scale=1.15,
+  xlabel={Number of \glspl{dof}},
+  ylabel={Wall time [seconds]},
+  grid=major,
+  legend columns=2,
+  legend cell align=left,
+  legend style={at={(0.39,1.06)}, anchor=south, /tikz/every even column/.append style={column sep=0.5cm}},
+  cycle list/Set1,
+  every axis plot/.append style={thick}
+]
+
+% data
+\addplot[mark=pentagon*, index of colormap=0 of Set1] table [y=setup, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{setup data structures};
+
+\addplot[mark=triangle*, index of colormap=4 of Set1] table [y=compute errors, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{estimate error};
+
+\addplot[mark=*, index of colormap=2 of Set1] table [y=assembly, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{assemble linear system};
+
+\addplot[mark=triangle*, mark options={rotate=180}, index of colormap=6 of Set1] table [y=calculate indicators, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{estimate smoothness};
+
+\addplot[mark=square*, index of colormap=1 of Set1] table [y=solve, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{linear solver};
+
+\addplot[mark=diamond*, index of colormap=3 of Set1] table [y=refine, x=ndofs, col sep=comma] {data/weak/weak-nodes16.csv};
+\addlegendentry{coarsen and refine};
+
+% auxiliary lines
+\begin{scope}
+  \draw[color=Set1-C, very thick] ({axis cs:76800000,0}|-{rel axis cs:0,1}) -- ({axis cs:76800000,0}|-{rel axis cs:0,0});
+  \draw[color=Set1-B, very thick] ({axis cs:50647318,0}|-{rel axis cs:0,1}) -- ({axis cs:50647318,0}|-{rel axis cs:0,0});
+\end{scope}
+\addlegendimage{very thick, color=Set1-C};
+\addlegendentry{$10^5$ \glspl{dof} per process};
+\addlegendimage{very thick, color=Set1-B};
+\addlegendentry{each reference finite element in mesh};
+
+% optimal line
+\addplot[ultra thick, samples=2, domain=12591105:1302365268] {10^(-7.2)*x};
+\addlegendentry{optimal convergence};
+\end{loglogaxis}
+\end{tikzpicture}

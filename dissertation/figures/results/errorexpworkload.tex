@@ -14,8 +14,11 @@
   xlabel={Number of \glspl{dof}},
   ylabel={H1 error},
   grid=major,
-  cycle list/Set1]
-%  legend pos=outer north east]
+  cycle list/Set1,
+  every axis plot/.append style={thick}
+%  legend pos=outer north east
+]
+
 %\addplot table [y=H1 error, x=ndofs, col sep=comma] {data/error/h.csv};
 %\addlegendentry{\h};
 
@@ -24,40 +27,40 @@
 %] {data/error/h.csv};
 %\addlegendentry{\h};
 
-\addplot[mark=x, color=black]table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[mark=x, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/p.csv};
 %\addlegendentry{\p};
 
+\addplot[mark=triangle*, index of colormap=0 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
+%select coords between index={1}{6}
+] {data/error/hp-prediction.csv};
+%\addlegendentry{\hp{} prediction};
+
 \addplot[mark=square*, index of colormap=1 of Set1]  table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/hp-legendre.csv};
-%\addlegendentry{\hp{}-Legendre};
+%\addlegendentry{\hp{} Legendre};
 
-\addplot[mark=*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[mark=pentagon*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={0}{5}
 ] {data/error/hp-fourier.csv};
-%\addlegendentry{\hp{}-Fourier};
+%\addlegendentry{\hp{} Fourier};
 
-\addplot[mark=triangle*, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
-%select coords between index={1}{6}
-] {data/error/hp-prediction.csv};
-%\addlegendentry{\hp{}-prediction};
-
-\addplot[dashed, mark=square*, index of colormap=1 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
-%select coords between index={0}{5}
-] {data/error/hp-legendre-naive.csv};
-%\addlegendentry{\hp{}-Legendre naive};
-
-\addplot[dashed, mark=*, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
-%select coords between index={0}{5}
-] {data/error/hp-fourier-naive.csv};
-%\addlegendentry{\hp{}-Fourier naive};
-
-\addplot[dashed, mark=triangle*, index of colormap=3 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
+\addplot[dashed, mark=triangle*, mark options={solid,rotate=180}, index of colormap=0 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
 %select coords between index={1}{6}
 ] {data/error/hp-prediction-naive.csv};
-%\addlegendentry{\hp{}-prediction naive};
+%\addlegendentry{\hp{} prediction naive};
+
+\addplot[dashed, mark=square*, mark options={solid,rotate=45}, index of colormap=1 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
+%select coords between index={0}{5}
+] {data/error/hp-legendre-naive.csv};
+%\addlegendentry{\hp{} Legendre naive};
+
+\addplot[dashed, mark=pentagon*, mark options={solid,rotate=36}, index of colormap=2 of Set1] table [y=H1 error, x=ndofs, col sep=comma,
+%select coords between index={0}{5}
+] {data/error/hp-fourier-naive.csv};
+%\addlegendentry{\hp{} Fourier naive};
 
 %\addplot[very thick, samples=100, domain=10000:50000] {10^(-2)*exp(10^(-3.9)*(-x+10000))}; % {10^(-4)*(-x+10000)};
 \addplot[very thick, samples=100, domain=8000:100000]%domain=12545:68954]
