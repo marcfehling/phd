@@ -6,7 +6,7 @@
   % append keywords to identify different bibliography entries.
   \maps[datatype=bibtex, overwrite]{
     \map{
-      \perdatasource{bibliography.bib}
+      \perdatasource{misc/bibliography.bib}
       \step[fieldset=KEYWORDS, fieldvalue=primary] % do not append!
       % print the following fields only if there is no doi
       \step[fieldsource=doi,final]
@@ -16,7 +16,7 @@
       \step[fieldset=issn,null]
     }
     \map{
-      \perdatasource{references.bib}
+      \perdatasource{misc/references.bib}
       \step[fieldset=KEYWORDS, fieldvalue=secondary] % do not append!
       % print the following fields only if there is no doi
       \step[fieldsource=doi,final]
