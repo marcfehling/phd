@@ -6,7 +6,7 @@
 
 The basic idea of the \gls{fem} consists of the specification of a finite-dimensional function space and finding a solution to the investigated boundary value problem in it. To be more precise, we pick a suitable set of basis functions for which the solution is a linear combination. Its coefficients are called unknowns or \glspl{dof}, since their values are determined after solving the problem.
 
-Differential equations are solved on a prescribed domain $\Omega$ and define a boundary value problem with boundary conditions posed on $\partial \Omega$.
+Differential equations are solved on prescribed domains $\Omega$, which are typically part of $\mathcal{R}^2$ or $\mathcal{R}^3$, and form boundary value problems with boundary conditions posed on $\partial \Omega$.
 Their numerical solution with \gls{fem} requires the subdivision of the domain into a triangulation of smaller cells $K$, where $\Omega = \bigcup_{i} K_i$ and each cell $K$ has a nonempty interior and a Lipschitz-continuous boundary. Typical choices for cells are triangles or quadrilaterals in two and tetrahedra or hexahedra in three dimensions.
 %All these cells are mappings of a reference cell, to which we assign a set of shape functions with corresponding support points.
 %Those functions are designed to have the value one on exactly one support point and the value zero on all others.
@@ -138,4 +138,4 @@ Further, we require that every process stores a copy of the common coarse mesh. 
 
 %In the \dealii{}, the parallel is handed out to an oracle that is requested on all mesh related operations. \dealii{} offers an interface to the \pforest{} library.
 
-\textcite{heister2011,bangerth2012} described the parallelization of \h-adaptive \gls{fem} within the \dealii{} library \textcite{dealii920pre} in great detail.
+\textcite{heister2011,bangerth2012} described the parallelization of \h-adaptive \gls{fem} within the \dealii{} library \textcite{dealii920} in great detail.
