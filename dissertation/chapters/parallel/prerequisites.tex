@@ -6,7 +6,7 @@
 
 The basic idea of the \gls{fem} consists of the specification of a finite-dimensional function space and finding a solution to the investigated boundary value problem in it. To be more precise, we pick a suitable set of basis functions for which the solution is a linear combination. Its coefficients are called unknowns or \glspl{dof}, since their values are determined after solving the problem.
 
-Differential equations are solved on prescribed domains $\Omega$, which are typically part of $\mathcal{R}^2$ or $\mathcal{R}^3$, and form boundary value problems with boundary conditions posed on $\partial \Omega$.
+Differential equations are solved on prescribed domains $\Omega$, which are typically part of $\mathbb{R}^2$ or $\mathbb{R}^3$, and form boundary value problems with boundary conditions posed on $\partial \Omega$.
 Their numerical solution with \gls{fem} requires the subdivision of the domain into a triangulation of smaller cells $K$, where $\Omega = \bigcup_{i} K_i$ and each cell $K$ has a nonempty interior and a Lipschitz-continuous boundary. Typical choices for cells are triangles or quadrilaterals in two and tetrahedra or hexahedra in three dimensions.
 %All these cells are mappings of a reference cell, to which we assign a set of shape functions with corresponding support points.
 %Those functions are designed to have the value one on exactly one support point and the value zero on all others.
