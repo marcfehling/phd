@@ -1,4 +1,4 @@
-\chapter{Application on the Laplace problem}
+\chapter{Application to the Laplace problem}
 \label{ch:results}
 \glsresetall
 
@@ -10,18 +10,18 @@
 %\end{align}
 %for $u$ scalar solution and $\vec{x} = (x_1, x_2, \dots, x_d)$ vector with $d$-components.
 
-With all algorithms and data structures elaborated in Chs.~\ref{ch:parallel} and \ref{ch:dynamic}, we now have all features at our disposal to solve partial differential equations with parallel, dynamic \hp-adaptive \glspl{fem}. As a next step, we would like to apply our implementation in the \dealii{} library on a certain exemplary problem that showcases its error performance and parallel scalability. To quantify its capabilities, we want to find a scenario for which an analytic solution $u_\text{sol}$ is available allowing us to calculate the actual error of the finite element approximation. This approach for code verification corresponds to the method of manufactured solutions \parencite{salari2000}. Our choice for a suitable problem falls on solving the Laplace problem with Dirichlet boundary conditions:
+With all algorithms and data structures elaborated in Chs.~\ref{ch:parallel} and \ref{ch:dynamic}, we now have all features at our disposal to solve partial differential equations with parallel, dynamic \hp-adaptive \glspl{fem}. As a next step, we would like to apply our implementation in the \dealii{} library on a certain exemplary problem that showcases its error performance and parallel scalability. To quantify its capabilities, we want to find a scenario for which an analytic solution $u_\text{sol}$ is available, allowing us to calculate the actual error of the finite element approximation. This approach for code verification corresponds to the method of manufactured solutions \parencite{salari2000}. Our choice for a suitable problem falls on solving the Laplace problem with Dirichlet boundary conditions:
 \begin{align}
 - \nabla^2 u(\vec{x}) &= 0 \quad\text{on}\quad \Omega \,\text{,} & u(\vec{x}) &= u_\text{sol}(\vec{x}) \quad\text{on}\quad \partial\Omega \,\text{.}
 \end{align}
 
 The choice to study the Laplace problem was not made by chance: We encounter the Laplace equation, or rather the Poisson equation with a non-vanishing right hand side, in many different modeling processes. In the field of electrostatics, the electric potential satisfies the Poisson equation. It is also used to model diffusion processes in time-dependent problems. Embedded in time discretization schemes, the Poisson problem has to be solved in each time step for, e.g., heat transfer problems. Further for the simulation of incompressible flows, the coupling of pressure and velocity is governed by the Poisson equation.
 
-Following Eq.~(\ref{eq:errorbound_hp}), we are aware that \p-adaptation is favorable in regions where the solution is regular, while \h-adaptation yields better results in regions with discontinuities or singularities. For elliptic problems like the Laplace one, we expect singularities on concave domains \parencite[Sec.~5.5]{brenner2008}.
+Following Eq.~(\ref{eq:errorbound_hp}), we expect that \p-adaptation is favorable in regions where the solution is regular, while \h-adaptation yields better results in regions with discontinuities or singularities. For elliptic problems like the Laplace one, we expect singularities on concave domains \parencite[Sec.~5.5]{brenner2008}.
 
-\textcite{mitchell2014} presented several benchmarks for \hp-adaptation that make use of this observation. We decide to showcase our implementation on a two-dimensional domain with a reentrant corner located at the point of origin:
+\textcite{mitchell2014} presented several benchmarks for \hp-\linebreak{}adaptation that make use of this observation. We decide to showcase our implementation on a two-dimensional domain with a reentrant corner located at the point of origin:
 \begin{align}
-\Omega &= \left\{ (r,\theta) \in \mathbb{R}_{\geq 0} \times [0, 2 \pi) : 0 \leq \theta \leq \pi/\alpha \right\} \,\text{,}
+\Omega \in \left\{ (r,\theta) \in \mathbb{R}_{\geq 0} \times [0, 2 \pi) : 0 \leq \theta \leq \pi/\alpha \right\} \,\text{,}
 \end{align}
 with $\alpha \in \left(1/2, 1\right)$. With the additional requirement that the solution must be zero along the legs of the reentrant corner, this particular scenario has a general solution which can be formulated in polar coordinates $r = \sqrt{x^2 + y^2} > 0$ and $\theta = \arctantwo(y,x)$:
 \begin{align}
@@ -43,7 +43,7 @@ A depiction of the solution on this particular domain is shown in Fig.~\ref{fig:
 \begin{figure}
 \centering
 \input{figures/results/solution}
-\caption[Solution of the manufactured Laplace problem on the L-shaped domain.]{Solution from Eq.~(\ref{eq:ficherasolution}) of the manufactured Laplace problem on the L-shaped domain described by Eq.~(\ref{eq:Ldomain}).}
+\caption[Solution of the manufactured Laplace problem on the L-shaped domain.]{Solution of Eq.~(\ref{eq:ficherasolution}) for the manufactured Laplace problem on the L-shaped domain described by Eq.~(\ref{eq:Ldomain}).}
 \label{fig:solution}
 \end{figure}
 
@@ -51,9 +51,9 @@ In this chapter, we will solve the so designed Laplace problem on the L-shaped d
 
 Following the usual approach in \gls{fem}, we transfer our problem to its weak formulation using \gls{cg} methods \parencite{brenner2008}:
 \begin{align}
-\left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
+\left(\nabla u, \nabla v\right) &= 0 \,\text{,} & \forall v \in V_0 &\coloneqq \left\{ v \in H^1(\Omega): v|_{\partial\Omega} = 0 \right\} \,\text{.}
 \end{align}
-The shape functions of Lagrange elements will form the basis for the function space $V$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on the boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
+The shape functions of Lagrange elements will form the basis for the function space $V_h \subset H^1(\Omega)$. Dirichlet boundary conditions are imposed via constraints on \glspl{dof} located on the boundaries. The problem will be solved numerically with an iterative solver based on the conjugate gradient algorithm combined with an \gls{amg} preconditioner.
 
 The \dealii{} library offers interfaces to parallel linear algebra of the third party libraries \petsc{} \textcite{petsc3124} and \trilinos{} \textcite{trilinos12181} for distributed memory architectures. In our investigations, we choose the latter using their \epetra{}
 %\textcite{epetra}

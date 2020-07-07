@@ -7,9 +7,9 @@ Again working with successively adapted meshes, we will measure the wall time sp
 \begin{itemize}
 \item \textit{Setup data structures}. Enumerate all \glspl{dof}. Determine the sparsity pattern describing locations of nonzero matrix entries. Calculate constraints for hanging nodes and boundary values. Allocate memory for all distributed data structures. Communicate between processes which matrix or vector elements they will write to that they do not own locally.
 \item \textit{Assemble linear system}. Calculate the individual contribution of each locally owned cell to the global equation system. Exchange data if matrix or vector elements are stored on a different process.
-\item \textit{Linear solver}. Setup both the \gls{amg} preconditioner and the conjugate gradient solver and solve the equation system in parallel.
-\item \textit{Estimate error}. Calculate the error indicators on locally owned cells on basis of the current solution. Mark cells for either refinement or coarsening by computing global thresholds.
-\item \textit{Estimate smoothness}. Calculate the smoothness indicators on basis of the current solution on locally owned cells marked for either refinement or coarsening. Decide whether \h- or \p-adaptation is going to be applied by computing global thresholds.
+\item \textit{Linear solver}. Set up both the \gls{amg} preconditioner and the conjugate gradient solver and solve the equation system in parallel.
+\item \textit{Estimate error}. Calculate the error indicators on locally owned cells on the basis of the current solution. Mark cells for either refinement or coarsening by computing global thresholds.
+\item \textit{Estimate smoothness}. Calculate the smoothness indicators on the basis of the current solution on locally owned cells marked for either refinement or coarsening. Decide whether \h- or \p-adaptation is going to be applied by computing global thresholds.
 \item \textit{Coarsen and refine}. Perform coarsening and refinement and maintain the 2:1 cell balance on the \pforest{} master mesh, followed by its repartitioning. Transfer data between the outdated and updated mesh. Apply all changes made to the master mesh on the \dealii{} grid.
 \end{itemize}
 
@@ -28,16 +28,15 @@ We initialize the problem with ten initial global refinements and adapt the mesh
   \input{figures/results/size-nodes16}
   \caption{Scaling on 16 nodes or 768 \gls{mpi} processes.}
   \label{fig:size-nodes16}
-\end{subfigure} \\
-\vspace{1em}
+\end{subfigure}
+\vspace{1em} \\
 \begin{subfigure}{1\textwidth}
   \centering
   \input{figures/results/size-nodes64}
   \caption{Scaling on 64 nodes or 3,072 \gls{mpi} processes.}
   \label{fig:size-nodes64}
 \end{subfigure}
-\vspace{-1em}
-\caption[Scaling for consecutively refined meshes on different numbers of \glsfmtlong{mpi} processes.]{Scaling for consecutively refined meshes on different numbers of \glspl{mpi} processes. Each \gls{mpi} process has more than 10\textsuperscript{5} \glspl{dof} assigned only to the right side of the indicated vertical line. Each finite element is represented at least once in the mesh only to the right side of the designated vertical line.}
+\caption[Scaling for consecutively refined meshes on different numbers of \glsfmtlong{mpi} processes.]{Scaling for consecutively refined meshes on different numbers of \gls{mpi} processes. Each \gls{mpi} process has more than 10\textsuperscript{5} \glspl{dof} assigned only to the right side of the indicated vertical line. Each finite element is represented at least once in the mesh only to the right side of the designated vertical line.}
 \label{fig:size}
 \end{figure}
 
@@ -63,7 +62,7 @@ We suspect that the rather heterogeneous association of the finite elements by t
 %has a negative influence on the conditioning of the system matrix and
 has a similar effect on the distribution of nonzero entries in the system matrix, for which \gls{amg} preconditioners are not designed for. It appears that we could make use of a more suitable preconditioner. Although it was the best option at our disposal at the time of this dissertation, we may think about an alternative to this for future applications.
 
-\textcite{mitchell2010} presented \hp-multigrid methods for sequential applications. They combined multilevel methods on a geometric hierarchy with those on a hierarchy of finite elements with different polynomial degrees $p$. The \hp-adaptive domain will be first relaxed by successively decreasing the polynomial degree of all associated finite elements until only linear ones remain. Next, the usual geometric multigrid method is applied, while results are interpolated back to finite elements of the original polynomial degrees as a last step. The embedding of \p-relaxation and \p-interpolation in either \gls{amg} or \gls{gmg} preconditioning is promising and will be the subject of future work. Different combinations of multilevel methods in a polynomial, geometric, and algebraic sense are possible, as \textcite{fehn2019} demonstrated on static non-adaptive meshes. % for matrix-free \gls{dg} methods.
+\textcite{mitchell2010} presented \hp-multigrid methods for sequential applications. They combined multilevel methods on a geometric hierarchy with those on a hierarchy of finite elements with different polynomial degrees $p$. The \hp-adaptive domain will be first relaxed by successively decreasing the polynomial degree of all associated finite elements until only linear ones remain. Next, the usual geometric multigrid method is applied, while results are interpolated back to finite elements of the original polynomial degrees as a last step. The embedding of \p-relaxation and \p-interpolation in either \gls{amg} or \gls{gmg} preconditioning is promising. Different combinations of multilevel methods in a polynomial, geometric, and algebraic sense are possible, as \textcite{fehn2019} demonstrated on static non-adaptive meshes. % for matrix-free \gls{dg} methods.
 %Instead of relying on \gls{amg} methods, \gls{gmg} preconditioners are expected to work more robust and should be the method of choice.
 %\Gls{gmg} methods for \hp-adaptive refinement in serial applications have already been developed by \textcite{mitchell2010}. \textcite{clevenger2019} worked out \gls{gmg} preconditioners for parallel \h-adaptive \gls{fem} for either \gls{cg} or \gls{dg} methods and made their algorithm available in the \dealii{} library. The development of a corresponding preconditioner for parallel \hp-adaptive \gls{fem} will be subject of future work, as well as its application and comparison with the \gls{amg} equivalents.
 Therefore, an even more favorable error to wall time performance of \hp- compared to \h-adaptive methods are conceivable than presented in Fig.~\ref{fig:errorwalltime} and described in Sec.~\ref{sec:errorvsperformance}.
@@ -85,12 +84,12 @@ In our application, we unintentionally re-calculated these values again in each 
 
 % strong scaling
 
-For strong scaling, problems are set to a fixed size and are solved with an increasing amount of \gls{mpi} processes. This time, we just solve one individual adaptation cycle on a tailored mesh, that has been prepared from a previous run via serialization.
+For strong scaling, problems are set to a fixed size and are solved with an increasing number of \gls{mpi} processes. This time, we just solve one individual adaptation cycle on a tailored mesh, that has been prepared from a previous run via serialization.
 %, we prepare a tailored mesh for these considerations, and solve that particular cycle with a varying number of processors.
 
 To prepare these meshes, we consider two different scenarios which will be constructed as follows: A smaller scenario is initialized with ten global refinements, and a larger one with twelve refinements. Both will be adapted successively in six adaptation cycles, which results in each reference finite element being represented at least once in the whole domain. This leads to number of \glspl{dof} of 50,736,415 and 969,257,276 in total for the respective scenarios.
 
-With serialization, both problems will be solved at their advanced stage with varying amounts of \gls{mpi} processes, and the wall times of each section in the program will be recorded. We again repeat each run for a total of seven times and take the minimum wall time in each category, except for the largest run in order to solve the bigger problem on 1,024 nodes or 49,152 \gls{mpi} processes, which we only repeated five times. % before we completely exhausted our entire computing time quota.
+With serialization, both problems will be solved at their advanced stage with varying numbers of \gls{mpi} processes, and the wall times of each section in the program will be recorded. We again repeat each run for a total of seven times and take the minimum wall time in each category, except for the largest run in order to solve the bigger problem on 1,024 nodes or 49,152 \gls{mpi} processes, which we only repeated five times. % before we completely exhausted our entire computing time quota.
 
 The results of strong scaling are shown in Fig.~\ref{fig:strong}.
 Again, we identify linear scaling whenever the number of \glspl{dof} per \gls{mpi} process exceeds $10^5$, which again coincides with the observations of \textcite{bangerth2012}.
@@ -101,8 +100,8 @@ Again, we identify linear scaling whenever the number of \glspl{dof} per \gls{mp
   \input{figures/results/strong-nrefs10}
   \caption{Strong scaling for a fixed problem size of roughly 51 million \glspl{dof}.}
   \label{fig:strong-nrefs10}
-\end{subfigure} \\
-\vspace{1em}
+\end{subfigure}
+\vspace{1em} \\
 \begin{subfigure}{1\textwidth}
   \centering
   \input{figures/results/strong-nrefs12}

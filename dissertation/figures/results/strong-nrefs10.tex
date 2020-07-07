@@ -1,6 +1,7 @@
 \begin{tikzpicture}
 \begin{loglogaxis}[
   scale=1.15,
+  ymin=10^-2, ymax=10^3,
   xlabel={Number of \gls{mpi} processes},
   ylabel={Wall time [seconds]},
   grid=major,
@@ -34,7 +35,7 @@
 \begin{scope}
   \draw[color=Set1-C, very thick] ({axis cs:507.36415,0}|-{rel axis cs:0,1}) -- ({axis cs:507.36415,0}|-{rel axis cs:0,0});
 \end{scope}
-\addlegendimage{color=Set1-C};
+\addlegendimage{color=Set1-C, very thick};
 \addlegendentry{$10^5$ \glspl{dof} per process};
 
 % optimal line

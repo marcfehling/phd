@@ -12,6 +12,7 @@ For parallel computations on distributed memory systems, the global domain is pa
   \input{figures/results/corner-subdomains-legendre-05_constantweight}
   \caption{Constant weighting.}
 \end{subfigure}
+\vspace{1em} \\
 \begin{subfigure}{1\textwidth}
   \centering
   \input{figures/results/corner-subdomains-legendre-05_customweight}
@@ -35,7 +36,7 @@ Further, we use a `flat' \gls{mpi} model: Every thread will be assigned to an in
 
 % problem specifications
 
-To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with nine global refinements and gets adapted in twelve iterations. For the strategy with the Legendre coefficient decay, this results in a total number of 46,369,440 \glspl{dof}, so that each process will be assigned to a number of 483,015 \glspl{dof} on average. Each type of finite element from the provided collection is represented at least once in the mesh.
+To qualify our problem for parallel computations, we need to increase its size drastically. The problem is initialized with nine global refinements and gets adapted in twelve iterations. For the strategy with the Legendre coefficient decay, this results in a total number of 46,369,440 \glspl{dof}, so that each process will be assigned 483,015 \glspl{dof} on average. Each type of finite element from the provided collection is represented at least once in the mesh.
 
 This advanced scenario will form the basis of our investigations to see how different weighting exponents affect the wall time, and which one provides a minimum. With serialization, we ensure that each of these runs conforms to the same conditions. Again, to mitigate the impact of temporary slowdowns on the supercomputer due to high loads on memory and network bandwidth, we repeat each run for a total of five times and take the minimum wall time in each category over all runs.
 
@@ -49,18 +50,22 @@ in Fig.~\ref{fig:weights}.
 \begin{figure}
 \centering
 \input{figures/results/weights}
-\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and those parts relevant for load balancing. The problem has a number of about 46 million \glspl{dof} and is solved on two nodes or 96 \gls{mpi} processes. Weights proportional to $n_\text{dofs}^c$ will be assigned to each cell with varying exponents $c$.}
+\caption[Wall times for load balancing with varying weighting exponents.]{Wall times of a complete adaptation cycle and those parts relevant for load balancing. The problem has about 46 million \glspl{dof} and is solved on two nodes or 96 \gls{mpi} processes. Weights proportional to $n_\text{dofs}^c$ will be assigned to each cell with varying exponents $c$.}
 \label{fig:weights}
 \end{figure}
 
-As discussed in Sec.~\ref{sec:balancing}, the assembly of the equation system and the its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about \SI{90}{\percent} of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $c = 1.9$.
+As discussed in Sec.~\ref{sec:balancing}, the assembly of the equation system and its solution are identified as the critical sections whose wall time is affected by the number of \glspl{dof}. We see that the solution of the equation system takes about \SI{90}{\percent} of the total wall time and is the crucial factor for proper load balancing. The minimal wall time for both solver and the full cycle is reached with a weighting exponent of $c = 1.9$.
 
 We were dissatisfied to find the minimum wall time of the solver at such a high exponent, since we expected $c = 1$ for an efficient solver.
 %This may be related to the implementation of the preconditioner combined with the disorder that \hp-adaptive methods cause in the system matrix.
 On closer reflection, this is not surprising considering the large number of nonzero entries in the system matrix caused by high order finite elements, which the current implementation of the preconditioner does not handle efficiently.
-Further, we were expecting a minimum in the assembly at about $c = 2$, but found it was decreasing at even higher exponents. We have no explanation for this behavior. Analyzing the effect of cell weighting on each individual section of the program
+Further, we were expecting a minimum in the assembly at about $c = 2$, but found it was decreasing at even higher exponents. We have no explanation for this behavior.
+
+Anyways, we observed that the total run time does not actually depend particularly strongly on the exponent as it varied by less than \SI{10}{\percent} in our investigations. We therefore do not give much importance to the particular choice of cell weights as long as the number of degrees of freedom of each cell is considered.
+
+%Analyzing the effect of cell weighting on each individual section of the program
 %the load balancing
-will be subject of further investigations.
+%will be subject of further investigations.
 
 % Next step
 %We set an weighting expoenent to a value of $c = 1.9$ for the following considerations regarding scalability.
