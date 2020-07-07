@@ -21,7 +21,7 @@ In this dissertation, we elaborated on the non-trivial parts of combining both p
 The unique enumeration of \glspl{dof} and their affiliation with the owning \gls{mpi} process poses challenges for \gls{cg} methods whenever finite elements of similar or different polynomial degree meet on subdomain boundaries. We developed an algorithm for the unique enumeration of \glspl{dof} in the parallel \hp-adaptive context which does not require more costly communication with ghost cells than the \h-adaptive pendant.
 
 %\item%
-For automatic adaptation, refinement criteria on basis of error indicators are required to decide which parts of the domain should be adapted. In addition using \hp-adaptive methods, we also have to select the type of adaptation we would like to impose.
+For automatic adaptation, refinement criteria on the basis of error indicators are required to decide which parts of the domain should be adapted. In addition using \hp-adaptive methods, we also have to select the type of adaptation we would like to impose.
 %In addition to the determination of refinement criteria on basis of error indicators, we need to additionally decide which type of adaptation to impose for an automatic determination.
 We presented several state-of-the-art methods for \hp-refinement, prepared them for parallel applications, and enhanced them for \hp-coarsening as well.
 %\end{itemize}
@@ -43,7 +43,7 @@ We provided a reference implementation in the \dealii{} library and applied it t
 
 % extensions
 
-Algorithms for parallel \hp-adaptive \glspl{fem} capable of handling both \gls{cg} and \gls{dg} methods have not yet been prepared in a general framework to this extent before. However, our implementation is still at an early stage of development, and there is still plenty of room for improvement, as we described throughout this dissertation. Those aspects that leave room for improvements are the following.
+Algorithms for parallel \hp-adaptive \glspl{fem} capable of handling both \gls{cg} and \gls{dg} methods have not yet been prepared in a general framework to this extent before. However, our implementation is still at an early stage of development, and there is still plenty of room for improvement, as described throughout this dissertation. Those aspects that leave room for improvements are outlined in the following.
 
 We observed an unfavorable scaling behavior during the solution of the equation system in our \hp-adaptive \gls{fem} application, which we attribute to our choice of \gls{amg} preconditioning. A preconditioner that also incorporates multilevel methods on a hierarchy of finite elements with different polynomial degrees $p$ will be more efficient and solve the linear equation system in less iterations as investigated by \textcite{mitchell2010}. They embedded \p-multigrid methods in \gls{gmg} preconditioning for sequential \hp-adpative applications. Furthermore, \textcite{fehn2019} combined multilevel methods on hierarchies in a polynomial, geometric, and algebraic sense for parallel \gls{fem} on static meshes without adaptation. Future work involves the combination of multilevel methods to make them available for parallel \hp-adaptive methods as well.
 This also incorporates parallel \h-adaptive \gls{gmg} preconditioners that have been presented by \textcite{clevenger2019} who also provided an implementation in the \dealii{} library.
@@ -58,7 +58,7 @@ This also incorporates parallel \h-adaptive \gls{gmg} preconditioners that have 
 We described a handful of decision strategies to choose between types of adaptation. However, there are more strategies worth trying out.
 %Regularity estimation (see houston 2005 for references), houston 2003
 %\textcite{houston2003} \textcite{houston2005}
-\textcite{houston2003,houston2005} directly determined the regularity of the solution from the coefficients of a Legendre expansion of the finite element approximation. We could use those as decision indicators, or directly set the fitting finite element on basis of their result.
+\textcite{houston2003,houston2005} directly determined the regularity of the solution from the coefficients of a Legendre expansion of the finite element approximation. We could use those as decision indicators, or directly set the fitting finite element on the basis of their result.
 %Enhancements for Fourier strategy using \gls{fft} (e.g. via \fftw{} \parencite{frigo2005,fftw338}).
 %Further, we noticed that the preparation of the Fourier transformation matrices consumes a lot of wall time due to the larger number of quadrature points required for integration, which we hope to accelerate using \gls{fft}, for example via \fftw{} \parencite{frigo2005,fftw338}.
 
