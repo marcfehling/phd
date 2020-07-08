@@ -110,7 +110,7 @@ We suggest a similar approach for the \hp-adaptation case as well. The above rat
 
 Now, we will use these findings to develop an algorithm to predict errors of our finite element approximation. \textcite{melenk2001} worked out such an algorithm for \hp-refinement, which we will extend to \hp-coarsening as well. First, we will now only consider individual cells on our domain rather than the whole domain itself. Further, in practical applications, the actual error on these may be not at our disposal. Instead, we use suitable error indicators $\left\|e_\text{hp}\right\|_{H^{1}(K)} \simeq \eta_K$, assuming that they change at the same rate as the actual error.
 
-We apply our consideration summarized in Eq.~(\ref{eq:errorratio_hp_exp}) on any form of adaptation. However, \h-adaptation poses an additional challenge, since we have to distribute errors from parent to children cells in case of refinement, or combine them in reverse for coarsening. Here, we will only consider isotropic \h-adaptation of quadrilaterals in two and hexahedrals in three dimensions, so that exactly $n_c = 2^\text{dim}$ children are assigned to a cell, and the ratio of cell diameters $h_\text{f} / h_\text{a}$ is fixed to be $0.5$ for refinement and $2$ for coarsening. With respect to the $H^1$-norm from Eq.~(\ref{eq:error_sum}), the square of the predicted error of a refined cell is distributed equally on all of its children, while the square sum of errors of coarsened cells is assigned to their parent. We assign future finite elements with their corresponding polynomial degrees on parent and children cells as described in Sec.~\ref{sec:adaptation}. Last, similar to \textcite{melenk2001}, we introduce control parameters $\gamma_n, \gamma_h \in (0, \infty)$, as well as $\gamma_p \in (0,1)$ for all three forms of adaptation, i.e., no, \h-, and \p-adaptation. We end up with a set of equations which covers all possible combinations for \hp-adaptation:
+We apply our consideration summarized in Eq.~(\ref{eq:errorratio_hp_exp}) on any form of adaptation. However, \h-adaptation poses an additional challenge, since we have to distribute errors from parent to children cells in case of refinement, or combine them in reverse for coarsening. Here, we will only consider isotropic \h-adaptation of quadrilaterals in two and hexahedrals in three dimensions, so that exactly $n_c = 2^\text{dim}$ children are assigned to a cell, and the ratio of cell diameters $h_\text{f} / h_\text{a}$ is fixed to be $0.5$ for refinement and $2$ for coarsening. With respect to the $H^1$-norm of Eq.~(\ref{eq:error_sum}), the square of the predicted error of a refined cell is distributed equally on all of its children, while the square sum of errors of coarsened cells is assigned to their parent. We assign future finite elements with their corresponding polynomial degrees on parent and children cells as described in Sec.~\ref{sec:adaptation}. Last, similar to \textcite{melenk2001}, we introduce control parameters $\gamma_n, \gamma_h \in (0, \infty)$, as well as $\gamma_p \in (0,1)$ for all three forms of adaptation, i.e., no, \h-, and \p-adaptation. We end up with a set of equations which covers all possible combinations for \hp-adaptation:
 \begin{subequations}
 \begin{align}
 &\text{no adaptation:} & \eta^\text{pred}_K &= \eta_K \, \gamma_n \,\text{,} \\
@@ -191,14 +191,14 @@ Furthermore, the calculation of expansion coefficients requires a mapping of the
 With these considerations, we will finally calculate the Legendre expansion coefficients of the finite element approximation $u_\text{hp}$ on each cell $K$ as follows:
 \begin{align}
 c_\tuple{k} &=
-\left(\prod\limits_{j \in \tuple{k}} \frac{2j+1}{2}\right) \int\limits_{K} u_\text{hp}(\vec{x}) \, \widetilde{P}_\tuple{k}(\mat{F}_K^{-1}(\vec{x})) \differential{\vec{x}} \\
+\left(\prod\limits_{j \in \tuple{k}} \frac{2j+1}{2}\right) \int\limits_{K} u_\text{hp}(\vec{x}) \, \widetilde{P}_\tuple{k}\left(\mat{F}_K^{-1}(\vec{x})\right) \differential{\vec{x}} \\
 &= \left(\prod\limits_{j \in \tuple{k}} \frac{2j+1}{2}\right) \int\limits_{\widehat{K}} \widehat{u}_\text{hp}(\vec{\widehat{x}}) \, \widetilde{P}_\tuple{k}(\vec{\widehat{x}}) \, \left|\det \mat{J}(\vec{\widehat{x}})\right| \differential{\vec{\widehat{x}}} \,\text{,}
 \end{align}
 with the determinant of the Jacobian $\mat{J}(\vec{\widehat{x}}) = \widehat{\nabla} \mat{F}_K (\vec{\widehat{x}})$ resulting from the coordinate transformation. \textcite{dealiilegendre}
 
 For one-dimensional scenarios, \textcite{mavriplis1994} expanded the finite element approximation in a power series of Legendre polynomials up to the order $p_K$ of the assigned finite element on cell $K$. \textcites{houston2005}{eibner2007} generalized their approach by considering multi-dimensional Legendre polynomials:
 \begin{align}
-\forall \vec{x} \in K : \quad u_\text{hp} (\vec{x}) \simeq u_{\text{hp},\tuple{k}} (\vec{x}) &= \sum\limits_{0 \leq \|\tuple{k}\|_1 \leq p_K} c_\tuple{k} \, \widetilde{P}_\tuple{k}(\mat{F}_K^{-1}(\vec{x})) \,\text{.}
+\forall \vec{x} \in K : \quad u_\text{hp} (\vec{x}) \simeq u_{\text{hp},\tuple{k}} (\vec{x}) &= \sum\limits_{0 \leq \|\tuple{k}\|_1 \leq p_K} c_\tuple{k} \, \widetilde{P}_\tuple{k}\left(\mat{F}_K^{-1}(\vec{x})\right) \,\text{.}
 \end{align}
 
 \textcite[Prop.~2]{eibner2007} argued that a function is analytic, i.e., representable by a power series, if and only if the absolute values of the expansion coefficients decay exponentially with increasing index $\tuple{k}$:
@@ -234,7 +234,7 @@ Suppose a function $u$ on cell $K$ is part of the Hilbert space $H^s(K)$, the fo
 \end{align}
 The same condition also applies for its spectral representation $u_{\tuple{k}}$ and can be written as:
 \begin{align}
-\| \nabla^s u_{\tuple{k}}(\vec{x}) \|_{L^2(K)}^2 &= \int\limits_K \left| \sum\limits_{\tuple{k}} (-i \, 2 \pi \tuple{k})^s \, c_\tuple{k} \, \phi_\tuple{k}(\mat{F}_K^{-1}(\vec{x})) \right|^2 \differential{\vec{x}} \\
+\| \nabla^s u_{\tuple{k}}(\vec{x}) \|_{L^2(K)}^2 &= \int\limits_K \left| \sum\limits_{\tuple{k}} (-i \, 2 \pi \tuple{k})^s \, c_\tuple{k} \, \phi_\tuple{k}\left(\mat{F}_K^{-1}(\vec{x})\right) \right|^2 \differential{\vec{x}} \\
 &= (2 \pi)^{2s} \sum\limits_{\tuple{k}} \left| c_\tuple{k} \right|^2 \|\tuple{k}\|_2^{2s} < \infty \,\text{.}
 \end{align}
 The sum is finite only if we require that its summands decay as:
