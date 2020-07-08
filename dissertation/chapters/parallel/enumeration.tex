@@ -48,13 +48,21 @@ In parallel applications, the enumeration of \glspl{dof} on interfaces between n
 
 For parallel \hp-adaptive \gls{fem}, the mere concatenation of both algorithms does not suffice. The case in which distinct finite element types from different subdomains are adjacent has to be given special consideration. We could cope with this situation by constraining \glspl{dof} on these interfaces to each other. However, this would leave unnecessary \gls{dof} duplicates in the equation system. Additionally, the global number of \glspl{dof} would differ with the number of subdomains in this approach. We would rather keep it independent from the number of processes, which would simplify debugging and assures that our solvers yield the same results on any number of subdomains. The algorithm developed in this thesis meets this requirement and combines the ideas of both previous algorithms.
 
-To follow the same nomenclature as \textcite{bangerth2012}, we call the set of all locally owned cells $\cellsp{loc}$, the set of all ghost cells $\cellsp{ghost}$, and the set of all locally relevant cells $\cellsp{rel} = \cellsp{loc} \cup \cellsp{ghost}$ on processes and subdomains identified by the integer $p$.
+A suitable benchmark that we used to test the enumeration algorithm consists of a two-dimensional domain of four neighboring cells. We provide two different Lagrangian elements that share at least one additional \gls{dof} per cell interface than only on vertices. For this purpose, we choose Lagrangian elements $Q_2$ and $Q_4$. Each of these finite elements will be assigned to two catty-cornered cells. Furthermore, we divide the mesh into two subdomains containing two neighboring cells with different reference finite elements. The whole setup is shown in Fig.~\ref{fig:enumbenchmark} and covers all combinations of adjacent finite elements that we have encountered so far in the parallel \hp-adaptive context. A step-by-step demonstration of the algorithm on this particular benchmark is presented in App.~\ref{app::enumeration}.
 
-We need to enumerate all \glspl{dof} on locally relevant cells, which includes ghost cells. Thus, we begin by exchanging active finite element indices on ghost cells so that we have information about all locally relevant finite elements and can prepare all data structures accordingly. We do this with point-to-point communication.
+\begin{figure}
+\centering
+\input{figures/parallel/enumbenchmark}
+\input{figures/parallel/enumbenchmarklegend}
+\caption[Benchmark scenario for \glsfmtlong{dof} enumeration.]{Benchmark scenario to verify our algorithm for \gls{dof} enumeration. The mesh is distributed on two \gls{mpi} processes, each owning one $Q_2$ and one $Q_4$ element. All \glspl{dof} are uniquely identified on the global mesh as a result of the enumeration algorithm from Sec.~\ref{sec:enumeration}.}
+\label{fig:enumbenchmark}
+\end{figure}
+
+The algorithm enumerates all \glspl{dof} on locally relevant cells, which includes ghost cells. Thus, we begin by exchanging active finite element indices on ghost cells so that we have information about all locally relevant finite elements and can prepare all data structures accordingly. We do this with point-to-point communication.
 
 In short, our algorithm is based on the parallel algorithm by \textcite[Sec.~3.1]{bangerth2012} for the most part. We will add a \gls{dof} unification step after enumerating all locally owned cells, while subjecting to the finite element domination hierarchy to decide ownership on all interfaces. After exchanging \glspl{dof} on all ghost cells, we are left to merge the valid \glspl{dof} on interfaces with the valid counterparts.
 
-In detail, the complete algorithm consists of the following six steps, starting with an initialization step flagged with `0`. A step-by-step demonstration is presented in App.~\ref{app::enumeration}, which should be consulted as an aid to its understanding.
+In detail, the complete algorithm consists of the following six steps, starting with an initialization step flagged with `0`. The step-by-step demonstration presented in App.~\ref{app::enumeration} should be consulted as an aid to its understanding. To follow the same nomenclature as \textcite{bangerth2012}, we call the set of all locally owned cells $\cellsp{loc}$, the set of all ghost cells $\cellsp{ghost}$, and the set of all locally relevant cells $\cellsp{rel} = \cellsp{loc} \cup \cellsp{ghost}$ on processes and subdomains identified by the integer $p$.
 \begin{enumerate}
   \item[0.] \textit{Initialization.}
   On all locally relevant cells $K \in \cellsp{rel}$, \gls{dof} indices are set to an invalid value, for example $i \coloneqq -1$.
@@ -103,16 +111,6 @@ At this stage, all locally owned cells $K \in \cellsp{loc}$ have their correct \
 One variant of this algorithm would be to modify steps 2 and 3 inasmuch as we apply the tie-break criterion on all \glspl{dof} on ghost interfaces and exclude them from \gls{dof} unification entirely. However, this would not assign shared \glspl{dof} to the dominating finite element on ghost interfaces, which would be inconsistent compared to the locally owned parts of the domain.
 
 At the end of this algorithm, all global \gls{dof} indices have been set correctly, and every process knows the indices of all locally relevant \glspl{dof}: All \glspl{dof} on interfaces belong to the dominating finite element on the process with the smallest rank. In particular, while the algorithm is substantially more complicated than the one without \p-adaptivity, no additional communication steps are introduced to the two original ones from the \h-adaptive variant.
-
-A suitable benchmark that we used to test the enumeration algorithm consists of a two-dimensional domain of four neighboring cells. We provide two different Lagrangian elements that share at least one additional \gls{dof} per cell interface than only on vertices. For this purpose, we choose Lagrangian elements $Q_2$ and $Q_4$. Each of these finite elements will be assigned to two catty-cornered cells. Furthermore, we divide the mesh into two subdomains containing two neighboring cells with different reference finite elements. The whole setup is shown in Fig.~\ref{fig:enumbenchmark} and covers all combinations of adjacent finite elements that we have encountered so far in the parallel \hp-adaptive context. A step-by-step demonstration of the algorithm on this particular benchmark is presented in App.~\ref{app::enumeration}.
-
-\begin{figure}
-\centering
-\input{figures/parallel/enumbenchmark}
-\input{figures/parallel/enumbenchmarklegend}
-\caption[Benchmark scenario for \glsfmtlong{dof} enumeration.]{Benchmark scenario to verify our algorithm for \gls{dof} enumeration. The mesh is distributed on two \gls{mpi} processes, each owning one $Q_2$ and one $Q_4$ element. All \glspl{dof} are uniquely identified on the global mesh as a result of the enumeration algorithm from Sec.~\ref{sec:enumeration}.}
-\label{fig:enumbenchmark}
-\end{figure}
 
 There may be situations where \glspl{dof} are constrained to others, which in turn are constrained to different third ones. These chains of constraints may span over \glspl{dof} from multiple subdomains. To deal with this case, we might need more than the current two communication steps in our algorithm. However, we could not think of any scenario in which this is going to be the case, and did not encounter any issues in our investigations so far.
 
