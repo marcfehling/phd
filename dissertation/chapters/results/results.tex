@@ -26,12 +26,12 @@ Following Eq.~(\ref{eq:errorbound_hp}), we expect that \p-adaptation is favorabl
 with $\alpha \in \left(1/2, 1\right)$. With the additional requirement that the solution must be zero along the legs of the reentrant corner, this particular scenario has a general solution which can be formulated in polar coordinates $r = \sqrt{x^2 + y^2} > 0$ and $\theta = \arctantwo(y,x)$:
 \begin{align}
 \label{eq:ficherasolution} u_\text{sol}(\vec{x}) &= r^\alpha \sin(\alpha \, \theta) \,\text{,} \\
-\nonumber \nabla u_\text{sol}(\vec{x}) &= \partial_r u_\text{sol}(\vec{x}) \vec{e}_r + \frac{1}{r} \partial_\theta u_\text{sol}(\vec{x}) \vec{e}_\theta \\
+\nabla u_\text{sol}(\vec{x}) &= \partial_r u_\text{sol}(\vec{x}) \vec{e}_r + \frac{1}{r} \partial_\theta u_\text{sol}(\vec{x}) \vec{e}_\theta \\
 &= \alpha r^{\alpha - 1} \left[ \sin(\alpha \, \theta) \vec{e}_r + \cos(\alpha \, \theta) \vec{e}_\theta \right] \,\text{,}
 \end{align}
 with unit vectors \(\vec{e}_r = \cos(\theta) \vec{e}_x - \sin(\theta) \vec{e}_y\) and \(\vec{e}_\theta = \sin(\theta) \vec{e}_x + \cos(\theta) \vec{e}_y\). We immediately see that this solution has a singularity near the point of origin for the permitted values of $\alpha \in \left(1/2, 1\right)$:
 \begin{align}
-\left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \alpha r^{\alpha - 1} \,\text{,} & \lim\limits_{r \rightarrow 0} \left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \infty \quad\text{for}\quad \alpha \in \left(1/2, 1\right) \,\text{.}
+\left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \alpha r^{\alpha - 1} \,\text{,} & \forall \alpha \in \left(1/2, 1\right) : \quad \lim\limits_{r \rightarrow 0} \left\| \nabla u_\text{sol}(\vec{x}) \right\|_{2} &= \infty \,\text{.}
 \end{align}
 
 In our testcase, we pick a corner with a right angle with $\alpha = 2/3$ resulting in an L-shaped domain, at which all cells share the same topology to exclude influences from mesh distortion in our benchmark:
