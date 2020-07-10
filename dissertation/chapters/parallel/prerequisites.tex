@@ -22,7 +22,7 @@ We transform the original boundary value problem into a variation problem by con
 
 With the discretized weak formulation of the investigated problem, we are left to assemble and solve the corresponding system of linear equations for the unknown coefficients or \glspl{dof}. In practice, we calculate the appearing integrals using quadrature rules and basis functions which have been mapped from a finite element on a reference cell $\widehat{K}$. It is thus sufficient to define reference finite elements and assign them to cells.
 
-One way to choose finite elements is to use nodal functionals $\Psi_i$ which evaluate the values of a function $\varphi$ at their associated support points $\vec{x}_i$, i.e., $\Psi_i[\varphi] = \varphi(\vec{x}_i)$. The corresponding shape functions form a basis of $P$ dual to $N$ fulfilling $\Psi_i[\varphi_j] = \delta_{ij}$ where $\delta$ is the Kronecker delta function. In other words, shape functions are designed to have the value one on their associated support point and the value zero on all others.
+One way to choose finite elements is to use nodal functionals $\Psi_i$ which evaluate the values of a function $\varphi$ at their associated support points $\vec{x}_i$, i.e., $\Psi_i[\varphi] = \varphi(\vec{x}_i)$. The corresponding shape functions form a basis of $P$ dual to $N$ fulfilling $\Psi_i[\varphi_j] = \delta_{ij}$, where $\delta$ is the Kronecker delta function. In other words, shape functions are designed to have the value one on their associated support point and the value zero on all others.
 %One way to choose the shape functions is that each node functional $\Psi_i$ interpolates the function values at its associated support point $\vec{x}_i$, i.e., $\Psi_i[\varphi] = \varphi(\vec{x}_i)$.
 When dealing with this category of finite elements in practice, it is sufficient to work with support points and shape functions once the type of element is specified. One of the most common types of finite elements are Lagrange elements $Q_p$, that are based on Lagrange interpolation with polynomials of order $p$ and can be extended from one to higher dimensions via tensor products. The arrangement of support points on quadrilaterals in Lagrange elements up to fourth order polynomials are depicted in Fig.~\ref{fig:lagrange}.
 
@@ -47,7 +47,7 @@ When dealing with this category of finite elements in practice, it is sufficient
   \input{figures/parallel/q4}
   \caption{$Q_4$ element.}
 \end{subfigure}
-\caption[Lagrange elements $Q_p$ on quadrilateral unit cells.]{First four Lagrange elements $Q_p$ on quadrilateral unit cells with $(1+p)^\text{dim}$ support points each. Here, we distinguish between support points on vertices $(\bullet)$, lines $(\square)$ and quadrilaterals $(\circ)$.}
+\caption[Lagrange elements $Q_p$ on quadrilateral unit cells.]{First four Lagrange elements $Q_p$ on quadrilateral unit cells with $(1+p)^\mathrm{dim}$ support points each. Here, we distinguish between support points on vertices $(\bullet)$, lines $(\square)$ and quadrilaterals $(\circ)$.}
 \label{fig:lagrange}
 \end{figure}
 
@@ -89,7 +89,11 @@ For quadrilateral or hexahedral meshes, this 2:1 mesh balance ensures to limit t
 
 Whenever different finite elements face each other in case of \p-adaptation, we need to impose continuity on these interfaces as well. This is performed by restricting the element with the higher polynomial degree to the continuity of the lower one. Following the example from Fig.~\ref{fig:papaptivity}, we would have to restrict the additional nodes of the $Q_4$ element to the ones of the $Q_2$ element on their shared line. To formulate it in a more general way, we need to constrain continuity of all neighboring finite elements to their smallest common finite element subspace. We say that this particular element \textit{dominates} the others.
 
-There may be cases in which neighboring elements do not dominate each other, since they do not pose compatible continuity requirements. In this case, we pick a common subspace from the full collection. As an example, this would be the case for two neighboring vector-valued elements $(Q_2 \times Q_1)$ and $(Q_1 \times Q_2)$, which would be dominated by a $(Q_1 \times Q_1)$ element.
+There may be cases in which neighboring elements do not dominate each other, since they do not pose compatible continuity requirements.
+%In this case, we pick a common subspace from the full collection.
+As an example, this would be the case for two neighboring vector-valued elements $(Q_2 \times Q_1)$ and $(Q_1 \times Q_2)$.
+%, which would be dominated by a $(Q_1 \times Q_1)$ element.
+In this case, we designate the first active finite element on a mesh object to be dominating.
 
 This section summarized data structures and algorithms for \hp-adaptive \gls{fem} presented in great detail by \textcite{bangerth2009}.
 
@@ -103,7 +107,7 @@ This section summarized data structures and algorithms for \hp-adaptive \gls{fem
 
 \subsection{Parallelization of \glsfmtshort{fem}}
 
-\Gls{hpc} applications require scalable algorithms and data structures for machines with distributed memory, which we realize using the \gls{mpi} standard \textcite{mpi31}. In this context, the workload on all participating processes will be shared by partitioning the cells among them.
+\Gls{hpc} applications require scalable algorithms and data structures for machines with distributed memory, which we realize using the \gls{mpi} standard \textcite{mpi31}. In this context, the workload on all participating processes will be shared by partitioning the mesh among them.
 
 This approach poses different challenges on the design of data structures and information exchange between \gls{mpi} processes. Especially dynamic changes of the domain by \hp-adaptation are difficult, since they require the redistribution of the workload by repartitioning the global mesh, as well as the transfer of data. In addition, the workload is no longer easily predictable by a simple measure such as the number of cells each process owns. We will discuss this topic in detail later in Ch.~\ref{ch:dynamic}. For now, we distinguish between different subsets of cells and \glspl{dof} which will be introduced in the following. An example of a distributed, adapted mesh is shown in Fig.~\ref{fig:paralleldistribution} with all presented types of cells.
 

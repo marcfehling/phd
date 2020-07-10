@@ -7,7 +7,7 @@
 
 %For parallel \gls{fem}, we need to communicate data between processes in different stages of the application. %One of the stages involves...
 
-A major requirement for a general parallel \hp-adaptive \gls{fem} application is the ability to transfer data from the entirety of all cells or even the complete finite element approximation across adapted meshes. This is especially the case for time dependent or non-linear problems, in which the solution of a problem on a recently adapted mesh depends on the finite element approximation of the preceding iteration from the previous mesh.
+A major requirement for a general parallel \hp-adaptive \gls{fem} application is the ability to transfer data from the entirety of all cells or even the complete finite element approximation across adapted meshes. This is especially the case for time dependent or nonlinear problems, in which the solution of a problem on a recently adapted mesh depends on the finite element approximation of the preceding iteration from the previous mesh.
 
 % --- Data preparation ---
 
@@ -27,7 +27,7 @@ A first attempt to make data transfer available on \hp-adaptive meshes would be 
 
 One possibility would be to use \texttt{MPI\_Probe} \textcite{mpi31} operations to check for sizes of incoming messages before actually receiving them, and decide afterwards on how to receive them. We could make use of this for the transfer of variable size data.
 
-Regardless of this approach, \textcite[Sec.~5.2]{burstedde2018} proposed to divide the data transfer into two separate ones that are optimized for each kind of transfer: One for fixed size data transfer, and one for variable size data transfer in this specific order. Information about sizes of the variable data buffers on each individual cell will be sent during the fixed size transfer. In either case, they use non-blocking communication for this purpose, which requires information about the association of cells to their owning process from both the old and the updated mesh as source and destination for the data transfer. Since we exchange data between all cells without exception anyway, we favor this algorithm variant for our implementation.
+Regardless of this approach, \textcite[Sec.~5.2]{burstedde2018} proposed to divide the data transfer into two separate ones that are optimized for each kind of transfer: one for fixed size data transfer, and one for variable size data transfer in this specific order. Information about sizes of the variable data buffers on each individual cell will be sent during the fixed size transfer. In either case, they use nonblocking communication for this purpose, which requires information about the association of cells to their owning process from both the old and the updated mesh as source and destination for the data transfer. Since we exchange data between all cells without exception anyway, we favor this algorithm variant for our implementation.
 
 Many problems to be solved with \gls{fem} require multiple data sets to be exchanged between meshes. We will avoid performing the costly transfer multiple times and prepare one consecutive memory buffer with all data to be communicated for both the fixed size and variable size transfer, respectively. This leaves enough flexibility for the transfer mechanism to be independent from the investigated problem.
 
@@ -44,12 +44,12 @@ For the preparation of data buffers, all refinement indicators need to be termin
 
 Simple data structures assigned on each cell can be easily packed and unpacked. However in case of \h-adaptation, data has to be transferred between parent cells and children. Depending on the context, it is upon the user's decision to provide an appropriate strategy, e.g., divide data of the parent cell equally on all children for refinement and sum data on all children for the parent cell for coarsening.
 
-However, the transfer of full finite element approximations is slightly more complicated. Here, we need to prepare data on each cell not only depending on the adaptation context, but also on the currently active finite element. In fact, we will already prepare data from the old mesh for the adapted grid in such a way that it just has to be unpacked on the new mesh. Regardless of whether \gls{cg} or \gls{dg} methods are employed, we will always store values of all \glspl{dof} on every cell to make sure that
+However, the transfer of complete finite element approximations is slightly more complicated. Here, we need to prepare data on each cell not only depending on the adaptation context, but also on the currently active finite element. In fact, we will already prepare data from the old mesh for the adapted grid in such a way that it just has to be unpacked on the new mesh. Regardless of whether \gls{cg} or \gls{dg} methods are employed, we will always store values of all \glspl{dof} on every cell to make sure that
 all data is available on cells after transfer. %on locally owned cells, even if \glspl{dof} are owned by an adjacent ghost cell.
 %potential ghost cells will have access to all necessary data.
 \textcite{bangerth2012} developed an algorithm for transferring the solution across \h-adapted meshes in parallel, which will be expanded to work with \hp-adaptation in the remaining part of this section.
 
-Once all adaptation indicators have been set, we know how cells will change during the execution of refinement and coarsening, so a corresponding \textit{pack} callback will look as follows: On all active cells which will not be coarsened, we interpolate or project all \gls{dof} values of the currently active finite element to the future finite element. On non-active cells which have active children that will be coarsened, we interpolate or project all \gls{dof} values from the currently active finite elements on children to the future finite element of the parent cell, which is determined as the encapsulating finite element space among all children (see Sec.~\ref{sec:adaptation}).
+Once all adaptation indicators have been set, we know how cells will change during the execution of refinement and coarsening, so a corresponding \textit{pack} callback will look as follows: On all active cells which will not be coarsened, we interpolate or project all \gls{dof} values of the currently active finite element to the future finite element. On nonactive cells which have active children that will be coarsened, we interpolate or project all \gls{dof} values from the currently active finite elements on children to the future finite element of the parent cell, which is determined as the encapsulating finite element space among all children (see Sec.~\ref{sec:adaptation}).
 
 This way, all data has been prepared for the new mesh and has to be distributed on it with the following \textit{unpack} callbacks after \hp-adaptation happened and all \glspl{dof} have been enumerated on the updated mesh. On every active cell that has not been changed or that is the result of coarsening, we simply extract all \gls{dof} values. If an active cell is the result of refinement, we extract all \gls{dof} values from its parent cell and interpolate them on the refined cells. All extracted \gls{dof} values are left to be copied to the global data container corresponding to the finite element approximation.
 
@@ -59,7 +59,7 @@ In the application scope before adaptation is executed, users attach \textit{pac
 
 As soon as the user requests adaptation to be performed, all adaptation indicators will be carried over to the \pforest{} master mesh, which will be modified accordingly while maintaining the 2:1 mesh balance. The \dealii{} domain is left untouched.
 
-We store a deep copy of the array of partition markers \parencite{burstedde2018} from the local \pforest{} object, which defines the global partition boundary allowing us to relate each cell to its corresponding subdomain. After repartitioning the \pforest{} master mesh, we know each cell's association to its subdomain on both the old and the adapted mesh with the corresponding partition markers, and thus source and destination processes for all \texttt{MPI} communication.
+We store a deep copy of the array of partition markers \parencite{burstedde2018} from the local \pforest{} object, which defines the global partition boundary allowing us to relate each cell to its corresponding subdomain. After repartitioning the \pforest{} master mesh, we know each cell's association to its subdomain on both the old and the adapted mesh with the corresponding partition markers, and thus source and destination processes for all \gls{mpi} communication.
 
 %And store its global first quadrant shared data structure from which we can determine the association of all processors to each cell, repartition the mesh among all processors, and store the same data structure again. This way we know each cell's association to a processor on both meshes. \parencite{burstedde2018}
 
@@ -92,7 +92,7 @@ After adaptation has been performed and all data has been communicated, the user
 
 %When mesh is about to be
 
-With this feature, we are able to send all sorts of cell related data across adapted meshes, e.g., particle data, quadrature point data, and finite element approximations. Further, we use the above algorithm to transfer active finite element indices internally. To be more precise, future finite element indices will be sent and unpacked as active finite element indices on the adapted mesh.
+With this feature, we are able to send all sorts of cell-related data across adapted meshes, e.g., particle data, quadrature point data, and finite element approximations. Further, we use the above algorithm to transfer active finite element indices internally. To be more precise, future finite element indices will be sent and unpacked as active finite element indices on the adapted mesh.
 
 These contiguous memory chunks can also be used for the purpose of serialization. In case the program shall be interrupted and resumed at a later stage, data will be dumped to the file system. We will create two separate files, each containing either fixed size or variable size data.
 
