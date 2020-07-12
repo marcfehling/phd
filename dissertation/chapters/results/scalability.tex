@@ -1,7 +1,7 @@
 \section{\Glsfmtlong{hpc} scalability}
 \label{sec:scaling}
 
-The final part of our investigations relates to the demonstration of the scalability of our algorithms and data structures on \gls{hpc} systems, for which we will again use the JURECA supercomputer \parencite{krause2016,jureca}.
+The final part of our investigations relates to the demonstration of the scalability of our algorithms and data structures on \gls{hpc} systems, for which we will again use the JURECA supercomputer \parencite{krause2018,jureca}.
 
 Again working with successively adapted meshes, we will measure the wall time spent in each particular section of each SOLVE-ESTIMATE-MARK-REFINE iteration, which is supposed to increase linearly with the workload determined by the number of \glspl{dof} or decrease linearly with an increasing amount of workers, i.e., number of \gls{mpi} processes. We distinguish between the following categories in each adaptation cycle similar to \textcite{bangerth2012}:
 \begin{itemize}
